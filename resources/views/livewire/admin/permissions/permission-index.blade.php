@@ -8,12 +8,14 @@
                 <p class="mt-1 text-sm text-gray-500">Manage system permissions and roles.</p>
             </div>
             <div class="flex items-center space-x-3">
+                @can('create_permission')
                 <button @click="showModal = true" type="button" class="inline-flex items-center rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200">
                     <svg class="mr-2 -ml-1 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                     </svg>
                     Add Permission
                 </button>
+                @endcan
             </div>
         </div>
 
@@ -24,7 +26,6 @@
                     <thead>
                         <tr>
                             <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Permission Name</th>
-                            <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Guard Name</th>
                             <th class="text-right py-3 px-4 text-sm font-semibold text-gray-700">Actions</th>
                         </tr>
                     </thead>
@@ -32,10 +33,14 @@
                         @foreach($permissions as $permission)
                             <tr class="hover:bg-gray-50 transition-colors">
                                 <td class="py-3 px-4 text-sm text-gray-900 font-medium">{{ $permission->name }}</td>
-                                <td class="py-3 px-4 text-sm text-gray-500">{{ $permission->guard_name }}</td>
                                 <td class="py-3 px-4 text-right text-sm font-medium">
+                                    @can('edit_permission')
                                     <button class="text-blue-600 hover:text-blue-900 mr-3">Edit</button>
+                                    @endcan
+                                    
+                                    @can('delete_permission')
                                     <button wire:click="deletePermission({{ $permission->id }})" wire:confirm="Are you sure?" class="text-red-600 hover:text-red-900">Delete</button>
+                                    @endcan
                                 </td>
                             </tr>
                         @endforeach
@@ -89,13 +94,6 @@
                                         <input type="text" wire:model="name" id="name" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm border-gray-300 p-2 border">
                                         @error('name') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                                     </div>
-                                    <div>
-                                        <label for="guard_name" class="block text-sm font-medium text-gray-700">Guard Name</label>
-                                        <select wire:model="guard_name" id="guard_name" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm border-gray-300 p-2 border">
-                                            <option value="web">web</option>
-                                            <option value="api">api</option>
-                                        </select>
-                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -114,44 +112,37 @@
     </div>
 </div>
 
-<script>
-    document.addEventListener('livewire:navigated', function() {
-        initDataTable();
-    });
-
-    document.addEventListener('livewire:initialized', () => {
-       Livewire.on('permission-created', () => {
-            setTimeout(() => {
-                 initDataTable();
-            }, 100);
-       });
-    });
-
-    function initDataTable() {
-        if ($.fn.DataTable.isDataTable('#permissionsTable')) {
-            $('#permissionsTable').DataTable().destroy();
-        }
-        
-        $('#permissionsTable').DataTable({
-            pageLength: 10,
-            lengthChange: false,
-            ordering: true,
-            dom: 'Bfrtip',
-            buttons: [{
-                extend: 'excelHtml5',
-                text: '📥 Export Excel',
-                className: 'bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 border-none'
-            }],
-            language: {
-                search: "Search permissions:",
-                emptyTable: "No permissions found",
-                paginate: {
-                    first: "First",
-                    last: "Last",
-                    next: "Next",
-                    previous: "Previous"
-                }
+    <script>
+        function initDataTable() {
+            if ($.fn.DataTable.isDataTable('#permissionsTable')) {
+                $('#permissionsTable').DataTable().destroy();
             }
+            
+            $('#permissionsTable').DataTable({
+                pageLength: 10,
+                lengthChange: false,
+                ordering: true,
+                dom: 'frtip',
+                language: {
+                    search: "Search permissions:",
+                    emptyTable: "No permissions found",
+                    paginate: {
+                        first: "First",
+                        last: "Last",
+                        next: "Next",
+                        previous: "Previous"
+                    }
+                }
+            });
+        }
+
+        document.addEventListener('livewire:navigated', initDataTable);
+        
+        document.addEventListener('livewire:initialized', () => {
+            @foreach(['permission-saved', 'permission-deleted'] as $event)
+                Livewire.on('{{ $event }}', () => {
+                    setTimeout(initDataTable, 100);
+                });
+            @endforeach
         });
-    }
-</script>
+    </script>

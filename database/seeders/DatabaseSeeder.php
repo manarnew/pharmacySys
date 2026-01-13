@@ -18,8 +18,9 @@ class DatabaseSeeder extends Seeder
         // User::factory(10)->create();
 
         User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+            'name' => 'admin',
+            'email' => 'admin@admin',
+            'password' => 'admin', // Laravel 11 hashes this automatically if cast to 'hashed' in Model
         ]);
     }
 }

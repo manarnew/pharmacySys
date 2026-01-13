@@ -9,27 +9,26 @@ use Spatie\Permission\Models\Permission;
 class PermissionIndex extends Component
 {
     public $name;
-    public $guard_name = 'web';
 
     public function createPermission()
     {
         $this->validate([
             'name' => 'required|string|unique:permissions,name',
-            'guard_name' => 'required|string',
         ]);
 
         Permission::create([
             'name' => $this->name,
-            'guard_name' => $this->guard_name,
+            'guard_name' => 'web',
         ]);
 
-        $this->reset(['name', 'guard_name']);
-        $this->dispatch('permission-created');
+        $this->reset(['name']);
+        $this->dispatch('permission-saved');
     }
 
     public function deletePermission($id)
     {
         Permission::find($id)?->delete();
+        $this->dispatch('permission-deleted');
     }
 
     #[Layout('layouts.admin')]

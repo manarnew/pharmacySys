@@ -1,66 +1,57 @@
-<div x-data="{ showModal: false }">
-    <div class="space-y-6">
-        <!-- Header -->
-        <div class="flex items-center justify-between">
-            <div>
-                <h1 class="text-2xl font-bold tracking-tight text-gray-900">Expenses</h1>
-                <p class="mt-1 text-sm text-gray-500">Track and manage your expenses.</p>
-            </div>
-            <div class="flex items-center space-x-3">
-                <button @click="showModal = true" type="button" class="inline-flex items-center rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200">
-                    <svg class="mr-2 -ml-1 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                    </svg>
-                    Add Expense
-                </button>
-            </div>
+<div x-data="{ showModal: false, isEditing: @entangle('isEditing') }"
+     @expense-saved.window="showModal = false; $wire.$refresh()"
+     @open-edit-modal.window="showModal = true"
+     class="space-y-6">
+    
+    <!-- Header -->
+    <div class="flex items-center justify-between">
+        <div>
+            <h1 class="text-2xl font-bold tracking-tight text-gray-900">Expenses</h1>
+            <p class="mt-1 text-sm text-gray-500">Track and manage your expenses.</p>
         </div>
+        <div class="flex items-center space-x-3">
+            @can('create_expense')
+            <button @click="showModal = true; $wire.openModal()" type="button" class="inline-flex items-center rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200">
+                <svg class="mr-2 -ml-1 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                </svg>
+                Add Expense
+            </button>
+            @endcan
+        </div>
+    </div>
 
-        <!-- Content -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-            <div class="p-6">
-                <!-- DataTables -->
-                <table id="expensesTable" class="display w-full" style="width:100%">
-                    <thead>
-                        <tr>
-                            <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Title</th>
-                            <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Amount</th>
-                            <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Date</th>
-                            <th class="text-right py-3 px-4 text-sm font-semibold text-gray-700">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-gray-100">
-                        <!-- Static Data -->
+    <!-- Content -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="p-6">
+            <table id="expensesTable" class="display w-full" style="width:100%">
+                <thead>
+                    <tr>
+                        <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Reason</th>
+                        <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Amount</th>
+                        <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Date</th>
+                        <th class="text-right py-3 px-4 text-sm font-semibold text-gray-700">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100">
+                    @foreach($expenses as $expense)
                         <tr class="hover:bg-gray-50 transition-colors">
-                            <td class="py-3 px-4 text-sm text-gray-900 font-medium">Electricity Bill</td>
-                            <td class="py-3 px-4 text-sm text-gray-500">$150.00</td>
-                            <td class="py-3 px-4 text-sm text-gray-500">2024-01-05</td>
+                            <td class="py-3 px-4 text-sm text-gray-900 font-medium">{{ $expense->reason }}</td>
+                            <td class="py-3 px-4 text-sm text-gray-500">{{ number_format($expense->amount, 2) }}</td>
+                            <td class="py-3 px-4 text-sm text-gray-500">{{ $expense->date }}</td>
                             <td class="py-3 px-4 text-right text-sm font-medium">
-                                <button class="text-blue-600 hover:text-blue-900 mr-3">Edit</button>
-                                <button class="text-red-600 hover:text-red-900">Delete</button>
+                                @can('edit_expense')
+                                <button wire:click="edit({{ $expense->id }})" class="text-blue-600 hover:text-blue-900 mr-3 transition-colors">Edit</button>
+                                @endcan
+
+                                @can('delete_expense')
+                                <button wire:click="delete({{ $expense->id }})" wire:confirm="Are you sure you want to delete this expense?" class="text-red-600 hover:text-red-900 transition-colors">Delete</button>
+                                @endcan
                             </td>
                         </tr>
-                        <tr class="hover:bg-gray-50 transition-colors">
-                            <td class="py-3 px-4 text-sm text-gray-900 font-medium">Office Supplies</td>
-                            <td class="py-3 px-4 text-sm text-gray-500">$45.00</td>
-                            <td class="py-3 px-4 text-sm text-gray-500">2024-01-08</td>
-                            <td class="py-3 px-4 text-right text-sm font-medium">
-                                <button class="text-blue-600 hover:text-blue-900 mr-3">Edit</button>
-                                <button class="text-red-600 hover:text-red-900">Delete</button>
-                            </td>
-                        </tr>
-                        <tr class="hover:bg-gray-50 transition-colors">
-                            <td class="py-3 px-4 text-sm text-gray-900 font-medium">Cleaning Service</td>
-                            <td class="py-3 px-4 text-sm text-gray-500">$80.00</td>
-                            <td class="py-3 px-4 text-sm text-gray-500">2024-01-10</td>
-                            <td class="py-3 px-4 text-right text-sm font-medium">
-                                <button class="text-blue-600 hover:text-blue-900 mr-3">Edit</button>
-                                <button class="text-red-600 hover:text-red-900">Delete</button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+                    @endforeach
+                </tbody>
+            </table>
         </div>
     </div>
 
@@ -99,21 +90,24 @@
                         </div>
                         <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
                             <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">
-                                Add New Expense
+                                <span x-text="isEditing ? 'Edit Expense' : 'Add New Expense'"></span>
                             </h3>
-                            <div class="mt-2">
+                            <div class="mt-2 text-sm text-gray-500">
                                 <div class="grid grid-cols-1 gap-y-4">
                                     <div>
-                                        <label for="title" class="block text-sm font-medium text-gray-700">Expense Title</label>
-                                        <input type="text" name="title" id="title" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm border p-2">
+                                        <label for="reason" class="block text-sm font-medium text-gray-700 text-left">Reason</label>
+                                        <input type="text" wire:model="reason" id="reason" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm border p-2 text-gray-900">
+                                        @error('reason') <span class="text-red-500 text-xs text-left block">{{ $message }}</span> @enderror
                                     </div>
                                     <div>
-                                        <label for="amount" class="block text-sm font-medium text-gray-700">Amount</label>
-                                        <input type="number" step="0.01" name="amount" id="amount" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm border p-2">
+                                        <label for="amount" class="block text-sm font-medium text-gray-700 text-left">Amount</label>
+                                        <input type="number" step="0.01" wire:model="amount" id="amount" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm border p-2 text-gray-900">
+                                        @error('amount') <span class="text-red-500 text-xs text-left block">{{ $message }}</span> @enderror
                                     </div>
                                     <div>
-                                        <label for="date" class="block text-sm font-medium text-gray-700">Date</label>
-                                        <input type="date" name="date" id="date" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm border p-2">
+                                        <label for="date" class="block text-sm font-medium text-gray-700 text-left">Date</label>
+                                        <input type="date" wire:model="date" id="date" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm border p-2 text-gray-900">
+                                        @error('date') <span class="text-red-500 text-xs text-left block">{{ $message }}</span> @enderror
                                     </div>
                                 </div>
                             </div>
@@ -121,44 +115,54 @@
                     </div>
                 </div>
                 <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-                    <button @click="showModal = false" type="button" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm">
+                    <button x-on:click="isEditing ? $wire.update() : $wire.store()" type="button" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm transition-colors">
                         Save
                     </button>
-                    <button @click="showModal = false" type="button" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+                    <button @click="showModal = false" type="button" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm transition-colors">
                         Cancel
                     </button>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
-<script>
-    document.addEventListener('livewire:navigated', function() {
-        if ($.fn.DataTable.isDataTable('#expensesTable')) {
-            $('#expensesTable').DataTable().destroy();
-        }
-        
-        $('#expensesTable').DataTable({
-            pageLength: 10,
-            lengthChange: false,
-            ordering: true,
-            dom: 'Bfrtip',
-            buttons: [{
-                extend: 'excelHtml5',
-                text: '📥 Export Excel',
-                className: 'bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 border-none'
-            }],
-            language: {
-                search: "Search expenses:",
-                emptyTable: "No expenses found",
-                paginate: {
-                    first: "First",
-                    last: "Last",
-                    next: "Next",
-                    previous: "Previous"
-                }
+    <script>
+        function initDataTable() {
+            if ($.fn.DataTable.isDataTable('#expensesTable')) {
+                $('#expensesTable').DataTable().destroy();
             }
+            
+            $('#expensesTable').DataTable({
+                pageLength: 10,
+                lengthChange: false,
+                ordering: true,
+                dom: 'Bfrtip',
+                buttons: [{
+                    extend: 'excelHtml5',
+                    text: '📥 Export Excel',
+                    className: 'bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 border-none transition-colors'
+                }],
+                language: {
+                    search: "Search expenses:",
+                    emptyTable: "No expenses found",
+                    paginate: {
+                        first: "First",
+                        last: "Last",
+                        next: "Next",
+                        previous: "Previous"
+                    }
+                }
+            });
+        }
+
+        document.addEventListener('livewire:navigated', initDataTable);
+        
+        document.addEventListener('livewire:initialized', () => {
+            @foreach(['expense-saved', 'expense-deleted'] as $event)
+                Livewire.on('{{ $event }}', () => {
+                    setTimeout(initDataTable, 100);
+                });
+            @endforeach
         });
-    });
-</script>
+    </script>
+</div>

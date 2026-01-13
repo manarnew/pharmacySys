@@ -1,61 +1,57 @@
-<div x-data="{ showModal: false }">
-    <div class="space-y-6">
-        <!-- Header -->
-        <div class="flex items-center justify-between">
-            <div>
-                <h1 class="text-2xl font-bold tracking-tight text-gray-900">Suppliers</h1>
-                <p class="mt-1 text-sm text-gray-500">Manage your suppliers and their details.</p>
-            </div>
-            <div class="flex items-center space-x-3">
-                <button @click="showModal = true" type="button" class="inline-flex items-center rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200">
-                    <svg class="mr-2 -ml-1 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                    </svg>
-                    Add Supplier
-                </button>
-            </div>
+<div x-data="{ showModal: false, isEditing: @entangle('isEditing') }"
+     @supplier-saved.window="showModal = false; $wire.$refresh()"
+     @open-edit-modal.window="showModal = true"
+     class="space-y-6">
+    
+    <!-- Header -->
+    <div class="flex items-center justify-between">
+        <div>
+            <h1 class="text-2xl font-bold tracking-tight text-gray-900">Suppliers</h1>
+            <p class="mt-1 text-sm text-gray-500">Manage your suppliers and their contact information.</p>
         </div>
+        <div class="flex items-center space-x-3">
+            @can('create_supplier')
+            <button @click="showModal = true; $wire.openModal()" type="button" class="inline-flex items-center rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200">
+                <svg class="mr-2 -ml-1 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                </svg>
+                Add Supplier
+            </button>
+            @endcan
+        </div>
+    </div>
 
-        <!-- Content -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-            <div class="p-6">
-                <table id="suppliersTable" class="display w-full" style="width:100%">
-                    <thead>
-                        <tr>
-                            <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Name</th>
-                            <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Phone</th>
-                            <th class="text-right py-3 px-4 text-sm font-semibold text-gray-700">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-gray-100">
-                        <!-- Static Data -->
+    <!-- Content -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="p-6">
+            <table id="suppliersTable" class="display w-full" style="width:100%">
+                <thead>
+                    <tr>
+                        <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Name</th>
+                        <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Phone</th>
+                        <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Email</th>
+                        <th class="text-right py-3 px-4 text-sm font-semibold text-gray-700">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100">
+                    @foreach($suppliers as $supplier)
                         <tr class="hover:bg-gray-50 transition-colors">
-                            <td class="py-3 px-4 text-sm text-gray-900 font-medium">مصنع النور</td>
-                            <td class="py-3 px-4 text-sm text-gray-500">0501234567</td>
+                            <td class="py-3 px-4 text-sm text-gray-900 font-medium">{{ $supplier->name }}</td>
+                            <td class="py-3 px-4 text-sm text-gray-500">{{ $supplier->phone ?? '-' }}</td>
+                            <td class="py-3 px-4 text-sm text-gray-500">{{ $supplier->email ?? '-' }}</td>
                             <td class="py-3 px-4 text-right text-sm font-medium">
-                                <button class="text-blue-600 hover:text-blue-900 mr-3">Edit</button>
-                                <button class="text-red-600 hover:text-red-900">Delete</button>
+                                @can('edit_supplier')
+                                <button wire:click="edit({{ $supplier->id }})" class="text-blue-600 hover:text-blue-900 mr-3">Edit</button>
+                                @endcan
+
+                                @can('delete_supplier')
+                                <button wire:click="delete({{ $supplier->id }})" wire:confirm="Are you sure you want to delete this supplier?" class="text-red-600 hover:text-red-900">Delete</button>
+                                @endcan
                             </td>
                         </tr>
-                        <tr class="hover:bg-gray-50 transition-colors">
-                            <td class="py-3 px-4 text-sm text-gray-900 font-medium">زرقاء اليمامة</td>
-                            <td class="py-3 px-4 text-sm text-gray-500">0507654321</td>
-                            <td class="py-3 px-4 text-right text-sm font-medium">
-                                <button class="text-blue-600 hover:text-blue-900 mr-3">Edit</button>
-                                <button class="text-red-600 hover:text-red-900">Delete</button>
-                            </td>
-                        </tr>
-                        <tr class="hover:bg-gray-50 transition-colors">
-                            <td class="py-3 px-4 text-sm text-gray-900 font-medium">الدهلوي</td>
-                            <td class="py-3 px-4 text-sm text-gray-500">0509876543</td>
-                            <td class="py-3 px-4 text-right text-sm font-medium">
-                                <button class="text-blue-600 hover:text-blue-900 mr-3">Edit</button>
-                                <button class="text-red-600 hover:text-red-900">Delete</button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+                    @endforeach
+                </tbody>
+            </table>
         </div>
     </div>
 
@@ -94,17 +90,24 @@
                         </div>
                         <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
                             <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">
-                                Add New Supplier
+                                <span x-text="isEditing ? 'Edit Supplier' : 'Add New Supplier'"></span>
                             </h3>
                             <div class="mt-2">
                                 <div class="grid grid-cols-1 gap-y-4">
                                     <div>
                                         <label for="name" class="block text-sm font-medium text-gray-700">Supplier Name</label>
-                                        <input type="text" name="name" id="name" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm border-gray-300 p-2 border">
+                                        <input type="text" wire:model="name" id="name" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm border-gray-300 p-2 border">
+                                        @error('name') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                                     </div>
                                     <div>
                                         <label for="phone" class="block text-sm font-medium text-gray-700">Phone Number</label>
-                                        <input type="text" name="phone" id="phone" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm border-gray-300 p-2 border">
+                                        <input type="text" wire:model="phone" id="phone" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm border-gray-300 p-2 border">
+                                        @error('phone') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+                                    </div>
+                                    <div>
+                                        <label for="email" class="block text-sm font-medium text-gray-700">Email Address</label>
+                                        <input type="email" wire:model="email" id="email" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm border-gray-300 p-2 border">
+                                        @error('email') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                                     </div>
                                 </div>
                             </div>
@@ -112,7 +115,7 @@
                     </div>
                 </div>
                 <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-                    <button @click="showModal = false" type="button" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm">
+                    <button x-on:click="isEditing ? $wire.update() : $wire.store()" type="button" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm">
                         Save
                     </button>
                     <button @click="showModal = false" type="button" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
@@ -122,34 +125,44 @@
             </div>
         </div>
     </div>
-</div>
 
-<script>
-    document.addEventListener('livewire:navigated', function() {
-        if ($.fn.DataTable.isDataTable('#suppliersTable')) {
-            $('#suppliersTable').DataTable().destroy();
-        }
-        
-        $('#suppliersTable').DataTable({
-            pageLength: 10,
-            lengthChange: false,
-            ordering: true,
-            dom: 'Bfrtip',
-            buttons: [{
-                extend: 'excelHtml5',
-                text: '📥 Export Excel',
-                className: 'bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 border-none'
-            }],
-            language: {
-                search: "Search suppliers:",
-                emptyTable: "No suppliers found",
-                paginate: {
-                    first: "First",
-                    last: "Last",
-                    next: "Next",
-                    previous: "Previous"
-                }
+    <script>
+        function initDataTable() {
+            if ($.fn.DataTable.isDataTable('#suppliersTable')) {
+                $('#suppliersTable').DataTable().destroy();
             }
+            
+            $('#suppliersTable').DataTable({
+                pageLength: 10,
+                lengthChange: false,
+                ordering: true,
+                dom: 'Bfrtip',
+                buttons: [{
+                    extend: 'excelHtml5',
+                    text: '📥 Export Excel',
+                    className: 'bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 border-none'
+                }],
+                language: {
+                    search: "Search suppliers:",
+                    emptyTable: "No suppliers found",
+                    paginate: {
+                        first: "First",
+                        last: "Last",
+                        next: "Next",
+                        previous: "Previous"
+                    }
+                }
+            });
+        }
+
+        document.addEventListener('livewire:navigated', initDataTable);
+        
+        document.addEventListener('livewire:initialized', () => {
+            @foreach(['supplier-saved', 'supplier-deleted'] as $event)
+                Livewire.on('{{ $event }}', () => {
+                    setTimeout(initDataTable, 100);
+                });
+            @endforeach
         });
-    });
-</script>
+    </script>
+</div>

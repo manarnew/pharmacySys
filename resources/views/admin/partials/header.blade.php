@@ -18,7 +18,7 @@
                 <div class="hidden lg:ml-5 lg:flex lg:items-center">
                     <div class="flex items-center text-sm font-medium">
                         <!-- Home/Dashboard -->
-                        <a href="{{ route('admin.dashboard') }}" 
+                        <a href="{{ route('admin.dashboard') }}" wire:navigate
                            class="text-gray-500 hover:text-blue-600 transition-colors duration-200 flex items-center">
                             <div class="h-8 w-8 rounded-lg bg-blue-50 flex items-center justify-center mr-2.5">
                                 <span class="text-blue-500">🏠</span>
@@ -85,20 +85,10 @@
             <!-- Right side - Search & User Menu -->
             <div class="flex items-center space-x-5">
                 <!-- Search Bar (Desktop) -->
-                <div class="hidden lg:block">
-                    <div class="relative group">
-                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                            <svg class="h-5 w-5 text-gray-400 group-hover:text-gray-500 transition-colors" 
-                                 fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2"
-                                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                            </svg>
-                        </div>
-                        <input type="search"
-                            class="block w-72 pl-12 pr-4 py-2.5 border-2 border-gray-200 rounded-xl leading-5 bg-white/50 placeholder-gray-400 focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition-all duration-200 shadow-sm hover:shadow"
-                            placeholder="Search patients...">
-                    </div>
+                <div class="hidden lg:block w-72">
+                    @livewire('admin.global-search')
                 </div>
+
 
                 <!-- Search Button (Mobile) -->
                 <button class="lg:hidden p-2.5 rounded-xl text-gray-600 hover:text-gray-900 hover:bg-gray-100/80 transition-all duration-200">
@@ -275,7 +265,7 @@
                         <div class="border-t border-gray-100 my-2"></div>
 
                         <!-- Logout -->
-                        <form method="POST" action="">
+                        <form method="POST" action="{{ route('logout') }}">
                             @csrf
                             <button type="submit"
                                 class="flex items-center w-full text-left px-5 py-3 text-sm text-red-600 hover:bg-red-50/80 transition-colors rounded-b-2xl">
@@ -293,18 +283,9 @@
         <!-- Search Bar (Mobile Expanded) -->
         <div x-data="{ searchOpen: false }" class="lg:hidden">
             <div x-show="searchOpen" class="mt-3">
-                <div class="relative">
-                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                        <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                        </svg>
-                    </div>
-                    <input type="search"
-                        class="block w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl bg-white placeholder-gray-400 focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition-all duration-200"
-                        placeholder="Search patients, appointments...">
-                </div>
+                @livewire('admin.global-search')
             </div>
         </div>
+
     </div>
 </header>

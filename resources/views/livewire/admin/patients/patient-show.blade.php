@@ -17,7 +17,7 @@
                                 </div>
                                 <div>
                                     <span class="block text-sm font-semibold text-gray-700">Name</span>
-                                    <span class="text-lg font-medium text-gray-900">Ahmed Mohamed Ali</span>
+                                    <span class="text-lg font-medium text-gray-900">{{ $patient->name }}</span>
                                 </div>
                             </div>
                         </div>
@@ -29,7 +29,7 @@
                                 </div>
                                 <div>
                                     <span class="block text-sm font-semibold text-gray-700">Age</span>
-                                    <span class="text-lg font-medium text-gray-900">45 years</span>
+                                    <span class="text-lg font-medium text-gray-900">{{ $patient->age ? $patient->age . ' years' : 'N/A' }}</span>
                                 </div>
                             </div>
                         </div>
@@ -41,7 +41,7 @@
                                 </div>
                                 <div>
                                     <span class="block text-sm font-semibold text-gray-700">Contact</span>
-                                    <span class="text-lg font-medium text-gray-900">+20 123 456 7890</span>
+                                    <span class="text-lg font-medium text-gray-900">{{ $patient->phone ?? 'N/A' }}</span>
                                 </div>
                             </div>
                         </div>
@@ -53,7 +53,7 @@
                                 </div>
                                 <div>
                                     <span class="block text-sm font-semibold text-gray-700">Last Visit</span>
-                                    <span class="text-lg font-medium text-gray-900">2026-01-10</span>
+                                    <span class="text-lg font-medium text-gray-900">{{ $patient->examinations->first()?->created_at->format('Y-m-d') ?? $patient->date ?? 'N/A' }}</span>
                                 </div>
                             </div>
                         </div>
@@ -83,81 +83,64 @@
                                 </tr>
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-100">
+                                @forelse($patient->examinations as $examination)
                                 <tr class="hover:bg-gray-50 transition duration-150">
                                     <td class="px-8 py-5 whitespace-nowrap">
                                         <div class="flex items-center">
                                             <div class="h-10 w-10 rounded-lg bg-blue-50 flex items-center justify-center mr-4">
-                                                <span class="text-blue-600 font-bold">10</span>
+                                                <span class="text-blue-600 font-bold">{{ $examination->created_at->format('d') }}</span>
                                             </div>
                                             <div>
-                                                <div class="text-sm font-medium text-gray-900">2026-01-10</div>
-                                                <div class="text-xs text-gray-500">Today</div>
+                                                <div class="text-sm font-medium text-gray-900">{{ $examination->created_at->format('Y-m-d') }}</div>
+                                                <div class="text-xs text-gray-500">{{ $examination->created_at->diffForHumans() }}</div>
                                             </div>
                                         </div>
                                     </td>
                                     <td class="px-8 py-5 whitespace-nowrap">
                                         <div class="flex items-center">
                                             <div class="h-8 w-8 rounded-full bg-green-100 flex items-center justify-center mr-3">
-                                                <span class="text-green-600 text-xs font-bold">SI</span>
+                                                <span class="text-green-600 text-xs font-bold">{{ strtoupper(substr($examination->specialist->name ?? 'D', 0, 2)) }}</span>
                                             </div>
-                                            <div class="text-sm font-medium text-gray-900">Dr. Sarah Ibrahim</div>
+                                            <div class="text-sm font-medium text-gray-900">{{ $examination->specialist->name ?? 'N/A' }}</div>
                                         </div>
                                     </td>
                                     <td class="px-8 py-5 whitespace-nowrap">
-                                        <div class="flex items-center space-x-4">
-                                            <a href="{{ route('admin.examinations.edit') }}" 
-                                               class="inline-flex items-center px-4 py-2 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition font-medium">
-                                                <span class="mr-2">🔍</span>
-                                                View Examination
+                                        <div class="flex items-center space-x-3">
+                                            <a href="{{ route('admin.examinations.edit', ['examination_id' => $examination->id]) }}" 
+                                               wire:navigate
+                                               class="inline-flex items-center px-4 py-2 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition font-medium text-xs uppercase tracking-wider">
+                                                <span class="mr-2 text-sm">�</span>
+                                                Exam
                                             </a>
-                                            <a href="{{ route('admin.prescriptions.index') }}" 
-                                               class="inline-flex items-center px-4 py-2 bg-green-50 text-green-700 rounded-lg hover:bg-green-100 transition font-medium">
-                                                <span class="mr-2">📄</span>
-                                                View Prescription
+                                            @if($examination->prescription)
+                                            <a href="{{ route('admin.prescriptions.show', ['prescription_id' => $examination->prescription->id]) }}" 
+                                               wire:navigate
+                                               class="inline-flex items-center px-4 py-2 bg-green-50 text-green-700 rounded-lg hover:bg-green-100 transition font-medium text-xs uppercase tracking-wider">
+                                                <span class="mr-2 text-sm">📄</span>
+                                                Prescription
                                             </a>
+                                            <a href="{{ $examination->prescription->order ? route('admin.orders.show', ['order_id' => $examination->prescription->order->id]) : route('admin.orders.create', ['patient_id' => $patient->id, 'prescription_id' => $examination->prescription->id]) }}" 
+                                               wire:navigate
+                                               class="inline-flex items-center px-4 py-2 {{ $examination->prescription->order ? 'bg-indigo-600' : 'bg-emerald-600' }} text-white rounded-lg hover:{{ $examination->prescription->order ? 'bg-indigo-700' : 'bg-emerald-700' }} transition font-medium text-xs uppercase tracking-wider shadow-sm">
+                                                <span class="mr-2 text-sm">🛒</span>
+                                                {{ $examination->prescription->order ? 'Order Details' : 'Order' }}
+                                            </a>
+                                            @endif
                                         </div>
                                     </td>
                                 </tr>
-                                
-                                <tr class="hover:bg-gray-50 transition duration-150">
-                                    <td class="px-8 py-5 whitespace-nowrap">
-                                        <div class="flex items-center">
-                                            <div class="h-10 w-10 rounded-lg bg-gray-50 flex items-center justify-center mr-4">
-                                                <span class="text-gray-600 font-bold">15</span>
-                                            </div>
-                                            <div>
-                                                <div class="text-sm font-medium text-gray-900">2025-11-15</div>
-                                                <div class="text-xs text-gray-500">2 months ago</div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="px-8 py-5 whitespace-nowrap">
-                                        <div class="flex items-center">
-                                            <div class="h-8 w-8 rounded-full bg-green-100 flex items-center justify-center mr-3">
-                                                <span class="text-green-600 text-xs font-bold">SI</span>
-                                            </div>
-                                            <div class="text-sm font-medium text-gray-900">Dr. Sarah Ibrahim</div>
-                                        </div>
-                                    </td>
-                                    <td class="px-8 py-5 whitespace-nowrap">
-                                        <div class="flex items-center space-x-4">
-                                            <a href="{{ route('admin.examinations.edit') }}" 
-                                               class="inline-flex items-center px-4 py-2 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition font-medium">
-                                                <span class="mr-2">🔍</span>
-                                                View Examination
-                                            </a>
-                                            <a href="{{ route('admin.prescriptions.index') }}" 
-                                               class="inline-flex items-center px-4 py-2 bg-green-50 text-green-700 rounded-lg hover:bg-green-100 transition font-medium">
-                                                <span class="mr-2">📄</span>
-                                                View Prescription
-                                            </a>
-                                        </div>
+                                @empty
+                                <tr>
+                                    <td colspan="3" class="px-8 py-10 text-center text-gray-500 italic">
+                                        No medical history found for this patient.
                                     </td>
                                 </tr>
+                                @endforelse
                             </tbody>
                         </table>
                     </div>
                 </div>
+
             </div>
         </div>
     </div>

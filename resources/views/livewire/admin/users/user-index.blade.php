@@ -1,114 +1,146 @@
-<div x-data="{ showModal: false }">
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-             <div class="flex justify-between items-center mb-6">
-                <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                    {{ __('Users Management') }}
-                </h2>
-                <button @click="showModal = true" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
-                    Add New User
-                </button>
-            </div>
+<div x-data="{ showModal: false, isEditing: @entangle('isEditing') }"
+     @user-saved.window="showModal = false; $wire.$refresh()"
+     @user-error.window="alert($event.detail)"
+     @open-edit-modal.window="showModal = true"
+     class="space-y-6">
+    
+    <!-- Header -->
+    <div class="flex items-center justify-between">
+        <div>
+            <h1 class="text-2xl font-bold tracking-tight text-gray-900">Users</h1>
+            <p class="mt-1 text-sm text-gray-500">Manage your administrative users.</p>
+        </div>
+        <div class="flex items-center space-x-3">
+            @can('create_user')
+            <button @click="showModal = true; $wire.openModal()" type="button" class="inline-flex items-center rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200">
+                <svg class="mr-2 -ml-1 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                </svg>
+                Add User
+            </button>
+            @endcan
+        </div>
+    </div>
 
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900">
-                    <div class="overflow-x-auto">
-                        <table id="usersTable" class="min-w-full divide-y divide-gray-200">
-                            <thead class="bg-gray-50">
-                                <tr>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Branch</th>
-                                    <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody class="bg-white divide-y divide-gray-200">
-                                <!-- Placeholder Data -->
-                                <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="flex items-center">
-                                            <div class="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-500 font-bold">JD</div>
-                                            <div class="ml-4">
-                                                <div class="text-sm font-medium text-gray-900">John Doe</div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">john@example.com</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Admin</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Main User</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                        <a href="#" class="text-indigo-600 hover:text-indigo-900 mr-3">Edit</a>
-                                        <a href="#" class="text-red-600 hover:text-red-900">Delete</a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="flex items-center">
-                                            <div class="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-500 font-bold">JS</div>
-                                            <div class="ml-4">
-                                                <div class="text-sm font-medium text-gray-900">Jane Smith</div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">jane@example.com</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Staff</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Downtown Branch</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                        <a href="#" class="text-indigo-600 hover:text-indigo-900 mr-3">Edit</a>
-                                        <a href="#" class="text-red-600 hover:text-red-900">Delete</a>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
+    <!-- Content -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="p-6">
+            <table id="usersTable" class="display w-full" style="width:100%">
+                <thead>
+                    <tr>
+                        <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Name</th>
+                        <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Email</th>
+                        <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Clinic</th>
+                        <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Role</th>
+                        <th class="text-right py-3 px-4 text-sm font-semibold text-gray-700">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100">
+                    @foreach($users as $user)
+                        <tr class="hover:bg-gray-50 transition-colors">
+                            <td class="py-3 px-4 text-sm text-gray-900 font-medium">{{ $user->name }}</td>
+                            <td class="py-3 px-4 text-sm text-gray-500">{{ $user->email }}</td>
+                            <td class="py-3 px-4 text-sm">
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                    {{ $user->clinic->name ?? 'N/A' }}
+                                </span>
+                            </td>
+                            <td class="py-3 px-4 text-sm">
+                                @foreach($user->roles as $role)
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                                        {{ $role->name }}
+                                    </span>
+                                @endforeach
+                                @if($user->roles->count() === 0)
+                                    <span class="text-gray-400 italic text-xs">No role</span>
+                                @endif
+                            </td>
+                            <td class="py-3 px-4 text-right text-sm font-medium">
+                                @can('edit_user')
+                                <button wire:click="edit({{ $user->id }})" class="text-blue-600 hover:text-blue-900 mr-3">Edit</button>
+                                @endcan
+
+                                @can('delete_user')
+                                <button wire:click="delete({{ $user->id }})" wire:confirm="Are you sure?" class="text-red-600 hover:text-red-900">Delete</button>
+                                @endcan
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
         </div>
     </div>
 
     <!-- Modal -->
     <div x-show="showModal" class="fixed inset-0 z-50 overflow-y-auto" style="display: none;">
         <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
-            <div class="fixed inset-0 transition-opacity" aria-hidden="true">
-                <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
-            </div>
+            <!-- Background Overlay -->
+            <div x-show="showModal" x-transition.opacity @click="showModal = false" class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
 
+            <!-- Modal Panel -->
             <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-
-            <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+            <div x-show="showModal"
+                 x-transition:enter="ease-out duration-300"
+                 x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                 x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
+                 x-transition:leave="ease-in duration-200"
+                 x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
+                 x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                 class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                
                 <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                     <div class="sm:flex sm:items-start">
+                        <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-blue-100 sm:mx-0 sm:h-10 sm:w-10">
+                            <svg class="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                            </svg>
+                        </div>
                         <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
                             <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">
-                                Add New User
+                                {{ $isEditing ? 'Edit User' : 'Add New User' }}
                             </h3>
-                            <div class="mt-2 text-sm text-gray-500">
-                                <p>Fill in the details for the new user.</p>
-                                <!-- Form Fields Placeholder -->
-                                <div class="mt-4 grid grid-cols-1 gap-y-4">
-                                    <div>
-                                        <label for="name" class="block text-sm font-medium text-gray-700">Name</label>
-                                        <input type="text" name="name" id="name" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm border p-2">
-                                    </div>
-                                    <div>
-                                        <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
-                                        <input type="email" name="email" id="email" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm border p-2">
-                                    </div>
-                                     <div>
-                                        <label for="role" class="block text-sm font-medium text-gray-700">Role</label>
-                                        <select id="role" name="role" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm border p-2">
-                                            <option>Admin</option>
-                                            <option>Staff</option>
-                                        </select>
-                                    </div>
+                            <div class="mt-4 grid grid-cols-1 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700">Name</label>
+                                    <input type="text" wire:model="name" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm border p-2">
+                                    @error('name') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700">Email</label>
+                                    <input type="email" wire:model="email" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm border p-2">
+                                    @error('email') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700">Password {{ $isEditing ? '(leave blank to keep current)' : '' }}</label>
+                                    <input type="password" wire:model="password" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm border p-2">
+                                    @error('password') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700">Clinic</label>
+                                    <select wire:model="clinic_id" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm border p-2">
+                                        <option value="">Select Clinic</option>
+                                        @foreach($clinics as $clinic)
+                                            <option value="{{ $clinic->id }}">{{ $clinic->name }}</option>
+                                        @endforeach
+                                    </select>
+                                    @error('clinic_id') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700">Role</label>
+                                    <select wire:model="role" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm border p-2">
+                                        <option value="">Select Role</option>
+                                        @foreach($roles as $r)
+                                            <option value="{{ $r->name }}">{{ $r->name }}</option>
+                                        @endforeach
+                                    </select>
+                                    @error('role') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-                    <button @click="showModal = false" type="button" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm">
+                    <button x-on:click="isEditing ? $wire.update() : $wire.store()" type="button" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm">
                         Save
                     </button>
                     <button @click="showModal = false" type="button" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
@@ -118,24 +150,44 @@
             </div>
         </div>
     </div>
-</div>
 
-<script>
-    $(document).ready(function() {
-        $('#usersTable').DataTable({
-            pageLength: 10,
-            lengthChange: false,
-            ordering: true,
-            dom: 'Bfrtip',
-            buttons: [{
-                extend: 'excelHtml5',
-                text: '📥 Export Excel',
-                className: 'bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700'
-            }],
-            language: {
-                search: "Search users:",
-                emptyTable: "No users found"
+    <script>
+        function initDataTable() {
+            if ($.fn.DataTable.isDataTable('#usersTable')) {
+                $('#usersTable').DataTable().destroy();
             }
+            
+            $('#usersTable').DataTable({
+                pageLength: 10,
+                lengthChange: false,
+                ordering: true,
+                dom: 'Bfrtip',
+                buttons: [{
+                    extend: 'excelHtml5',
+                    text: '📥 Export Excel',
+                    className: 'bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 border-none'
+                }],
+                language: {
+                    search: "Search users:",
+                    emptyTable: "No users found",
+                    paginate: {
+                        first: "First",
+                        last: "Last",
+                        next: "Next",
+                        previous: "Previous"
+                    }
+                }
+            });
+        }
+
+        document.addEventListener('livewire:navigated', initDataTable);
+        
+        document.addEventListener('livewire:initialized', () => {
+            @foreach(['user-saved', 'user-deleted'] as $event)
+                Livewire.on('{{ $event }}', () => {
+                    setTimeout(initDataTable, 100);
+                });
+            @endforeach
         });
-    });
-</script>
+    </script>
+</div>
