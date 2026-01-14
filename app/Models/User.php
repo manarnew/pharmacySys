@@ -22,12 +22,12 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'clinic_id',
+        'branch_id',
     ];
 
-    public function clinic()
+    public function branch()
     {
-        return $this->belongsTo(Clinic::class);
+        return $this->belongsTo(Branch::class);
     }
 
     /**

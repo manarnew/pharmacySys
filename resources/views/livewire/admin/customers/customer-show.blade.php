@@ -2,10 +2,10 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="bg-white rounded-xl shadow-lg overflow-hidden">
             <div class="p-8">
-                <!-- Patient Info -->
+                <!-- Customer Info -->
                 <div class="mb-10">
                     <div class="flex items-center justify-between mb-6">
-                        <h2 class="text-2xl font-bold text-gray-900">Patient Information</h2>
+                        <h2 class="text-2xl font-bold text-gray-900">Customer Information</h2>
                         <div class="h-px flex-grow ml-4 bg-gradient-to-r from-blue-400 to-blue-100"></div>
                     </div>
                     
@@ -17,7 +17,7 @@
                                 </div>
                                 <div>
                                     <span class="block text-sm font-semibold text-gray-700">Name</span>
-                                    <span class="text-lg font-medium text-gray-900">{{ $patient->name }}</span>
+                                    <span class="text-lg font-medium text-gray-900">{{ $customer->name }}</span>
                                 </div>
                             </div>
                         </div>
@@ -29,7 +29,7 @@
                                 </div>
                                 <div>
                                     <span class="block text-sm font-semibold text-gray-700">Age</span>
-                                    <span class="text-lg font-medium text-gray-900">{{ $patient->age ? $patient->age . ' years' : 'N/A' }}</span>
+                                    <span class="text-lg font-medium text-gray-900">{{ $customer->age ? $customer->age . ' years' : 'N/A' }}</span>
                                 </div>
                             </div>
                         </div>
@@ -41,7 +41,7 @@
                                 </div>
                                 <div>
                                     <span class="block text-sm font-semibold text-gray-700">Contact</span>
-                                    <span class="text-lg font-medium text-gray-900">{{ $patient->phone ?? 'N/A' }}</span>
+                                    <span class="text-lg font-medium text-gray-900">{{ $customer->phone ?? 'N/A' }}</span>
                                 </div>
                             </div>
                         </div>
@@ -53,7 +53,7 @@
                                 </div>
                                 <div>
                                     <span class="block text-sm font-semibold text-gray-700">Last Visit</span>
-                                    <span class="text-lg font-medium text-gray-900">{{ $patient->examinations->first()?->created_at->format('Y-m-d') ?? $patient->date ?? 'N/A' }}</span>
+                                    <span class="text-lg font-medium text-gray-900">{{ $customer->examinations->first()?->created_at->format('Y-m-d') ?? $customer->date ?? 'N/A' }}</span>
                                 </div>
                             </div>
                         </div>
@@ -83,7 +83,7 @@
                                 </tr>
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-100">
-                                @forelse($patient->examinations as $examination)
+                                @forelse($customer->examinations as $examination)
                                 <tr class="hover:bg-gray-50 transition duration-150">
                                     <td class="px-8 py-5 whitespace-nowrap">
                                         <div class="flex items-center">
@@ -119,7 +119,7 @@
                                                 <span class="mr-2 text-sm">📄</span>
                                                 Prescription
                                             </a>
-                                            <a href="{{ $examination->prescription->order ? route('admin.orders.show', ['order_id' => $examination->prescription->order->id]) : route('admin.orders.create', ['patient_id' => $patient->id, 'prescription_id' => $examination->prescription->id]) }}" 
+                                            <a href="{{ $examination->prescription->order ? route('admin.orders.show', ['order_id' => $examination->prescription->order->id]) : route('admin.orders.create', ['customer_id' => $customer->id, 'prescription_id' => $examination->prescription->id]) }}" 
                                                wire:navigate
                                                class="inline-flex items-center px-4 py-2 {{ $examination->prescription->order ? 'bg-indigo-600' : 'bg-emerald-600' }} text-white rounded-lg hover:{{ $examination->prescription->order ? 'bg-indigo-700' : 'bg-emerald-700' }} transition font-medium text-xs uppercase tracking-wider shadow-sm">
                                                 <span class="mr-2 text-sm">🛒</span>
@@ -132,7 +132,7 @@
                                 @empty
                                 <tr>
                                     <td colspan="3" class="px-8 py-10 text-center text-gray-500 italic">
-                                        No medical history found for this patient.
+                                        No medical history found for this customer.
                                     </td>
                                 </tr>
                                 @endforelse

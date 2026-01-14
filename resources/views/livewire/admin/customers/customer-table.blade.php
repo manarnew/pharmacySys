@@ -1,17 +1,17 @@
 <div x-data="{ showModal: false, isEditing: @entangle('isEditing'), showConfirmDuplicate: @entangle('showConfirmDuplicate') }"
-     @patient-saved.window="showModal = false; $wire.$refresh()"
+     @customer-saved.window="showModal = false; $wire.$refresh()"
      @open-edit-modal.window="showModal = true"
      class="space-y-6">
     
     <!-- Header -->
     <div class="flex items-center justify-between">
         <div>
-            <h1 class="text-2xl font-bold tracking-tight text-gray-900">Patients</h1>
-            <p class="mt-1 text-sm text-gray-500">Manage your patients and their records.</p>
+            <h1 class="text-2xl font-bold tracking-tight text-gray-900">Customers</h1>
+            <p class="mt-1 text-sm text-gray-500">Manage your customers and their records.</p>
         </div>
         <div class="flex items-center space-x-3">
-            @can('create_patient')
-            <form action="{{ route('admin.patients.import') }}" method="POST" enctype="multipart/form-data" class="inline-flex">
+            @can('create_customer')
+            <form action="{{ route('admin.customers.import') }}" method="POST" enctype="multipart/form-data" class="inline-flex">
                 @csrf
                 <input type="file" name="file" id="excel_file" class="hidden" onchange="this.form.submit()" accept=".xlsx,.xls">
                 <button type="button" onclick="document.getElementById('excel_file').click()" class="inline-flex items-center rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-all duration-200 mr-3">
@@ -25,7 +25,7 @@
                 <svg class="mr-2 -ml-1 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                 </svg>
-                Add Patient
+                Add Customer
             </button>
             @endcan
         </div>
@@ -34,7 +34,7 @@
     <!-- Content -->
     <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
         <div class="p-6">
-            <table id="patientsTable" class="display w-full" style="width:100%">
+            <table id="customersTable" class="display w-full" style="width:100%">
                 <thead>
                     <tr class="border-b border-slate-200 bg-slate-50">
                         <th class="text-left py-3 px-4 text-sm font-semibold text-slate-600 uppercase tracking-wider">Name</th>
@@ -45,29 +45,29 @@
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-100">
-                    @foreach($patients as $patient)
+                    @foreach($customers as $customer)
                         <tr class="hover:bg-gray-50 transition-colors">
                             <td class="py-3 px-4 text-sm font-medium">
-                                <a href="{{ route('admin.patients.show', ['patient_id' => $patient->id]) }}" 
+                                <a href="{{ route('admin.customers.show', ['customer_id' => $customer->id]) }}" 
                                    wire:navigate
                                    class="text-blue-600 hover:text-blue-800 hover:underline transition-colors">
-                                    {{ $patient->name }}
+                                    {{ $customer->name }}
                                 </a>
                             </td>
-                            <td class="py-3 px-4 text-sm text-gray-500">{{ $patient->age ?? '-' }}</td>
-                            <td class="py-3 px-4 text-sm text-gray-500">{{ $patient->phone ?? '-' }}</td>
-                            <td class="py-3 px-4 text-sm text-gray-500">{{ $patient->date ?? '-' }}</td>
+                            <td class="py-3 px-4 text-sm text-gray-500">{{ $customer->age ?? '-' }}</td>
+                            <td class="py-3 px-4 text-sm text-gray-500">{{ $customer->phone ?? '-' }}</td>
+                            <td class="py-3 px-4 text-sm text-gray-500">{{ $customer->date ?? '-' }}</td>
                             <td class="py-3 px-4 text-right text-sm font-medium">
                                 @can('create_examination')
-                                <a href="{{ route('admin.examinations.index', ['patient_id' => $patient->id]) }}" class="text-green-600 hover:text-green-900 mr-3 transition-colors">Start Exam</a>
+                                <a href="{{ route('admin.examinations.index', ['customer_id' => $customer->id]) }}" class="text-green-600 hover:text-green-900 mr-3 transition-colors">Start Exam</a>
                                 @endcan
                                 
-                                @can('edit_patient')
-                                <button wire:click="edit({{ $patient->id }})" class="text-blue-600 hover:text-blue-900 mr-3 transition-colors">Edit</button>
+                                @can('edit_customer')
+                                <button wire:click="edit({{ $customer->id }})" class="text-blue-600 hover:text-blue-900 mr-3 transition-colors">Edit</button>
                                 @endcan
 
-                                @can('delete_patient')
-                                <button wire:click="delete({{ $patient->id }})" wire:confirm="Are you sure you want to delete this patient?" class="text-red-600 hover:text-red-900 transition-colors">Delete</button>
+                                @can('delete_customer')
+                                <button wire:click="delete({{ $customer->id }})" wire:confirm="Are you sure you want to delete this customer?" class="text-red-600 hover:text-red-900 transition-colors">Delete</button>
                                 @endcan
                             </td>
                         </tr>
@@ -112,12 +112,12 @@
                         </div>
                         <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
                             <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">
-                                <span x-text="isEditing ? 'Edit Patient' : 'Add New Patient'"></span>
+                                <span x-text="isEditing ? 'Edit Customer' : 'Add New Customer'"></span>
                             </h3>
                             <div class="mt-2 text-sm text-gray-500">
                                 <div class="grid grid-cols-1 gap-y-4">
                                     <div>
-                                        <label for="name" class="block text-sm font-medium text-gray-700">Patient Name</label>
+                                        <label for="name" class="block text-sm font-medium text-gray-700">Customer Name</label>
                                         <input type="text" wire:model="name" id="name" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm border-gray-300 p-2 border">
                                         @error('name') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                                     </div>
@@ -166,9 +166,9 @@
                             </svg>
                         </div>
                         <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-                            <h3 class="text-lg leading-6 font-medium text-gray-900">Duplicate Patient Detected</h3>
+                            <h3 class="text-lg leading-6 font-medium text-gray-900">Duplicate Customer Detected</h3>
                             <div class="mt-2">
-                                <p class="text-sm text-gray-500">There is already a patient with the same name and phone number. Do you want to continue and save a duplicate record?</p>
+                                <p class="text-sm text-gray-500">There is already a customer with the same name and phone number. Do you want to continue and save a duplicate record?</p>
                             </div>
                         </div>
                     </div>
@@ -187,11 +187,11 @@
 
     <script>
         function initDataTable() {
-            if ($.fn.DataTable.isDataTable('#patientsTable')) {
-                $('#patientsTable').DataTable().destroy();
+            if ($.fn.DataTable.isDataTable('#customersTable')) {
+                $('#customersTable').DataTable().destroy();
             }
             
-            $('#patientsTable').DataTable({
+            $('#customersTable').DataTable({
                 pageLength: 10,
                 lengthChange: false,
                 ordering: true,
@@ -202,8 +202,8 @@
                     className: 'bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 border-none'
                 }],
                 language: {
-                    search: "Search patients:",
-                    emptyTable: "No patients found",
+                    search: "Search customers:",
+                    emptyTable: "No customers found",
                     paginate: {
                         first: "First",
                         last: "Last",
@@ -217,7 +217,7 @@
         document.addEventListener('livewire:navigated', initDataTable);
         
         document.addEventListener('livewire:initialized', () => {
-            @foreach(['patient-saved', 'patient-deleted'] as $event)
+            @foreach(['customer-saved', 'customer-deleted'] as $event)
                 Livewire.on('{{ $event }}', () => {
                     setTimeout(initDataTable, 100);
                 });

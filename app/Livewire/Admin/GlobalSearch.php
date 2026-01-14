@@ -2,8 +2,8 @@
 
 namespace App\Livewire\Admin;
 
-use App\Models\Order;
-use App\Models\Patient;
+use App\Models\Customer;
+use App\Models\Supplier;
 use Livewire\Component;
 
 class GlobalSearch extends Component
@@ -23,37 +23,37 @@ class GlobalSearch extends Component
         $this->showResults = true;
         $searchTerm = '%' . $this->search . '%';
 
-        // Search patients by name or phone
-        $patients = Patient::where('name', 'like', $searchTerm)
+        // Search customers by name or phone
+        $customers = Customer::where('name', 'like', $searchTerm)
             ->orWhere('phone', 'like', $searchTerm)
             ->limit(5)
             ->get()
-            ->map(function ($patient) {
+            ->map(function ($customer) {
                 return [
-                    'type' => 'patient',
-                    'id' => $patient->id,
-                    'title' => $patient->name,
-                    'subtitle' => $patient->phone,
-                    'url' => route('admin.patients.show', ['patient_id' => $patient->id])
+                    'type' => 'customer',
+                    'id' => $customer->id,
+                    'title' => $customer->name,
+                    'subtitle' => $customer->phone,
+                    'url' => route('admin.customers.show', ['customer_id' => $customer->id])
                 ];
             });
 
-        // Search orders by invoice number
-        $orders = Order::where('invoice_no', 'like', $searchTerm)
-            ->with('patient')
+        // Search suppliers
+        $suppliers = Supplier::where('name', 'like', $searchTerm)
+            ->orWhere('phone', 'like', $searchTerm)
             ->limit(5)
             ->get()
-            ->map(function ($order) {
+            ->map(function ($supplier) {
                 return [
-                    'type' => 'order',
-                    'id' => $order->id,
-                    'title' => $order->invoice_no,
-                    'subtitle' => $order->patient->name ?? 'N/A',
-                    'url' => route('admin.orders.show', ['order_id' => $order->id])
+                    'type' => 'supplier',
+                    'id' => $supplier->id,
+                    'title' => $supplier->name,
+                    'subtitle' => $supplier->phone,
+                    'url' => route('admin.suppliers.index')
                 ];
             });
 
-        $this->results = $patients->concat($orders)->toArray();
+        $this->results = $customers->concat($suppliers)->toArray();
     }
 
     public function clearSearch()

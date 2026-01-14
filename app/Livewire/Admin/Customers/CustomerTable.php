@@ -1,17 +1,17 @@
 <?php
 
-namespace App\Livewire\Admin\Patients;
+namespace App\Livewire\Admin\Customers;
 
 use Livewire\Component;
 
-use App\Models\Patient;
+use App\Models\Customer;
 use Livewire\WithPagination;
 
-class PatientTable extends Component
+class CustomerTable extends Component
 {
     use WithPagination;
 
-    public $name, $phone, $age, $patient_id;
+    public $name, $phone, $age, $customer_id;
     public $isEditing = false;
     public $showConfirmDuplicate = false;
 
@@ -23,7 +23,7 @@ class PatientTable extends Component
 
     public function resetFields()
     {
-        $this->reset(['name', 'phone', 'age', 'patient_id', 'isEditing', 'showConfirmDuplicate']);
+        $this->reset(['name', 'phone', 'age', 'customer_id', 'isEditing', 'showConfirmDuplicate']);
     }
 
     public function openModal()
@@ -35,7 +35,7 @@ class PatientTable extends Component
     {
         $this->validate();
 
-        $duplicate = Patient::where('name', $this->name)
+        $duplicate = Customer::where('name', $this->name)
             ->where('phone', $this->phone)
             ->first();
 
@@ -49,7 +49,7 @@ class PatientTable extends Component
 
     public function store()
     {
-        Patient::create([
+        Customer::create([
             'name' => $this->name,
             'phone' => $this->phone,
             'age' => $this->age,
@@ -57,17 +57,17 @@ class PatientTable extends Component
             'created_by' => auth()->id(),
         ]);
 
-        $this->dispatch('patient-saved', 'Patient saved successfully!');
+        $this->dispatch('customer-saved', 'Customer saved successfully!');
         $this->resetFields();
     }
 
     public function edit($id)
     {
-        $patient = Patient::findOrFail($id);
-        $this->patient_id = $id;
-        $this->name = $patient->name;
-        $this->phone = $patient->phone;
-        $this->age = $patient->age;
+        $customer = Customer::findOrFail($id);
+        $this->customer_id = $id;
+        $this->name = $customer->name;
+        $this->phone = $customer->phone;
+        $this->age = $customer->age;
         $this->isEditing = true;
 
         $this->dispatch('open-edit-modal');
@@ -77,30 +77,30 @@ class PatientTable extends Component
     {
         $this->validate();
 
-        if ($this->patient_id) {
-            $patient = Patient::findOrFail($this->patient_id);
-            $patient->update([
+        if ($this->customer_id) {
+            $customer = Customer::findOrFail($this->customer_id);
+            $customer->update([
                 'name' => $this->name,
                 'phone' => $this->phone,
                 'age' => $this->age,
                 'updated_by' => auth()->id(),
             ]);
 
-            $this->dispatch('patient-saved', 'Patient updated successfully!');
+            $this->dispatch('customer-saved', 'Customer updated successfully!');
             $this->resetFields();
         }
     }
 
     public function delete($id)
     {
-        Patient::findOrFail($id)->delete();
-        $this->dispatch('patient-deleted', 'Patient deleted successfully!');
+        Customer::findOrFail($id)->delete();
+        $this->dispatch('customer-deleted', 'Customer deleted successfully!');
     }
 
     public function render()
     {
-        $patients = Patient::with(['creator', 'updater'])->latest()->get();
-        return view('livewire.admin.patients.patient-table', compact('patients'))
+        $customers = Customer::with(['creator', 'updater'])->latest()->get();
+        return view('livewire.admin.customers.customer-table', compact('customers'))
             ->layout('layouts.admin');
     }
 }

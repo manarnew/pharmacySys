@@ -20,11 +20,8 @@ class RolePermissionSeeder extends Seeder
         // Define models
         $models = [
             'User',
-            'Clinic',
-            'Patient',
-            'Examination',
-            'Prescription',
-            'Order',
+            'Branch',
+            'Customer',
             'Supplier',
             'Expense',
             'Role',
@@ -50,22 +47,13 @@ class RolePermissionSeeder extends Seeder
         $allPermissions = Permission::all();
         $adminRole->syncPermissions($allPermissions);
 
-        $receptionistRole = Role::findOrCreate('Receptionist', 'web');
-        $receptionistPermissions = [
-            'view_patient', 'create_patient', 'edit_patient',
-            'view_clinic',
+        $staffRole = Role::findOrCreate('Staff', 'web');
+        $staffPermissions = [
+            'view_customer', 'create_customer', 'edit_customer',
+            'view_branch',
             'view_dashboard'
         ];
-        $receptionistRole->syncPermissions($receptionistPermissions);
-
-        $doctorRole = Role::findOrCreate('Doctor', 'web');
-        $doctorPermissions = [
-            'view_patient',
-            'view_examination', 'create_examination', 'edit_examination',
-            'view_prescription', 'create_prescription', 'edit_prescription',
-            'view_dashboard'
-        ];
-        $doctorRole->syncPermissions($doctorPermissions);
+        $staffRole->syncPermissions($staffPermissions);
 
         // Assign Administrator role to the first user if exists
         $admin = User::where('email', 'admin@admin')->first();

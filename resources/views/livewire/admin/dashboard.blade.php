@@ -1,17 +1,17 @@
-<div x-data="{ startDate: '', endDate: '' }">
+<div x-data="{ startDate: '{{ $startDate }}', endDate: '{{ $endDate }}' }">
     <!-- Header with Date Filter -->
     <div class="flex flex-col md:flex-row justify-between items-center mb-6">
         <h2 class="font-semibold text-xl text-slate-800 leading-tight mb-4 md:mb-0">
-            {{ __('Dashboard Overview') }}
+            {{ __('Pharmacy Dashboard Overview') }}
         </h2>
         
         <div class="flex flex-wrap gap-4 bg-white p-3 rounded-xl shadow-sm border border-slate-200 items-center">
             <div class="flex items-center">
-                <span class="text-slate-500 font-bold uppercase tracking-wider text-[10px] mr-2">Clinic:</span>
-                <select wire:model="selectedClinic" class="border-slate-300 focus:border-blue-500 focus:ring-blue-500 rounded-lg shadow-sm text-sm min-w-[150px] text-slate-700">
-                    <option value="">All Clinics</option>
-                    @foreach($clinics as $clinic)
-                        <option value="{{ $clinic->id }}">{{ $clinic->name }}</option>
+                <span class="text-slate-500 font-bold uppercase tracking-wider text-[10px] mr-2">Branch:</span>
+                <select wire:model.live="selectedBranch" class="border-slate-300 focus:border-blue-500 focus:ring-blue-500 rounded-lg shadow-sm text-sm min-w-[150px] text-slate-700">
+                    <option value="">All Branches</option>
+                    @foreach($branches as $branch)
+                        <option value="{{ $branch->id }}">{{ $branch->name }}</option>
                     @endforeach
                 </select>
             </div>
@@ -32,7 +32,7 @@
     <!-- Stats Cards -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
 
-        <!-- Total Patients -->
+        <!-- Total Customers -->
         <div class="bg-white rounded-lg shadow-sm border border-slate-200 p-6">
             <div class="flex items-center">
                 <div class="p-3 rounded-full bg-blue-100 text-blue-600">
@@ -41,8 +41,8 @@
                     </svg>
                 </div>
                 <div class="ml-4">
-                    <h3 class="text-sm font-medium text-slate-600">Total Patients</h3>
-                    <p class="text-2xl font-bold text-slate-800">{{ number_format($totalPatients) }}</p>
+                    <h3 class="text-sm font-medium text-slate-600">Total Customers</h3>
+                    <p class="text-2xl font-bold text-slate-800">{{ number_format($totalCustomers) }}</p>
                 </div>
             </div>
         </div>
@@ -64,7 +64,7 @@
             </div>
         </div>
 
-        <!-- Total Clinics -->
+        <!-- Total Branches -->
         <div class="bg-white rounded-lg shadow-sm border border-slate-200 p-6">
             <div class="flex items-center">
                 <div class="p-3 rounded-full bg-indigo-100 text-indigo-600">
@@ -74,8 +74,8 @@
                     </svg>
                 </div>
                 <div class="ml-4">
-                    <h3 class="text-sm font-medium text-slate-600">Total Clinics</h3>
-                    <p class="text-2xl font-bold text-slate-800">{{ number_format($activeClinics) }}</p>
+                    <h3 class="text-sm font-medium text-slate-600">Total Branches</h3>
+                    <p class="text-2xl font-bold text-slate-800">{{ number_format($activeBranches) }}</p>
                 </div>
             </div>
         </div>
@@ -97,57 +97,19 @@
     </div>
 
     <!-- Charts Section -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-
-        <!-- Operational Stats -->
-        <div class="bg-white rounded-lg shadow-sm border border-slate-200 p-6">
-            <h3 class="text-lg font-semibold text-slate-800 mb-6">Operational Volume</h3>
-            <div class="grid grid-cols-2 gap-4">
-                <div class="p-4 bg-indigo-50 rounded-xl border border-indigo-100">
-                    <div class="text-indigo-600 mb-1">
-                        <i class="fas fa-notes-medical text-2xl"></i>
-                    </div>
-                    <div class="text-2xl font-bold text-indigo-900">{{ number_format($totalExams) }}</div>
-                    <div class="text-xs font-medium text-indigo-500 uppercase">Examinations</div>
-                </div>
-                <div class="p-4 bg-purple-50 rounded-xl border border-purple-100">
-                    <div class="text-purple-600 mb-1">
-                        <i class="fas fa-file-prescription text-2xl"></i>
-                    </div>
-                    <div class="text-2xl font-bold text-purple-900">{{ number_format($totalPrescriptions) }}</div>
-                    <div class="text-xs font-medium text-purple-500 uppercase">Prescriptions</div>
-                </div>
-            </div>
-            
-            <div class="mt-6 p-4 rounded-xl border border-dashed border-slate-300">
-                <div class="flex items-center justify-between text-sm">
-                    <span class="text-slate-500">Order Conversion Rate</span>
-                    <span class="font-bold text-slate-900">
-                        {{ $totalExams > 0 ? number_format(($totalOrders / $totalExams) * 100, 1) : 0 }}%
-                    </span>
-                </div>
-                <div class="mt-2 w-full bg-slate-100 rounded-full h-1.5">
-                    @php
-                        $convRate = $totalExams > 0 ? ($totalOrders / $totalExams) * 100 : 0;
-                    @endphp
-                    <div class="bg-purple-500 h-1.5 rounded-full" style="width: {{ min($convRate, 100) }}%"></div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Detailed Trends Section (Patient Growth Trend) -->
+    <div class="grid grid-cols-1 lg:grid-cols-1 gap-6 mb-8">
+        <!-- Detailed Trends Section (Customer Growth Trend) -->
         <div class="bg-white rounded-lg shadow-sm border border-slate-200 p-6">
             <h3 class="text-lg font-semibold text-slate-800 mb-6 flex justify-between items-center">
-                <span>Patient Growth Trend</span>
+                <span>Customer Growth Trend</span>
                 <span class="text-xs font-normal text-slate-400">Activity in period</span>
             </h3>
             <div class="flex items-end justify-between space-x-1 h-32">
-                @forelse($patientGrowth as $day)
-                    @php $maxCount = $patientGrowth->max('count'); @endphp
+                @forelse($customerGrowth as $day)
                     <div class="flex-1 bg-indigo-100 rounded-t-md group relative hover:bg-indigo-300 transition-all duration-200" 
-                         style="height: {{ ($maxCount > 0 ? ($day->count / $maxCount) : 0) * 100 }}%">
+                         style="height: {{ ($customerGrowth->max('count') > 0 ? ($day->count / $customerGrowth->max('count')) : 0) * 100 }}%">
                          <div class="absolute -top-10 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-[10px] px-2 py-1 rounded shadow-xl opacity-0 group-hover:opacity-100 transition whitespace-nowrap z-10">
-                            {{ $day->date }}: {{ $day->count }} patients
+                            {{ $day->date }}: {{ $day->count }} customers
                          </div>
                     </div>
                 @empty

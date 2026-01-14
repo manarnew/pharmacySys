@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('patients', function (Blueprint $table) {
+        Schema::table('customers', function (Blueprint $table) {
             $table->date('date')->nullable()->after('age');
             $table->foreignId('created_by')->nullable()->after('date')->constrained('users')->onDelete('set null');
             $table->foreignId('updated_by')->nullable()->after('created_by')->constrained('users')->onDelete('set null');
@@ -23,7 +23,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('patients', function (Blueprint $table) {
+        Schema::table('customers', function (Blueprint $table) {
             $table->dropForeign(['created_by']);
             $table->dropForeign(['updated_by']);
             $table->dropColumn(['date', 'created_by', 'updated_by']);

@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Patient extends Model
+class Customer extends Model
 {
     protected $fillable = [
         'name',
@@ -23,11 +23,6 @@ class Patient extends Model
     public function updater()
     {
         return $this->belongsTo(User::class, 'updated_by');
-    }
-
-    public function examinations()
-    {
-        return $this->hasMany(Examination::class)->orderBy('created_at', 'desc');
     }
 }
 
