@@ -41,12 +41,12 @@
                             </div>
                             Overview
                         </span>
-                        @elseif(request()->routeIs('admin.patients.index'))
+                        @elseif(request()->routeIs('admin.customers.index'))
                         <span class="flex items-center text-gray-800">
                             <div class="h-8 w-8 rounded-lg bg-gradient-to-br from-blue-100 to-blue-50 flex items-center justify-center mr-2.5">
                                 <span class="text-blue-600">👥</span>
                             </div>
-                            Patients
+                            Customers
                         </span>
                         @else
                         <span class="text-gray-800 flex items-center">
@@ -67,16 +67,16 @@
                             <span class="text-blue-600">📊</span>
                         </div>
                         Dashboard
-                        @elseif(request()->routeIs('admin.patients.index'))
+                        @elseif(request()->routeIs('admin.customers.index'))
                         <div class="h-9 w-9 rounded-xl bg-blue-50 flex items-center justify-center mr-3">
                             <span class="text-blue-600">👥</span>
                         </div>
-                        Patients
+                        Customers
                         @else
                         <div class="h-9 w-9 rounded-xl bg-blue-50 flex items-center justify-center mr-3">
                             <span class="text-blue-600">👁️</span>
                         </div>
-                        Optical Admin
+                        pharmacySys Admin
                         @endif
                     </h2>
                 </div>
@@ -139,7 +139,7 @@
                                     </div>
                                 </div>
                                 <div class="ml-4 flex-1 min-w-0">
-                                    <p class="text-sm font-semibold text-gray-900">New patient registered</p>
+                                    <p class="text-sm font-semibold text-gray-900">New customer registered</p>
                                     <p class="text-xs text-gray-500 mt-0.5">John Doe signed up 5 minutes ago</p>
                                 </div>
                                 <div class="ml-3">

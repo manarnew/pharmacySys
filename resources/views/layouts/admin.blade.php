@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Optical Project Admin - @yield('title', 'Dashboard')</title>
+    <title>pharmacySys Admin - @yield('title', 'Dashboard')</title>
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 
@@ -144,7 +144,7 @@
             <!-- Footer (Optional) -->
             <footer class="bg-white border-t px-4 py-3">
                 <div class="text-center text-sm text-gray-600">
-                    &copy; {{ date('Y') }} Optical Project. All rights reserved.
+                    &copy; {{ date('Y') }} pharmacySys. All rights reserved.
                 </div>
             </footer>
         </div>
