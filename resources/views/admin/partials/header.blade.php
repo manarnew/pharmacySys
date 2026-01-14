@@ -135,7 +135,7 @@
                             <a href="#" class="flex items-start px-5 py-4 hover:bg-gray-50/80 border-b border-gray-100/50 transition-colors">
                                 <div class="flex-shrink-0">
                                     <div class="h-10 w-10 rounded-xl bg-gradient-to-br from-blue-100 to-blue-50 flex items-center justify-center shadow-sm">
-                                        <span class="text-blue-600 text-base">👁️</span>
+                                        <span class="text-blue-600 text-base">💊</span>
                                     </div>
                                 </div>
                                 <div class="ml-4 flex-1 min-w-0">
@@ -235,7 +235,7 @@
                                 </div>
                                 <div>
                                     <p class="text-sm font-bold text-gray-900">{{ Auth::user()->name ?? 'Admin' }}</p>
-                                    <p class="text-xs text-gray-500">{{ Auth::user()->email ?? 'admin@optical.com' }}</p>
+                                    <p class="text-xs text-gray-500">{{ Auth::user()->email ?? 'admin@pharmacy.com' }}</p>
                                 </div>
                             </div>
                         </div>
