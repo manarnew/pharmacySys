@@ -6,8 +6,8 @@
     <!-- Header -->
     <div class="flex items-center justify-between">
         <div>
-            <h1 class="text-2xl font-bold tracking-tight text-gray-900">Branchs</h1>
-            <p class="mt-1 text-sm text-gray-500">Manage your branchs.</p>
+            <h1 class="text-2xl font-bold tracking-tight text-gray-900">Branches</h1>
+            <p class="mt-1 text-sm text-gray-500">Manage your branches.</p>
         </div>
         <div class="flex items-center space-x-3">
             @can('create_branch')
@@ -24,7 +24,7 @@
     <!-- Content -->
     <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
         <div class="p-6">
-            <table id="branchsTable" class="display w-full" style="width:100%">
+            <table id="branchesTable" class="display w-full" style="width:100%">
                 <thead>
                     <tr>
                         <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Branch Name</th>
@@ -32,7 +32,7 @@
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-100">
-                    @foreach($branchs as $branch)
+                    @foreach($branches as $branch)
                         <tr class="hover:bg-gray-50 transition-colors">
                             <td class="py-3 px-4 text-sm text-gray-900 font-medium">{{ $branch->name }}</td>
                             <td class="py-3 px-4 text-right text-sm font-medium">
@@ -114,11 +114,11 @@
 
     <script>
         function initDataTable() {
-            if ($.fn.DataTable.isDataTable('#branchsTable')) {
-                $('#branchsTable').DataTable().destroy();
+            if ($.fn.DataTable.isDataTable('#branchesTable')) {
+                $('#branchesTable').DataTable().destroy();
             }
             
-            $('#branchsTable').DataTable({
+            $('#branchesTable').DataTable({
                 pageLength: 10,
                 lengthChange: false,
                 ordering: true,
@@ -129,8 +129,8 @@
                     className: 'bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 border-none'
                 }],
                 language: {
-                    search: "Search branchs:",
-                    emptyTable: "No branchs found",
+                    search: "Search branches:",
+                    emptyTable: "No branches found",
                     paginate: {
                         first: "First",
                         last: "Last",

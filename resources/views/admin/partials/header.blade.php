@@ -5,12 +5,17 @@
             <div class="flex items-center">
                 <!-- Mobile menu button -->
                 <button @click="sidebarOpen = !sidebarOpen"
-                    class="lg:hidden p-2.5 rounded-xl text-gray-600 hover:text-gray-900 hover:bg-gray-100/80 transition-all duration-200">
-                    <span class="sr-only">Open sidebar</span>
-                    <!-- Menu icon -->
-                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    class="lg:hidden p-2.5 rounded-xl text-gray-600 hover:text-gray-900 hover:bg-gray-100/80 transition-all duration-200 z-50 relative">
+                    <span class="sr-only">Toggle sidebar</span>
+                    <!-- Menu icon (hamburger) -->
+                    <svg x-show="!sidebarOpen" class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
-                            d="M4 6h16M4 12h16M4 18h7" />
+                            d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                    <!-- Close icon (X) -->
+                    <svg x-show="sidebarOpen" class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                            d="M6 18L18 6M6 6l12 12" />
                     </svg>
                 </button>
 
@@ -60,20 +65,20 @@
                 </div>
 
                 <!-- Mobile Page Title -->
-                <div class="lg:hidden ml-4">
-                    <h2 class="text-xl font-bold text-gray-900 flex items-center">
+                <div class="lg:hidden ml-2 sm:ml-4">
+                    <h2 class="text-base sm:text-lg md:text-xl font-bold text-gray-900 flex items-center">
                         @if(request()->routeIs('admin.dashboard'))
-                        <div class="h-9 w-9 rounded-xl bg-blue-50 flex items-center justify-center mr-3">
+                        <div class="h-8 w-8 sm:h-9 sm:w-9 rounded-xl bg-blue-50 flex items-center justify-center mr-2 sm:mr-3">
                             <span class="text-blue-600">📊</span>
                         </div>
                         Dashboard
                         @elseif(request()->routeIs('admin.customers.index'))
-                        <div class="h-9 w-9 rounded-xl bg-blue-50 flex items-center justify-center mr-3">
+                        <div class="h-8 w-8 sm:h-9 sm:w-9 rounded-xl bg-blue-50 flex items-center justify-center mr-2 sm:mr-3">
                             <span class="text-blue-600">👥</span>
                         </div>
                         Customers
                         @else
-                        <div class="h-9 w-9 rounded-xl bg-blue-50 flex items-center justify-center mr-3">
+                        <div class="h-8 w-8 sm:h-9 sm:w-9 rounded-xl bg-blue-50 flex items-center justify-center mr-2 sm:mr-3">
                             <span class="text-blue-600">👁️</span>
                         </div>
                         pharmacySys Admin
@@ -83,17 +88,16 @@
             </div>
 
             <!-- Right side - Search & User Menu -->
-            <div class="flex items-center space-x-5">
+            <div class="flex items-center space-x-2 sm:space-x-3 md:space-x-5">
                 <!-- Search Bar (Desktop) -->
                 <div class="hidden lg:block w-72">
                     @livewire('admin.global-search')
                 </div>
 
-
                 <!-- Search Button (Mobile) -->
-                <button class="lg:hidden p-2.5 rounded-xl text-gray-600 hover:text-gray-900 hover:bg-gray-100/80 transition-all duration-200">
+                <button @click="$dispatch('toggle-search')" class="lg:hidden p-2.5 rounded-xl text-gray-600 hover:text-gray-900 hover:bg-gray-100/80 transition-all duration-200">
                     <span class="sr-only">Search</span>
-                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="h-5 w-5 sm:h-6 sm:w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2"
                             d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                     </svg>
@@ -121,7 +125,7 @@
                          x-transition:leave="transition ease-in duration-100"
                          x-transition:leave-start="transform opacity-100 scale-100"
                          x-transition:leave-end="transform opacity-0 scale-95"
-                         class="absolute right-0 mt-3 w-96 bg-white rounded-2xl shadow-2xl py-2 z-50 border border-gray-200/80">
+                         class="absolute right-0 mt-3 w-[calc(100vw-2rem)] sm:w-96 max-w-sm bg-white rounded-2xl shadow-2xl py-2 z-50 border border-gray-200/80">
                         <div class="px-5 py-4 border-b border-gray-100">
                             <h3 class="text-base font-bold text-gray-900 flex items-center">
                                 <span class="mr-2">🔔</span>
@@ -226,7 +230,7 @@
                         x-transition:leave="transition ease-in duration-100"
                         x-transition:leave-start="transform opacity-100 scale-100"
                         x-transition:leave-end="transform opacity-0 scale-95"
-                        class="absolute right-0 mt-3 w-56 bg-white rounded-2xl shadow-2xl py-2 z-50 border border-gray-200/80">
+                        class="absolute right-0 mt-3 w-[calc(100vw-2rem)] sm:w-56 max-w-xs bg-white rounded-2xl shadow-2xl py-2 z-50 border border-gray-200/80">
                         <!-- User info in dropdown (mobile) -->
                         <div class="lg:hidden px-5 py-4 border-b border-gray-100">
                             <div class="flex items-center">
@@ -281,8 +285,8 @@
         </div>
 
         <!-- Search Bar (Mobile Expanded) -->
-        <div x-data="{ searchOpen: false }" class="lg:hidden">
-            <div x-show="searchOpen" class="mt-3">
+        <div x-data="{ searchOpen: false }" @toggle-search.window="searchOpen = !searchOpen" class="lg:hidden">
+            <div x-show="searchOpen" x-transition class="mt-3 px-2">
                 @livewire('admin.global-search')
             </div>
         </div>

@@ -4,28 +4,19 @@
      class="space-y-6">
     
     <!-- Header -->
-    <div class="flex items-center justify-between">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div>
-            <h1 class="text-2xl font-bold tracking-tight text-gray-900">Customers</h1>
-            <p class="mt-1 text-sm text-gray-500">Manage your customers and their records.</p>
+            <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-gray-900">Customers</h1>
+            <p class="mt-1 text-xs sm:text-sm text-gray-500">Manage your customers and their records.</p>
         </div>
         <div class="flex items-center space-x-3">
             @can('create_customer')
-            <form action="{{ route('admin.customers.import') }}" method="POST" enctype="multipart/form-data" class="inline-flex">
-                @csrf
-                <input type="file" name="file" id="excel_file" class="hidden" onchange="this.form.submit()" accept=".xlsx,.xls">
-                <button type="button" onclick="document.getElementById('excel_file').click()" class="inline-flex items-center rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-all duration-200 mr-3">
-                    <svg class="mr-2 -ml-1 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
-                    </svg>
-                    Upload Excel
-                </button>
-            </form>
-            <button @click="showModal = true; $wire.openModal()" type="button" class="inline-flex items-center rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200">
-                <svg class="mr-2 -ml-1 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+            <button @click="showModal = true; $wire.openModal()" type="button" class="inline-flex items-center rounded-lg bg-blue-600 px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200">
+                <svg class="mr-1 sm:mr-2 -ml-1 h-4 w-4 sm:h-5 sm:w-5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                 </svg>
-                Add Customer
+                <span class="hidden sm:inline">Add Customer</span>
+                <span class="sm:hidden">Add</span>
             </button>
             @endcan
         </div>
@@ -33,8 +24,10 @@
 
     <!-- Content -->
     <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-        <div class="p-6">
-            <table id="customersTable" class="display w-full" style="width:100%">
+        <div class="p-3 sm:p-4 md:p-6">
+            <div class="overflow-x-auto -mx-3 sm:-mx-4 md:-mx-6">
+                <div class="inline-block min-w-full align-middle px-3 sm:px-4 md:px-6">
+                    <table id="customersTable" class="display w-full" style="width:100%">
                 <thead>
                     <tr class="border-b border-slate-200 bg-slate-50">
                         <th class="text-left py-3 px-4 text-sm font-semibold text-slate-600 uppercase tracking-wider">Name</th>
@@ -73,7 +66,9 @@
                         </tr>
                     @endforeach
                 </tbody>
-            </table>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -101,7 +96,7 @@
                  x-transition:leave="ease-in duration-200"
                  x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
                  x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                 class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                 class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all w-full sm:my-8 sm:align-middle sm:max-w-lg">
                 
                 <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                     <div class="sm:flex sm:items-start">
@@ -121,7 +116,7 @@
                                         <input type="text" wire:model="name" id="name" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm border-gray-300 p-2 border">
                                         @error('name') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                                     </div>
-                                    <div class="grid grid-cols-2 gap-4">
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                         <div>
                                             <label for="age" class="block text-sm font-medium text-gray-700">Age</label>
                                             <input type="number" wire:model="age" id="age" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm border-gray-300 p-2 border">
@@ -195,11 +190,13 @@
                 pageLength: 10,
                 lengthChange: false,
                 ordering: true,
-                dom: 'Bfrtip',
+                responsive: true,
+                scrollX: true,
+                dom: '<"flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4"Bf><"flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4"lfr>t<"flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mt-4"ip>',
                 buttons: [{
                     extend: 'excelHtml5',
                     text: '📥 Export Excel',
-                    className: 'bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 border-none'
+                    className: 'bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 border-none text-xs sm:text-sm'
                 }],
                 language: {
                     search: "Search customers:",

@@ -25,7 +25,13 @@ class RolePermissionSeeder extends Seeder
             'Supplier',
             'Expense',
             'Role',
-            'Permission'
+            'Permission',
+            'Category',
+            'Product',
+            'Store',
+            'Purchase',
+            'Sale',
+            'Inventory',
         ];
 
         // Define actions

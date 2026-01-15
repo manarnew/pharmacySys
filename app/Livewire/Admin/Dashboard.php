@@ -14,6 +14,10 @@ class Dashboard extends Component
     public $activeBranches = 0;
     public $totalExpenses = 0;
     public $totalUsers = 0;
+    public $totalSales = 0;
+    public $totalPurchases = 0;
+    public $lowStockCount = 0;
+    public $recentSales = [];
     public $expenseStats = [];
     public $customerGrowth = [];
 
@@ -57,6 +61,39 @@ class Dashboard extends Component
         $this->totalExpenses = Expense::query()
             ->whereBetween('date', [$this->startDate, $this->endDate])
             ->sum('amount');
+
+        // New Metrics: Sales & Purchases
+        $this->totalSales = \App\Models\Sale::query()
+            ->whereBetween('sale_date', [$this->startDate, $this->endDate])
+            ->when($this->selectedBranch, function($q) {
+                $q->whereExists(function ($query) {
+                    $query->select(\Illuminate\Support\Facades\DB::raw(1))
+                        ->from('users')
+                        ->whereColumn('users.id', 'sales.created_by')
+                        ->where('users.branch_id', $this->selectedBranch);
+                });
+            })
+            ->sum('total');
+
+        $this->totalPurchases = \App\Models\Purchase::query()
+            ->whereBetween('purchase_date', [$this->startDate, $this->endDate])
+            ->sum('total');
+
+        $this->lowStockCount = \App\Models\Product::whereRaw('(select COALESCE(SUM(quantity), 0) from inventories where product_id = products.id) < reorder_level')
+            ->count();
+
+        $this->recentSales = \App\Models\Sale::with('customer')
+            ->when($this->selectedBranch, function($q) {
+                $q->whereExists(function ($query) {
+                    $query->select(\Illuminate\Support\Facades\DB::raw(1))
+                        ->from('users')
+                        ->whereColumn('users.id', 'sales.created_by')
+                        ->where('users.branch_id', $this->selectedBranch);
+                });
+            })
+            ->latest()
+            ->limit(5)
+            ->get();
 
         // Daily Expenses
         $this->expenseStats = Expense::select(

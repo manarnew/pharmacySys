@@ -24,5 +24,10 @@ class Customer extends Model
     {
         return $this->belongsTo(User::class, 'updated_by');
     }
+
+    public function sales()
+    {
+        return $this->hasMany(Sale::class);
+    }
 }
 

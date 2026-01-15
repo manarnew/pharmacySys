@@ -53,7 +53,54 @@ class GlobalSearch extends Component
                 ];
             });
 
-        $this->results = $customers->concat($suppliers)->toArray();
+        // Search products
+        $products = \App\Models\Product::where('name', 'like', $searchTerm)
+            ->orWhere('sku', 'like', $searchTerm)
+            ->limit(5)
+            ->get()
+            ->map(function ($product) {
+                return [
+                    'type' => 'product',
+                    'id' => $product->id,
+                    'title' => $product->name,
+                    'subtitle' => 'SKU: ' . $product->sku,
+                    'url' => route('admin.products.index')
+                ];
+            });
+
+        // Search sales
+        $sales = \App\Models\Sale::where('invoice_no', 'like', $searchTerm)
+            ->limit(3)
+            ->get()
+            ->map(function ($sale) {
+                return [
+                    'type' => 'sale',
+                    'id' => $sale->id,
+                    'title' => 'Sale #' . $sale->invoice_no,
+                    'subtitle' => 'Total: $' . number_format($sale->total, 2),
+                    'url' => route('admin.sales.index')
+                ];
+            });
+
+        // Search purchases
+        $purchases = \App\Models\Purchase::where('invoice_no', 'like', $searchTerm)
+            ->limit(3)
+            ->get()
+            ->map(function ($purchase) {
+                return [
+                    'type' => 'purchase',
+                    'id' => $purchase->id,
+                    'title' => 'Purchase #' . $purchase->invoice_no,
+                    'subtitle' => 'Total: $' . number_format($purchase->total, 2),
+                    'url' => route('admin.purchases.index')
+                ];
+            });
+
+        $this->results = $customers->concat($suppliers)
+            ->concat($products)
+            ->concat($sales)
+            ->concat($purchases)
+            ->toArray();
     }
 
     public function clearSearch()

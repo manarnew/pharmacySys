@@ -21,6 +21,16 @@ Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])->name(
 // Admin routes (protected)
 Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', Dashboard::class)->name('dashboard');
+    
+    // Search AJAX Endpoints
+    Route::prefix('search')->name('search.')->group(function () {
+        Route::get('/products', [\App\Http\Controllers\Admin\SearchController::class, 'products'])->name('products');
+        Route::get('/customers', [\App\Http\Controllers\Admin\SearchController::class, 'customers'])->name('customers');
+        Route::get('/suppliers', [\App\Http\Controllers\Admin\SearchController::class, 'suppliers'])->name('suppliers');
+        Route::get('/categories', [\App\Http\Controllers\Admin\SearchController::class, 'categories'])->name('categories');
+        Route::get('/branches', [\App\Http\Controllers\Admin\SearchController::class, 'branches'])->name('branches');
+    });
+
     Route::get('/customers', \App\Livewire\Admin\Customers\CustomerTable::class)->name('customers.index');
     Route::get('/customers/view', \App\Livewire\Admin\Customers\CustomerShow::class)->name('customers.show');
     Route::get('/users', \App\Livewire\Admin\Users\UserIndex::class)->name('users.index');
@@ -30,4 +40,16 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::get('/roles', \App\Livewire\Admin\Roles\RoleIndex::class)->name('roles.index');
     Route::get('/expenses', \App\Livewire\Admin\Expenses\ExpenseIndex::class)->name('expenses.index');
     Route::get('/messages', \App\Livewire\Admin\Messages\MessageIndex::class)->name('messages.index');
+    
+    // Pharmacy Management Routes
+    Route::get('/products', \App\Livewire\Admin\Products\ProductIndex::class)->name('products.index');
+    Route::get('/products/view', \App\Livewire\Admin\Products\ProductShow::class)->name('products.show');
+    Route::get('/stores', \App\Livewire\Admin\Stores\StoreIndex::class)->name('stores.index');
+    Route::get('/purchases', \App\Livewire\Admin\Purchases\PurchaseIndex::class)->name('purchases.index');
+    Route::get('/purchases/return', \App\Livewire\Admin\Purchases\PurchaseReturnCreate::class)->name('purchases.return');
+    Route::get('/sales', \App\Livewire\Admin\Sales\SaleIndex::class)->name('sales.index');
+    Route::get('/sales/create', \App\Livewire\Admin\Sales\SaleCreate::class)->name('sales.create');
+    Route::get('/sales/return', \App\Livewire\Admin\Sales\SaleReturnCreate::class)->name('sales.return');
+    Route::get('/sales/{sale}/print', [\App\Http\Controllers\Admin\InvoiceController::class, 'print'])->name('sales.print');
+    Route::get('/inventory', \App\Livewire\Admin\Inventory\InventoryIndex::class)->name('inventory.index');
 });

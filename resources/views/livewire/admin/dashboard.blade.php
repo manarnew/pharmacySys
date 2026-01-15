@@ -1,123 +1,196 @@
 <div x-data="{ startDate: '{{ $startDate }}', endDate: '{{ $endDate }}' }">
     <!-- Header with Date Filter -->
-    <div class="flex flex-col md:flex-row justify-between items-center mb-6">
-        <h2 class="font-semibold text-xl text-slate-800 leading-tight mb-4 md:mb-0">
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 sm:mb-6 gap-4">
+        <h2 class="font-semibold text-lg sm:text-xl text-slate-800 leading-tight">
             {{ __('Pharmacy Dashboard Overview') }}
         </h2>
         
-        <div class="flex flex-wrap gap-4 bg-white p-3 rounded-xl shadow-sm border border-slate-200 items-center">
-            <div class="flex items-center">
-                <span class="text-slate-500 font-bold uppercase tracking-wider text-[10px] mr-2">Branch:</span>
-                <select wire:model.live="selectedBranch" class="border-slate-300 focus:border-blue-500 focus:ring-blue-500 rounded-lg shadow-sm text-sm min-w-[150px] text-slate-700">
-                    <option value="">All Branches</option>
-                    @foreach($branches as $branch)
-                        <option value="{{ $branch->id }}">{{ $branch->name }}</option>
-                    @endforeach
-                </select>
+        <div class="flex flex-col sm:flex-row flex-wrap gap-2 sm:gap-4 bg-white p-3 sm:p-4 rounded-xl shadow-sm border border-slate-200 items-stretch sm:items-center w-full md:w-auto">
+            <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-4 w-full sm:w-auto">
+                <div class="flex items-center">
+                    <span class="text-slate-500 font-bold uppercase tracking-wider text-[10px] mr-2 whitespace-nowrap">Branch:</span>
+                    <select wire:model.live="selectedBranch" class="border-slate-300 focus:border-blue-500 focus:ring-blue-500 rounded-lg shadow-sm text-sm w-full sm:min-w-[150px] text-slate-700">
+                        <option value="">All Branches</option>
+                        @foreach($branches as $branch)
+                            <option value="{{ $branch->id }}">{{ $branch->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="flex items-center">
+                    <span class="text-slate-500 font-bold uppercase tracking-wider text-[10px] mr-2 whitespace-nowrap">From:</span>
+                    <input type="date" wire:model="startDate" class="border-slate-300 focus:border-blue-500 focus:ring-blue-500 rounded-lg shadow-sm text-sm w-full sm:w-auto text-slate-700">
+                </div>
+                <div class="flex items-center">
+                    <span class="text-slate-500 font-bold uppercase tracking-wider text-[10px] mr-2 whitespace-nowrap">To:</span>
+                    <input type="date" wire:model="endDate" class="border-slate-300 focus:border-blue-500 focus:ring-blue-500 rounded-lg shadow-sm text-sm w-full sm:w-auto text-slate-700">
+                </div>
+                <button wire:click="filter" class="bg-blue-600 text-white px-4 sm:px-6 py-2 rounded-lg text-sm font-bold uppercase tracking-widest hover:bg-blue-700 transition shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 w-full sm:w-auto">
+                    Update
+                </button>
             </div>
-            <div class="flex items-center">
-                <span class="text-slate-500 font-bold uppercase tracking-wider text-[10px] mr-2">From:</span>
-                <input type="date" wire:model="startDate" class="border-slate-300 focus:border-blue-500 focus:ring-blue-500 rounded-lg shadow-sm text-sm text-slate-700">
-            </div>
-            <div class="flex items-center">
-                <span class="text-slate-500 font-bold uppercase tracking-wider text-[10px] mr-2">To:</span>
-                <input type="date" wire:model="endDate" class="border-slate-300 focus:border-blue-500 focus:ring-blue-500 rounded-lg shadow-sm text-sm text-slate-700">
-            </div>
-            <button wire:click="filter" class="bg-blue-600 text-white px-6 py-2 rounded-lg text-sm font-bold uppercase tracking-widest hover:bg-blue-700 transition shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
-                Update
-            </button>
         </div>
     </div>
 
-    <!-- Stats Cards -->
+    <!-- Stats Cards Grid -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-
-        <!-- Total Customers -->
-        <div class="bg-white rounded-lg shadow-sm border border-slate-200 p-6">
-            <div class="flex items-center">
-                <div class="p-3 rounded-full bg-blue-100 text-blue-600">
-                     <svg class="h-8 w-8" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M4.5 6.375a4.125 4.125 0 118.25 0 4.125 4.125 0 01-8.25 0zM14.25 8.625a3.375 3.375 0 116.75 0 3.375 3.375 0 01-6.75 0zM1.5 19.125a7.125 7.125 0 0114.25 0v.003l-.001.119a.75.75 0 01-.363.63 13.067 13.067 0 01-6.761 1.873c-2.472 0-4.786-.684-6.76-1.873a.75.75 0 01-.364-.63l-.001-.122zM17.25 19.128l-.001.144a2.25 2.25 0 01-.233.96 10.088 10.088 0 005.06-4.42 6.753 6.753 0 01-1.481-1.296 2.25 2.25 0 00-2.435-.756 2.25 2.25 0 00-1.875 1.875 2.5 2.5 0 00.965 3.493z" />
+        <!-- Total Sales -->
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 hover:border-blue-300 transition-colors">
+            <div class="flex items-center space-x-4">
+                <div class="p-3 bg-blue-50 text-blue-600 rounded-xl">
+                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m.599-1H11.401m.002 0a6.7 6.7 0 01-1.393-1.04C10.311 15.01 10 14.524 10 14m0 0c0-.895 1.343-2 3-2M10 14c0 .895 1.343 2 3 2m3-2c0 .895-1.343-2-3-2m3 2c0 .895-1.343 2-3 2" />
                     </svg>
                 </div>
-                <div class="ml-4">
-                    <h3 class="text-sm font-medium text-slate-600">Total Customers</h3>
-                    <p class="text-2xl font-bold text-slate-800">{{ number_format($totalCustomers) }}</p>
+                <div>
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Total Sales</p>
+                    <p class="text-xl font-bold text-slate-800">${{ number_format($totalSales, 2) }}</p>
                 </div>
             </div>
         </div>
 
-        <!-- Monthly Expenses -->
-        <div class="bg-white rounded-lg shadow-sm border border-slate-200 p-6">
-            <div class="flex items-center">
-                <div class="p-3 rounded-full bg-red-100 text-red-600">
-                    <svg class="h-8 w-8" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M12 7.5a2.25 2.25 0 100 4.5 2.25 2.25 0 000-4.5z" />
-                        <path fill-rule="evenodd" d="M1.5 4.875C1.5 3.839 2.34 3 3.375 3h17.25c1.035 0 1.875.84 1.875 1.875v9.75c0 1.036-.84 1.875-1.875 1.875H3.375A1.875 1.875 0 011.5 14.625v-9.75zM8.25 9.75a3.75 3.75 0 117.5 0 3.75 3.75 0 01-7.5 0zM18.75 9a.75.75 0 00-.75.75v.008c0 .414.336.75.75.75h.008a.75.75 0 00.75-.75V9.75a.75.75 0 00-.75-.75h-.008zM4.5 9.75A.75.75 0 015.25 9h.008a.75.75 0 01.75.75v.008a.75.75 0 01-.75.75H5.25a.75.75 0 01-.75-.75V9.75z" clip-rule="evenodd" />
-                        <path d="M2.25 18a.75.75 0 000 1.5c5.4 0 10.63.722 15.6 2.075 1.19.324 2.4-.558 2.4-1.82V18.75a.75.75 0 00-.75-.75H2.25z" />
+        <!-- Total Purchases -->
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 hover:border-emerald-300 transition-colors">
+            <div class="flex items-center space-x-4">
+                <div class="p-3 bg-emerald-50 text-emerald-600 rounded-xl">
+                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
                     </svg>
                 </div>
-                <div class="ml-4">
-                    <h3 class="text-sm font-medium text-slate-600">Expenses</h3>
-                    <p class="text-2xl font-bold text-slate-800">${{ number_format($totalExpenses, 2) }}</p>
+                <div>
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Total Purchases</p>
+                    <p class="text-xl font-bold text-slate-800">${{ number_format($totalPurchases, 2) }}</p>
                 </div>
             </div>
         </div>
 
-        <!-- Total Branches -->
-        <div class="bg-white rounded-lg shadow-sm border border-slate-200 p-6">
-            <div class="flex items-center">
-                <div class="p-3 rounded-full bg-indigo-100 text-indigo-600">
-                    <svg class="h-8 w-8" viewBox="0 0 24 24" fill="currentColor">
-                        <path fill-rule="evenodd" d="M3 2.25a.75.75 0 000 1.5v16.5h-.75a.75.75 0 000 1.5H16.5a.75.75 0 000-1.5H15.75V2.25A.75.75 0 0015 1.5H3.75a.75.75 0 00-.75.75zM4.5 3.75h9.75v15.75H4.5V3.75z" clip-rule="evenodd" />
-                        <path d="M18.75 7.5a.75.75 0 00-.75.75v.008c0 .414.336.75.75.75h.008a.75.75 0 00.75-.75V8.25a.75.75 0 00-.75-.75h-.008zM18.75 10.5a.75.75 0 00-.75.75v.008c0 .414.336.75.75.75h.008a.75.75 0 00.75-.75V11.25a.75.75 0 00-.75-.75h-.008zM18.75 13.5a.75.75 0 00-.75.75v.008c0 .414.336.75.75.75h.008a.75.75 0 00.75-.75v-.008a.75.75 0 00-.75-.75h-.008z" />
+        <!-- Total Expenses -->
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 hover:border-rose-300 transition-colors">
+            <div class="flex items-center space-x-4">
+                <div class="p-3 bg-rose-50 text-rose-600 rounded-xl">
+                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                 </div>
-                <div class="ml-4">
-                    <h3 class="text-sm font-medium text-slate-600">Total Branches</h3>
-                    <p class="text-2xl font-bold text-slate-800">{{ number_format($activeBranches) }}</p>
+                <div>
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Expenses</p>
+                    <p class="text-xl font-bold text-slate-800">${{ number_format($totalExpenses, 2) }}</p>
                 </div>
             </div>
         </div>
 
-        <!-- Total Users -->
-        <div class="bg-white rounded-lg shadow-sm border border-slate-200 p-6">
-            <div class="flex items-center">
-                <div class="p-3 rounded-full bg-purple-100 text-purple-600">
-                    <svg class="h-8 w-8" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M5.25 6.375a4.125 4.125 0 118.25 0 4.125 4.125 0 01-8.25 0zM2.25 19.125a7.125 7.125 0 0114.25 0v.003l-.001.119a.75.75 0 01-.363.63 13.067 13.067 0 01-6.761 1.873c-2.472 0-4.786-.684-6.76-1.873a.75.75 0 01-.364-.63l-.001-.122zM18.75 7.5a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM18.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM18.75 16.5a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" />
+        <!-- Low Stock Alert -->
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 hover:border-amber-300 transition-colors">
+            <div class="flex items-center space-x-4">
+                <div class="p-3 bg-amber-50 text-amber-600 rounded-xl">
+                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                     </svg>
                 </div>
-                <div class="ml-4">
-                    <h3 class="text-sm font-medium text-slate-600">System Users</h3>
-                    <p class="text-2xl font-bold text-slate-800">{{ number_format($totalUsers) }}</p>
+                <div>
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Low Stock Items</p>
+                    <p class="text-xl font-bold text-slate-800">{{ $lowStockCount }}</p>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Charts Section -->
-    <div class="grid grid-cols-1 lg:grid-cols-1 gap-6 mb-8">
-        <!-- Detailed Trends Section (Customer Growth Trend) -->
-        <div class="bg-white rounded-lg shadow-sm border border-slate-200 p-6">
-            <h3 class="text-lg font-semibold text-slate-800 mb-6 flex justify-between items-center">
-                <span>Customer Growth Trend</span>
-                <span class="text-xs font-normal text-slate-400">Activity in period</span>
-            </h3>
-            <div class="flex items-end justify-between space-x-1 h-32">
-                @forelse($customerGrowth as $day)
-                    <div class="flex-1 bg-indigo-100 rounded-t-md group relative hover:bg-indigo-300 transition-all duration-200" 
-                         style="height: {{ ($customerGrowth->max('count') > 0 ? ($day->count / $customerGrowth->max('count')) : 0) * 100 }}%">
-                         <div class="absolute -top-10 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-[10px] px-2 py-1 rounded shadow-xl opacity-0 group-hover:opacity-100 transition whitespace-nowrap z-10">
-                            {{ $day->date }}: {{ $day->count }} customers
-                         </div>
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Main Stats / Charts -->
+        <div class="lg:col-span-2 space-y-8">
+            <!-- Customer Growth Chart -->
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <div>
+                        <h3 class="text-lg font-bold text-slate-800">Customer Growth</h3>
+                        <p class="text-xs text-slate-400">Total customers: {{ $totalCustomers }}</p>
                     </div>
-                @empty
-                    <div class="flex-1 flex flex-col items-center justify-center text-slate-400 text-sm italic">
-                        <i class="fas fa-chart-line mb-2 text-2xl opacity-20"></i>
-                        No activity recorded
+                </div>
+                <div class="flex items-end justify-between space-x-2 h-48">
+                    @forelse($customerGrowth as $day)
+                        <div class="flex-1 bg-blue-100 rounded-t-lg group relative hover:bg-blue-400 transition-all duration-200" 
+                             style="height: {{ ($customerGrowth->max('count') > 0 ? ($day->count / $customerGrowth->max('count')) : 0) * 100 }}%">
+                             <div class="absolute -top-10 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-[10px] px-2 py-1 rounded shadow-xl opacity-0 group-hover:opacity-100 transition whitespace-nowrap z-10">
+                                {{ $day->date }}: {{ $day->count }}
+                             </div>
+                        </div>
+                    @empty
+                        <div class="w-full flex items-center justify-center text-slate-300 italic text-sm">No data available</div>
+                    @endforelse
+                </div>
+            </div>
+
+            <!-- Recent Sales Table -->
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="p-4 sm:p-6 border-b border-slate-100">
+                    <h3 class="text-base sm:text-lg font-bold text-slate-800">Recent Sales</h3>
+                </div>
+                <div class="overflow-x-auto -mx-4 sm:mx-0">
+                    <div class="inline-block min-w-full align-middle px-4 sm:px-0">
+                        <table class="min-w-full divide-y divide-slate-200">
+                        <thead class="bg-slate-50">
+                            <tr>
+                                <th class="px-3 sm:px-6 py-3 text-left text-[10px] font-bold text-slate-500 uppercase tracking-widest">Invoice</th>
+                                <th class="px-3 sm:px-6 py-3 text-left text-[10px] font-bold text-slate-500 uppercase tracking-widest hidden sm:table-cell">Customer</th>
+                                <th class="px-3 sm:px-6 py-3 text-left text-[10px] font-bold text-slate-500 uppercase tracking-widest">Total</th>
+                                <th class="px-3 sm:px-6 py-3 text-left text-[10px] font-bold text-slate-500 uppercase tracking-widest">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100">
+                            @foreach($recentSales as $sale)
+                            <tr class="hover:bg-slate-50 transition-colors">
+                                <td class="px-3 sm:px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900">
+                                    <div>#{{ $sale->invoice_no }}</div>
+                                    <div class="text-xs text-slate-500 sm:hidden">{{ $sale->customer->name ?? 'Walk-in' }}</div>
+                                </td>
+                                <td class="px-3 sm:px-6 py-4 whitespace-nowrap text-sm text-slate-600 hidden sm:table-cell">{{ $sale->customer->name ?? 'Walk-in' }}</td>
+                                <td class="px-3 sm:px-6 py-4 whitespace-nowrap text-sm font-bold text-blue-600">${{ number_format($sale->total, 2) }}</td>
+                                <td class="px-3 sm:px-6 py-4 whitespace-nowrap">
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium {{ $sale->payment_status === 'paid' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800' }}">
+                                        {{ ucfirst($sale->payment_status) }}
+                                    </span>
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                        </table>
                     </div>
-                @endforelse
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar Info -->
+        <div class="space-y-8">
+            <!-- Smaller Stats Cards -->
+            <div class="grid grid-cols-1 gap-6">
+                <!-- Branches -->
+                <div class="bg-indigo-600 rounded-xl p-6 shadow-lg shadow-indigo-200 text-white border border-indigo-500">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-[10px] font-bold text-indigo-100 uppercase tracking-widest mb-1">Active Branches</p>
+                            <p class="text-3xl font-black">{{ $activeBranches }}</p>
+                        </div>
+                        <div class="p-2 bg-indigo-500/50 rounded-lg">
+                            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Users -->
+                <div class="bg-purple-600 rounded-xl p-6 shadow-lg shadow-purple-200 text-white border border-purple-500">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-[10px] font-bold text-purple-100 uppercase tracking-widest mb-1">Total Users</p>
+                            <p class="text-3xl font-black">{{ $totalUsers }}</p>
+                        </div>
+                        <div class="p-2 bg-purple-500/50 rounded-lg">
+                            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                            </svg>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

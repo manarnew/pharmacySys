@@ -5,18 +5,19 @@
      class="space-y-6">
     
     <!-- Header -->
-    <div class="flex items-center justify-between">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div>
-            <h1 class="text-2xl font-bold tracking-tight text-gray-900">Users</h1>
-            <p class="mt-1 text-sm text-gray-500">Manage your administrative users.</p>
+            <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-gray-900">Users</h1>
+            <p class="mt-1 text-xs sm:text-sm text-gray-500">Manage your administrative users.</p>
         </div>
         <div class="flex items-center space-x-3">
             @can('create_user')
-            <button @click="showModal = true; $wire.openModal()" type="button" class="inline-flex items-center rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200">
-                <svg class="mr-2 -ml-1 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+            <button @click="showModal = true; $wire.openModal()" type="button" class="inline-flex items-center rounded-lg bg-blue-600 px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200">
+                <svg class="mr-1 sm:mr-2 -ml-1 h-4 w-4 sm:h-5 sm:w-5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                 </svg>
-                Add User
+                <span class="hidden sm:inline">Add User</span>
+                <span class="sm:hidden">Add</span>
             </button>
             @endcan
         </div>
@@ -24,13 +25,15 @@
 
     <!-- Content -->
     <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-        <div class="p-6">
-            <table id="usersTable" class="display w-full" style="width:100%">
+        <div class="p-3 sm:p-4 md:p-6">
+            <div class="overflow-x-auto -mx-3 sm:-mx-4 md:-mx-6">
+                <div class="inline-block min-w-full align-middle px-3 sm:px-4 md:px-6">
+                    <table id="usersTable" class="display w-full" style="width:100%">
                 <thead>
                     <tr>
                         <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Name</th>
                         <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Email</th>
-                        <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Clinic</th>
+                        <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Branch</th>
                         <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Role</th>
                         <th class="text-right py-3 px-4 text-sm font-semibold text-gray-700">Actions</th>
                     </tr>
@@ -42,7 +45,7 @@
                             <td class="py-3 px-4 text-sm text-gray-500">{{ $user->email }}</td>
                             <td class="py-3 px-4 text-sm">
                                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                                    {{ $user->clinic->name ?? 'N/A' }}
+                                    {{ $user->branch->name ?? 'N/A' }}
                                 </span>
                             </td>
                             <td class="py-3 px-4 text-sm">
@@ -67,7 +70,9 @@
                         </tr>
                     @endforeach
                 </tbody>
-            </table>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -86,7 +91,7 @@
                  x-transition:leave="ease-in duration-200"
                  x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
                  x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                 class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                 class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all w-full sm:my-8 sm:align-middle sm:max-w-lg">
                 
                 <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                     <div class="sm:flex sm:items-start">
@@ -116,14 +121,17 @@
                                     @error('password') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700">Clinic</label>
-                                    <select wire:model="clinic_id" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm border p-2">
-                                        <option value="">Select Clinic</option>
-                                        @foreach($clinics as $clinic)
-                                            <option value="{{ $clinic->id }}">{{ $clinic->name }}</option>
-                                        @endforeach
-                                    </select>
-                                    @error('clinic_id') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+                                    <label class="block text-sm font-medium text-gray-700">Branch</label>
+                                    <div wire:ignore>
+                                        <select id="branch-select" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm border p-2">
+                                            @if($branch_id)
+                                                <option value="{{ $branch_id }}" selected>{{ App\Models\Branch::find($branch_id)?->name }}</option>
+                                            @else
+                                                <option value="">Select Branch</option>
+                                            @endif
+                                        </select>
+                                    </div>
+                                    @error('branch_id') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                                 </div>
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700">Role</label>
@@ -161,11 +169,13 @@
                 pageLength: 10,
                 lengthChange: false,
                 ordering: true,
-                dom: 'Bfrtip',
+                responsive: true,
+                scrollX: true,
+                dom: '<"flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4"Bf><"flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4"lfr>t<"flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mt-4"ip>',
                 buttons: [{
                     extend: 'excelHtml5',
                     text: '📥 Export Excel',
-                    className: 'bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 border-none'
+                    className: 'bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 border-none text-xs sm:text-sm'
                 }],
                 language: {
                     search: "Search users:",
@@ -180,14 +190,35 @@
             });
         }
 
+                }
+            });
+        }
+
         document.addEventListener('livewire:navigated', initDataTable);
         
         document.addEventListener('livewire:initialized', () => {
+            initSelect2();
             @foreach(['user-saved', 'user-deleted'] as $event)
                 Livewire.on('{{ $event }}', () => {
                     setTimeout(initDataTable, 100);
                 });
             @endforeach
         });
+
+        function initSelect2() {
+            $('#branch-select').select2({
+                placeholder: 'Search branch...',
+                dropdownParent: $('#modal-title').closest('.inline-block'),
+                ajax: {
+                    url: '{{ route("admin.search.branches") }}',
+                    dataType: 'json',
+                    delay: 250,
+                    data: (params) => ({ q: params.term }),
+                    processResults: (data) => ({ results: data })
+                }
+            }).on('change', function (e) {
+                @this.set('branch_id', $(this).val());
+            });
+        }
     </script>
 </div>

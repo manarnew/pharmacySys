@@ -8,7 +8,7 @@
             </svg>
         </div>
         <h2 class="text-2xl font-bold text-slate-900 tracking-tight">Optical Panel</h2>
-        <p class="text-slate-500 text-sm mt-2">Sign in to manage your clinic</p>
+        <p class="text-slate-500 text-sm mt-2">Sign in to manage your branch</p>
     </div>
 
     <!-- Session Status -->

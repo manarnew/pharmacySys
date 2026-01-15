@@ -6,7 +6,7 @@ use Livewire\Component;
 use Livewire\Attributes\Layout;
 
 use App\Models\User;
-use App\Models\Clinic;
+use App\Models\Branch;
 use Livewire\WithPagination;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
@@ -17,7 +17,7 @@ class UserIndex extends Component
 {
     use WithPagination;
 
-    public $name, $email, $password, $user_id, $clinic_id, $role;
+    public $name, $email, $password, $user_id, $branch_id, $role;
     public $isEditing = false;
 
     protected function rules()
@@ -26,14 +26,14 @@ class UserIndex extends Component
             'name' => 'required|string|max:255',
             'email' => ['required', 'email', 'max:255', Rule::unique('users', 'email')->ignore($this->user_id)],
             'password' => $this->isEditing ? 'nullable|min:6' : 'required|min:6',
-            'clinic_id' => 'nullable|exists:clinics,id',
+            'branch_id' => 'nullable|exists:branches,id',
             'role' => 'required|string|exists:roles,name',
         ];
     }
 
     public function resetFields()
     {
-        $this->reset(['name', 'email', 'password', 'user_id', 'clinic_id', 'role', 'isEditing']);
+        $this->reset(['name', 'email', 'password', 'user_id', 'branch_id', 'role', 'isEditing']);
     }
 
     public function openModal()
@@ -49,7 +49,7 @@ class UserIndex extends Component
             'name' => $this->name,
             'email' => $this->email,
             'password' => Hash::make($this->password),
-            'clinic_id' => $this->clinic_id,
+            'branch_id' => $this->branch_id,
         ]);
 
         $user->assignRole($this->role);
@@ -64,7 +64,7 @@ class UserIndex extends Component
         $this->user_id = $id;
         $this->name = $user->name;
         $this->email = $user->email;
-        $this->clinic_id = $user->clinic_id;
+        $this->branch_id = $user->branch_id;
         $this->role = $user->getRoleNames()->first();
         $this->isEditing = true;
 
@@ -80,7 +80,7 @@ class UserIndex extends Component
             $data = [
                 'name' => $this->name,
                 'email' => $this->email,
-                'clinic_id' => $this->clinic_id,
+                'branch_id' => $this->branch_id,
             ];
 
             if ($this->password) {
@@ -109,9 +109,8 @@ class UserIndex extends Component
     #[Layout('layouts.admin')]
     public function render()
     {
-        $users = User::with(['clinic', 'roles'])->latest()->get();
-        $clinics = Clinic::all();
+        $users = User::with(['branch', 'roles'])->latest()->get();
         $roles = Role::all();
-        return view('livewire.admin.users.user-index', compact('users', 'clinics', 'roles'));
+        return view('livewire.admin.users.user-index', compact('users', 'roles'));
     }
 }

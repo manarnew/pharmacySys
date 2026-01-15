@@ -22,5 +22,12 @@ class DatabaseSeeder extends Seeder
             'email' => 'admin@admin',
             'password' => 'admin', // Laravel 11 hashes this automatically if cast to 'hashed' in Model
         ]);
+
+        $this->call([
+            RolePermissionSeeder::class,
+            CategorySeeder::class,
+            ProductSeeder::class,
+            CustomerSeeder::class,
+        ]);
     }
 }

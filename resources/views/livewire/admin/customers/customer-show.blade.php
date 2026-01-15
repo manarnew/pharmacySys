@@ -52,18 +52,18 @@
                                     <span class="text-yellow-600 font-semibold">📅</span>
                                 </div>
                                 <div>
-                                    <span class="block text-sm font-semibold text-gray-700">Last Visit</span>
-                                    <span class="text-lg font-medium text-gray-900">{{ $customer->examinations->first()?->created_at->format('Y-m-d') ?? $customer->date ?? 'N/A' }}</span>
+                                    <span class="block text-sm font-semibold text-gray-700">Last Purchase</span>
+                                    <span class="text-lg font-medium text-gray-900">{{ $customer->sales->first()?->sale_date->format('Y-m-d') ?? 'N/A' }}</span>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Medical History -->
+                <!-- Purchase History -->
                 <div>
                     <div class="flex items-center justify-between mb-6">
-                        <h2 class="text-2xl font-bold text-gray-900">Medical History</h2>
+                        <h2 class="text-2xl font-bold text-gray-900">Purchase History</h2>
                         <div class="h-px flex-grow ml-4 bg-gradient-to-r from-green-400 to-green-100"></div>
                     </div>
                     
@@ -75,7 +75,13 @@
                                         Date
                                     </th>
                                     <th scope="col" class="px-8 py-4 text-left text-sm font-semibold text-gray-900 uppercase tracking-wider">
-                                        Doctor
+                                        Invoice #
+                                    </th>
+                                    <th scope="col" class="px-8 py-4 text-left text-sm font-semibold text-gray-900 uppercase tracking-wider">
+                                        Status
+                                    </th>
+                                    <th scope="col" class="px-8 py-4 text-left text-sm font-semibold text-gray-900 uppercase tracking-wider">
+                                        Total
                                     </th>
                                     <th scope="col" class="px-8 py-4 text-left text-sm font-semibold text-gray-900 uppercase tracking-wider">
                                         Actions
@@ -83,56 +89,50 @@
                                 </tr>
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-100">
-                                @forelse($customer->examinations as $examination)
+                                @forelse($customer->sales as $sale)
                                 <tr class="hover:bg-gray-50 transition duration-150">
                                     <td class="px-8 py-5 whitespace-nowrap">
                                         <div class="flex items-center">
                                             <div class="h-10 w-10 rounded-lg bg-blue-50 flex items-center justify-center mr-4">
-                                                <span class="text-blue-600 font-bold">{{ $examination->created_at->format('d') }}</span>
+                                                <span class="text-blue-600 font-bold">{{ $sale->sale_date->format('d') }}</span>
                                             </div>
                                             <div>
-                                                <div class="text-sm font-medium text-gray-900">{{ $examination->created_at->format('Y-m-d') }}</div>
-                                                <div class="text-xs text-gray-500">{{ $examination->created_at->diffForHumans() }}</div>
+                                                <div class="text-sm font-medium text-gray-900">{{ $sale->sale_date->format('Y-m-d') }}</div>
+                                                <div class="text-xs text-gray-500">{{ $sale->sale_date->diffForHumans() }}</div>
                                             </div>
                                         </div>
                                     </td>
                                     <td class="px-8 py-5 whitespace-nowrap">
-                                        <div class="flex items-center">
-                                            <div class="h-8 w-8 rounded-full bg-green-100 flex items-center justify-center mr-3">
-                                                <span class="text-green-600 text-xs font-bold">{{ strtoupper(substr($examination->specialist->name ?? 'D', 0, 2)) }}</span>
-                                            </div>
-                                            <div class="text-sm font-medium text-gray-900">{{ $examination->specialist->name ?? 'N/A' }}</div>
-                                        </div>
+                                         <span class="text-sm font-bold text-gray-900">#{{ $sale->invoice_no }}</span>
+                                    </td>
+                                    <td class="px-8 py-5 whitespace-nowrap">
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $sale->payment_status === 'paid' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
+                                            {{ ucfirst($sale->payment_status) }}
+                                        </span>
+                                    </td>
+                                    <td class="px-8 py-5 whitespace-nowrap font-bold text-blue-600">
+                                        ${{ number_format($sale->total, 2) }}
                                     </td>
                                     <td class="px-8 py-5 whitespace-nowrap">
                                         <div class="flex items-center space-x-3">
-                                            <a href="{{ route('admin.examinations.edit', ['examination_id' => $examination->id]) }}" 
-                                               wire:navigate
+                                            <a href="{{ route('admin.sales.create') }}?sale_id={{ $sale->id }}" 
                                                class="inline-flex items-center px-4 py-2 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition font-medium text-xs uppercase tracking-wider">
-                                                <span class="mr-2 text-sm">�</span>
-                                                Exam
+                                                <span class="mr-2 text-sm">👁️</span>
+                                                View
                                             </a>
-                                            @if($examination->prescription)
-                                            <a href="{{ route('admin.prescriptions.show', ['prescription_id' => $examination->prescription->id]) }}" 
-                                               wire:navigate
-                                               class="inline-flex items-center px-4 py-2 bg-green-50 text-green-700 rounded-lg hover:bg-green-100 transition font-medium text-xs uppercase tracking-wider">
-                                                <span class="mr-2 text-sm">📄</span>
-                                                Prescription
+                                            <a href="{{ route('admin.invoices.print', ['sale_id' => $sale->id]) }}" 
+                                               target="_blank"
+                                               class="inline-flex items-center px-4 py-2 bg-gray-50 text-gray-700 rounded-lg hover:bg-gray-100 transition font-medium text-xs uppercase tracking-wider">
+                                                <span class="mr-2 text-sm">🖨️</span>
+                                                Print
                                             </a>
-                                            <a href="{{ $examination->prescription->order ? route('admin.orders.show', ['order_id' => $examination->prescription->order->id]) : route('admin.orders.create', ['customer_id' => $customer->id, 'prescription_id' => $examination->prescription->id]) }}" 
-                                               wire:navigate
-                                               class="inline-flex items-center px-4 py-2 {{ $examination->prescription->order ? 'bg-indigo-600' : 'bg-emerald-600' }} text-white rounded-lg hover:{{ $examination->prescription->order ? 'bg-indigo-700' : 'bg-emerald-700' }} transition font-medium text-xs uppercase tracking-wider shadow-sm">
-                                                <span class="mr-2 text-sm">🛒</span>
-                                                {{ $examination->prescription->order ? 'Order Details' : 'Order' }}
-                                            </a>
-                                            @endif
                                         </div>
                                     </td>
                                 </tr>
                                 @empty
                                 <tr>
-                                    <td colspan="3" class="px-8 py-10 text-center text-gray-500 italic">
-                                        No medical history found for this customer.
+                                    <td colspan="5" class="px-8 py-10 text-center text-gray-500 italic">
+                                        No purchase history found for this customer.
                                     </td>
                                 </tr>
                                 @endforelse

@@ -13,8 +13,9 @@ class CustomerShow extends Component
     public function mount()
     {
         $customer_id = request()->query('customer_id');
-        $this->customer = Customer::with(['examinations.specialist', 'examinations.prescription.order'])
-            ->findOrFail($customer_id);
+        $this->customer = Customer::with(['sales' => function($q) {
+            $q->latest();
+        }])->findOrFail($customer_id);
     }
 
     #[Layout('layouts.admin')]

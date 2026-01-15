@@ -16,7 +16,7 @@ class BranchIndex extends Component
     public $isEditing = false;
 
     protected $rules = [
-        'name' => 'required|string|max:255|unique:branchs,name',
+        'name' => 'required|string|max:255|unique:branches,name',
     ];
 
     public function resetFields()
@@ -54,7 +54,7 @@ class BranchIndex extends Component
     public function update()
     {
         $this->validate([
-            'name' => 'required|string|max:255|unique:branchs,name,' . $this->branch_id,
+            'name' => 'required|string|max:255|unique:branches,name,' . $this->branch_id,
         ]);
 
         if ($this->branch_id) {
@@ -77,7 +77,7 @@ class BranchIndex extends Component
     #[Layout('layouts.admin')]
     public function render()
     {
-        $branchs = Branch::latest()->get();
-        return view('livewire.admin.branches.branch-index', compact('branchs'));
+        $branches = Branch::latest()->get();
+        return view('livewire.admin.branches.branch-index', compact('branches'));
     }
 }

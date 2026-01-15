@@ -1,7 +1,7 @@
-<aside x-data="{ sidebarOpen: window.innerWidth >= 1024, isCollapsed: false }" 
+<aside x-data="{ isCollapsed: false }" 
     x-show="sidebarOpen || window.innerWidth >= 1024"
     @click.away="if (window.innerWidth < 1024) sidebarOpen = false"
-    class="bg-gradient-to-b from-gray-900 to-gray-950 border-r border-gray-800 w-64 flex flex-col h-screen fixed inset-y-0 left-0 transform lg:relative lg:translate-x-0 transition-all duration-300 ease-in-out z-30 shadow-2xl"
+    class="bg-gradient-to-b from-gray-900 to-gray-950 border-r border-gray-800 w-64 flex flex-col h-screen fixed inset-y-0 left-0 transform lg:relative lg:translate-x-0 transition-all duration-300 ease-in-out z-[35] shadow-2xl"
     :class="{
         'translate-x-0': sidebarOpen || window.innerWidth >= 1024,
         '-translate-x-full': !sidebarOpen && window.innerWidth < 1024,
@@ -42,7 +42,7 @@
 
     <!-- Mobile Toggle Button -->
     <button @click="sidebarOpen = false" 
-            x-show="window.innerWidth < 1024"
+            x-show="window.innerWidth < 1024 && sidebarOpen"
             class="lg:hidden absolute -right-3 top-6 h-6 w-6 rounded-full bg-gray-800 border border-gray-700 flex items-center justify-center text-gray-400 hover:text-white transition-colors duration-200 z-40">
         <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
@@ -263,7 +263,131 @@
                 </template>
             </a>
             @endcan
-        
+
+            <!-- Products -->
+            @can('view_product')
+            <a href="{{ route('admin.products.index') }}" wire:navigate
+                class="group flex items-center px-3 py-2.5 rounded-lg transition-all duration-200 relative
+                {{ request()->routeIs('admin.products.*') 
+                    ? 'bg-gradient-to-r from-cyan-600 to-blue-600 text-white shadow-lg shadow-cyan-500/10' 
+                    : 'text-gray-400 hover:bg-gray-800/60 hover:text-white' 
+                }}"
+                :class="{ 'justify-center': isCollapsed }">
+                <svg class="h-5 w-5 flex-shrink-0 transition-colors duration-200
+                    {{ request()->routeIs('admin.products.*') ? 'text-white' : 'text-gray-500 group-hover:text-gray-300' }}"
+                    :class="{ 'mr-3': !isCollapsed }"
+                    viewBox="0 0 20 20" fill="currentColor">
+                    <path d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 000-2H6.414l1-1H14a1 1 0 00.894-.553l3-6A1 1 0 0017 3H6.28l-.31-1.243A1 1 0 005 1H3zM16 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM6.5 18a1.5 1.5 0 100-3 1.5 1.5 0 000 3z" />
+                </svg>
+                <span x-show="!isCollapsed" x-transition:enter="transition ease-out duration-200" 
+                      x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
+                      class="text-sm font-medium">Products</span>
+                <template x-if="isCollapsed">
+                    <div x-show="{{ request()->routeIs('admin.products.*') ? 'true' : 'false' }}"
+                         class="absolute left-14 w-2 h-2 rounded-full bg-cyan-400"></div>
+                </template>
+            </a>
+            @endcan
+
+            <!-- Stores -->
+            @can('view_store')
+            <a href="{{ route('admin.stores.index') }}" wire:navigate
+                class="group flex items-center px-3 py-2.5 rounded-lg transition-all duration-200 relative
+                {{ request()->routeIs('admin.stores.*') 
+                    ? 'bg-gradient-to-r from-cyan-600 to-blue-600 text-white shadow-lg shadow-cyan-500/10' 
+                    : 'text-gray-400 hover:bg-gray-800/60 hover:text-white' 
+                }}"
+                :class="{ 'justify-center': isCollapsed }">
+                <svg class="h-5 w-5 flex-shrink-0 transition-colors duration-200
+                    {{ request()->routeIs('admin.stores.*') ? 'text-white' : 'text-gray-500 group-hover:text-gray-300' }}"
+                    :class="{ 'mr-3': !isCollapsed }"
+                    viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M4 4a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2V8a2 2 0 00-2-2h-5L9 4H4zm7 5a1 1 0 10-2 0v1H8a1 1 0 100 2h1v1a1 1 0 102 0v-1h1a1 1 0 100-2h-1V9z" clip-rule="evenodd" />
+                </svg>
+                <span x-show="!isCollapsed" x-transition:enter="transition ease-out duration-200" 
+                      x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
+                      class="text-sm font-medium">Stores</span>
+                <template x-if="isCollapsed">
+                    <div x-show="{{ request()->routeIs('admin.stores.*') ? 'true' : 'false' }}"
+                         class="absolute left-14 w-2 h-2 rounded-full bg-cyan-400"></div>
+                </template>
+            </a>
+            @endcan
+
+            <!-- Purchases -->
+            @can('view_purchase')
+            <a href="{{ route('admin.purchases.index') }}" wire:navigate
+                class="group flex items-center px-3 py-2.5 rounded-lg transition-all duration-200 relative
+                {{ request()->routeIs('admin.purchases.*') 
+                    ? 'bg-gradient-to-r from-cyan-600 to-blue-600 text-white shadow-lg shadow-cyan-500/10' 
+                    : 'text-gray-400 hover:bg-gray-800/60 hover:text-white' 
+                }}"
+                :class="{ 'justify-center': isCollapsed }">
+                <svg class="h-5 w-5 flex-shrink-0 transition-colors duration-200
+                    {{ request()->routeIs('admin.purchases.*') ? 'text-white' : 'text-gray-500 group-hover:text-gray-300' }}"
+                    :class="{ 'mr-3': !isCollapsed }"
+                    viewBox="0 0 20 20" fill="currentColor">
+                    <path d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 000-2H6.414l1-1H14a1 1 0 00.894-.553l3-6A1 1 0 0017 3H6.28l-.31-1.243A1 1 0 005 1H3z" />
+                </svg>
+                <span x-show="!isCollapsed" x-transition:enter="transition ease-out duration-200" 
+                      x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
+                      class="text-sm font-medium">Purchases</span>
+                <template x-if="isCollapsed">
+                    <div x-show="{{ request()->routeIs('admin.purchases.*') ? 'true' : 'false' }}"
+                         class="absolute left-14 w-2 h-2 rounded-full bg-cyan-400"></div>
+                </template>
+            </a>
+            @endcan
+
+            <!-- Sales -->
+            @can('view_sale')
+            <a href="{{ route('admin.sales.index') }}" wire:navigate
+                class="group flex items-center px-3 py-2.5 rounded-lg transition-all duration-200 relative
+                {{ request()->routeIs('admin.sales.*') 
+                    ? 'bg-gradient-to-r from-cyan-600 to-blue-600 text-white shadow-lg shadow-cyan-500/10' 
+                    : 'text-gray-400 hover:bg-gray-800/60 hover:text-white' 
+                }}"
+                :class="{ 'justify-center': isCollapsed }">
+                <svg class="h-5 w-5 flex-shrink-0 transition-colors duration-200
+                    {{ request()->routeIs('admin.sales.*') ? 'text-white' : 'text-gray-500 group-hover:text-gray-300' }}"
+                    :class="{ 'mr-3': !isCollapsed }"
+                    viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M10 2a4 4 0 00-4 4v1H5a1 1 0 00-.994.89l-1 9A1 1 0 004 18h12a1 1 0 00.994-1.11l-1-9A1 1 0 0015 7h-1V6a4 4 0 00-4-4zm2 5V6a2 2 0 10-4 0v1h4zm-6 3a1 1 0 112 0 1 1 0 01-2 0zm7-1a1 1 0 100 2 1 1 0 000-2z" clip-rule="evenodd" />
+                </svg>
+                <span x-show="!isCollapsed" x-transition:enter="transition ease-out duration-200" 
+                      x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
+                      class="text-sm font-medium">Sales</span>
+                <template x-if="isCollapsed">
+                    <div x-show="{{ request()->routeIs('admin.sales.*') ? 'true' : 'false' }}"
+                         class="absolute left-14 w-2 h-2 rounded-full bg-cyan-400"></div>
+                </template>
+            </a>
+            @endcan
+
+            <!-- Inventory -->
+            @can('view_inventory')
+            <a href="{{ route('admin.inventory.index') }}" wire:navigate
+                class="group flex items-center px-3 py-2.5 rounded-lg transition-all duration-200 relative
+                {{ request()->routeIs('admin.inventory.*') 
+                    ? 'bg-gradient-to-r from-cyan-600 to-blue-600 text-white shadow-lg shadow-cyan-500/10' 
+                    : 'text-gray-400 hover:bg-gray-800/60 hover:text-white' 
+                }}"
+                :class="{ 'justify-center': isCollapsed }">
+                <svg class="h-5 w-5 flex-shrink-0 transition-colors duration-200
+                    {{ request()->routeIs('admin.inventory.*') ? 'text-white' : 'text-gray-500 group-hover:text-gray-300' }}"
+                    :class="{ 'mr-3': !isCollapsed }"
+                    viewBox="0 0 20 20" fill="currentColor">
+                    <path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                </svg>
+                <span x-show="!isCollapsed" x-transition:enter="transition ease-out duration-200" 
+                      x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
+                      class="text-sm font-medium">Inventory</span>
+                <template x-if="isCollapsed">
+                    <div x-show="{{ request()->routeIs('admin.inventory.*') ? 'true' : 'false' }}"
+                         class="absolute left-14 w-2 h-2 rounded-full bg-cyan-400"></div>
+                </template>
+            </a>
+            @endcan
 
 
             <!-- Messages -->

@@ -11,7 +11,9 @@
 
     <!-- DataTables -->
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.8/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css">
     <script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
 
     <!-- Buttons extension -->
     <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.dataTables.min.css">
@@ -20,6 +22,10 @@
 
     <!-- Excel dependency -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+    <!-- Select2 -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
     <style>
         .dataTables_wrapper select,
@@ -58,6 +64,48 @@
         }
 
         [x-cloak] { display: none !important; }
+
+        /* Select2 Tailwind-like styling */
+        .select2-container--default .select2-selection--single {
+            border: 1px solid #d1d5db !important;
+            border-radius: 0.5rem !important;
+            height: 42px !important;
+            padding-top: 6px !important;
+        }
+        .select2-container--default .select2-selection--single .select2-selection__arrow {
+            height: 40px !important;
+        }
+        .select2-dropdown {
+            border: 1px solid #d1d5db !important;
+            border-radius: 0.5rem !important;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1) !important;
+        }
+
+        /* Responsive DataTables */
+        @media (max-width: 640px) {
+            .dataTables_wrapper .dataTables_length,
+            .dataTables_wrapper .dataTables_filter,
+            .dataTables_wrapper .dataTables_info,
+            .dataTables_wrapper .dataTables_paginate {
+                margin-top: 0.5rem;
+            }
+            .dataTables_wrapper .dataTables_paginate .paginate_button {
+                padding: 0.25rem 0.5rem;
+                font-size: 0.75rem;
+            }
+        }
+
+        /* Mobile-friendly scrollbars */
+        .overflow-x-auto {
+            -webkit-overflow-scrolling: touch;
+        }
+
+        /* Better touch targets on mobile */
+        @media (max-width: 640px) {
+            button, a, input, select, textarea {
+                min-height: 44px;
+            }
+        }
     </style>
 
     <!-- Tailwind CSS -->
@@ -115,6 +163,19 @@
                 </p>
             </div>
         </div>
+        <!-- Mobile Backdrop Overlay -->
+        <div x-show="sidebarOpen && window.innerWidth < 1024"
+             @click="sidebarOpen = false"
+             x-transition:enter="transition-opacity ease-linear duration-300"
+             x-transition:enter-start="opacity-0"
+             x-transition:enter-end="opacity-100"
+             x-transition:leave="transition-opacity ease-linear duration-300"
+             x-transition:leave-start="opacity-100"
+             x-transition:leave-end="opacity-0"
+             class="fixed inset-0 bg-gray-900 bg-opacity-50 z-20 lg:hidden"
+             style="display: none;">
+        </div>
+
         <!-- Sidebar -->
         @include('admin.partials.sidebar')
 
@@ -123,7 +184,7 @@
             @include('admin.partials.header')
 
             <!-- Main Content -->
-            <main id="main-content" class="flex-1 overflow-y-auto bg-gray-50 p-4 md:p-6">
+            <main id="main-content" class="flex-1 overflow-y-auto bg-gray-50 p-3 sm:p-4 md:p-6">
                 <!-- Flash Messages -->
                 @if (session('success'))
                     <div class="mb-4 p-4 bg-green-100 border border-green-400 text-green-700 rounded">
