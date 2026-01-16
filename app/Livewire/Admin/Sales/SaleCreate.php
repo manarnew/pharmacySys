@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\DB;
 class SaleCreate extends Component
 {
     public $customer_id, $invoice_no, $sale_date, $discount = 0, $tax = 0, $paid_amount = 0, $notes;
+    public $payment_type = 'cash'; // Default to cash
     public $items = []; 
 
     public function mount()
@@ -46,6 +47,7 @@ class SaleCreate extends Component
             'customer_id' => 'required|exists:customers,id',
             'invoice_no' => 'required|string|max:255|unique:sales,invoice_no',
             'sale_date' => 'required|date',
+            'payment_type' => 'required|in:cash,bankak',
             'discount' => 'required|numeric|min:0',
             'tax' => 'required|numeric|min:0',
             'paid_amount' => 'required|numeric|min:0',
@@ -133,6 +135,7 @@ class SaleCreate extends Component
                 'customer_id' => $this->customer_id,
                 'invoice_no' => $this->invoice_no,
                 'sale_date' => $this->sale_date,
+                'payment_type' => $this->payment_type,
                 'subtotal' => $subtotal,
                 'discount' => $this->discount,
                 'tax' => $this->tax,
@@ -199,6 +202,7 @@ class SaleCreate extends Component
     public function resetFields()
     {
         $this->reset(['discount', 'tax', 'paid_amount', 'notes']);
+        $this->payment_type = 'cash';
         $this->sale_date = date('Y-m-d');
         $this->invoice_no = 'SALE-' . strtoupper(uniqid());
 

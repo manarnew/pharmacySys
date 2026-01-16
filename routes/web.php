@@ -39,7 +39,7 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::get('/permissions', \App\Livewire\Admin\Permissions\PermissionIndex::class)->name('permissions.index');
     Route::get('/roles', \App\Livewire\Admin\Roles\RoleIndex::class)->name('roles.index');
     Route::get('/expenses', \App\Livewire\Admin\Expenses\ExpenseIndex::class)->name('expenses.index');
-    Route::get('/messages', \App\Livewire\Admin\Messages\MessageIndex::class)->name('messages.index');
+
     
     // Pharmacy Management Routes
     Route::get('/products', \App\Livewire\Admin\Products\ProductIndex::class)->name('products.index');
@@ -51,5 +51,8 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::get('/sales/create', \App\Livewire\Admin\Sales\SaleCreate::class)->name('sales.create');
     Route::get('/sales/return', \App\Livewire\Admin\Sales\SaleReturnCreate::class)->name('sales.return');
     Route::get('/sales/{sale}/print', [\App\Http\Controllers\Admin\InvoiceController::class, 'print'])->name('sales.print');
+    Route::get('/inventory/stocktake/create', App\Livewire\Admin\Inventory\StocktakeCreate::class)->name('stocktakes.create');
+    Route::get('/inventory/stocktakes', App\Livewire\Admin\Inventory\StocktakeIndex::class)->name('stocktakes.index');
+    Route::get('/inventory/stocktake/{stocktake}', App\Livewire\Admin\Inventory\StocktakeShow::class)->name('stocktakes.show');
     Route::get('/inventory', \App\Livewire\Admin\Inventory\InventoryIndex::class)->name('inventory.index');
 });

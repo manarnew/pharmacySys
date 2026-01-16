@@ -1,14 +1,11 @@
 <x-guest-layout>
     <!-- Header -->
     <div class="text-center mb-8">
-        <div class="inline-flex items-center justify-center w-16 h-16 rounded-xl bg-blue-50 text-blue-600 mb-4">
-            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-            </svg>
+        <div class="inline-flex items-center justify-center w-20 h-20 rounded-xl bg-white mb-4 shadow-sm overflow-hidden">
+            <img src="{{ asset('assets/images/logo.png') }}" alt="pharmacySys EPS Logo" class="w-full h-full object-contain">
         </div>
-        <h2 class="text-2xl font-bold text-slate-900 tracking-tight">Optical Panel</h2>
-        <p class="text-slate-500 text-sm mt-2">Sign in to manage your branch</p>
+        <h2 class="text-2xl font-bold text-slate-900 tracking-tight"> <span class="text-blue-600">EPS</span></h2>
+        <p class="text-slate-500 text-sm mt-2">Sign in to manage your pharmacy</p>
     </div>
 
     <!-- Session Status -->
@@ -34,7 +31,7 @@
                        required 
                        autofocus 
                        autocomplete="username" 
-                       placeholder="admin@optical.com" />
+                       placeholder="admin@pharmacysys-eps.com" />
             </div>
             <x-input-error :messages="$errors->get('email')" class="mt-1 text-xs font-semibold text-red-500" />
         </div>
@@ -87,7 +84,7 @@
     <!-- Footer -->
     <div class="mt-8 pt-6 border-t border-slate-100 text-center">
         <p class="text-xs text-slate-400">
-            &copy; {{ date('Y') }} Optical Panel • v2.0
+            &copy; {{ date('Y') }} EPS • v2.0
         </p>
     </div>
 

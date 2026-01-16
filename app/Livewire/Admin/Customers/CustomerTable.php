@@ -11,7 +11,7 @@ class CustomerTable extends Component
 {
     use WithPagination;
 
-    public $name, $phone, $age, $customer_id;
+    public $name, $phone, $age, $address, $gender, $customer_id;
     public $isEditing = false;
     public $showConfirmDuplicate = false;
 
@@ -19,11 +19,13 @@ class CustomerTable extends Component
         'name' => 'required|string|max:255',
         'phone' => 'nullable|string|max:20',
         'age' => 'nullable|integer|min:0',
+        'address' => 'nullable|string|max:500',
+        'gender' => 'nullable|in:male,female',
     ];
 
     public function resetFields()
     {
-        $this->reset(['name', 'phone', 'age', 'customer_id', 'isEditing', 'showConfirmDuplicate']);
+        $this->reset(['name', 'phone', 'age', 'address', 'gender', 'customer_id', 'isEditing', 'showConfirmDuplicate']);
     }
 
     public function openModal()
@@ -53,6 +55,8 @@ class CustomerTable extends Component
             'name' => $this->name,
             'phone' => $this->phone,
             'age' => $this->age,
+            'address' => $this->address,
+            'gender' => $this->gender,
             'date' => now()->toDateString(),
             'created_by' => auth()->id(),
         ]);
@@ -68,6 +72,8 @@ class CustomerTable extends Component
         $this->name = $customer->name;
         $this->phone = $customer->phone;
         $this->age = $customer->age;
+        $this->address = $customer->address;
+        $this->gender = $customer->gender;
         $this->isEditing = true;
 
         $this->dispatch('open-edit-modal');
@@ -83,6 +89,8 @@ class CustomerTable extends Component
                 'name' => $this->name,
                 'phone' => $this->phone,
                 'age' => $this->age,
+                'address' => $this->address,
+                'gender' => $this->gender,
                 'updated_by' => auth()->id(),
             ]);
 

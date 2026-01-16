@@ -45,6 +45,30 @@
                                 </div>
                             </div>
                         </div>
+
+                        <div class="bg-gray-50 p-5 rounded-lg border border-gray-100 hover:border-blue-200 transition">
+                            <div class="flex items-center mb-3">
+                                <div class="h-10 w-10 rounded-full bg-indigo-100 flex items-center justify-center mr-3">
+                                    <span class="text-indigo-600 font-semibold">📍</span>
+                                </div>
+                                <div>
+                                    <span class="block text-sm font-semibold text-gray-700">Address</span>
+                                    <span class="text-lg font-medium text-gray-900">{{ $customer->address ?? 'N/A' }}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-gray-50 p-5 rounded-lg border border-gray-100 hover:border-blue-200 transition">
+                            <div class="flex items-center mb-3">
+                                <div class="h-10 w-10 rounded-full bg-pink-100 flex items-center justify-center mr-3">
+                                    <span class="text-pink-600 font-semibold">⚧</span>
+                                </div>
+                                <div>
+                                    <span class="block text-sm font-semibold text-gray-700">Gender</span>
+                                    <span class="text-lg font-medium text-gray-900">{{ $customer->gender ? ucfirst($customer->gender) : 'N/A' }}</span>
+                                </div>
+                            </div>
+                        </div>
                         
                         <div class="bg-gray-50 p-5 rounded-lg border border-gray-100 hover:border-blue-200 transition">
                             <div class="flex items-center mb-3">
@@ -115,12 +139,7 @@
                                     </td>
                                     <td class="px-8 py-5 whitespace-nowrap">
                                         <div class="flex items-center space-x-3">
-                                            <a href="{{ route('admin.sales.create') }}?sale_id={{ $sale->id }}" 
-                                               class="inline-flex items-center px-4 py-2 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition font-medium text-xs uppercase tracking-wider">
-                                                <span class="mr-2 text-sm">👁️</span>
-                                                View
-                                            </a>
-                                            <a href="{{ route('admin.invoices.print', ['sale_id' => $sale->id]) }}" 
+                                            <a href="{{ route('admin.sales.print', ['sale' => $sale->id]) }}" 
                                                target="_blank"
                                                class="inline-flex items-center px-4 py-2 bg-gray-50 text-gray-700 rounded-lg hover:bg-gray-100 transition font-medium text-xs uppercase tracking-wider">
                                                 <span class="mr-2 text-sm">🖨️</span>

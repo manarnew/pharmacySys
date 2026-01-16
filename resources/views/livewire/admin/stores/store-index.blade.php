@@ -4,26 +4,28 @@
      class="space-y-6">
     
     <!-- Header -->
-    <div class="flex items-center justify-between">
+    <div class="mb-6">
         <div>
-            <h1 class="text-2xl font-bold tracking-tight text-gray-900">Stores</h1>
-            <p class="mt-1 text-sm text-gray-500">Manage your inventory storage locations.</p>
-        </div>
-        <div class="flex items-center space-x-3">
-            @can('create_store')
-            <button @click="showModal = true; $wire.openModal()" type="button" class="inline-flex items-center rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200">
-                <svg class="mr-2 -ml-1 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                </svg>
-                Add Store
-            </button>
-            @endcan
+            <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-gray-900">Stores</h1>
+            <p class="mt-1 text-xs sm:text-sm text-gray-500">Manage your inventory storage locations.</p>
         </div>
     </div>
 
     <!-- Content -->
     <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-        <div class="p-6">
+        <div class="p-3 sm:p-4 md:p-6">
+            <!-- Add Button inside table container -->
+            <div class="flex justify-end mb-4">
+                @can('create_store')
+                <button @click="showModal = true; $wire.openModal()" type="button" class="inline-flex items-center rounded-lg bg-blue-600 px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200">
+                    <svg class="mr-1 sm:mr-2 -ml-1 h-4 w-4 sm:h-5 sm:w-5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                    </svg>
+                    <span class="hidden sm:inline">Add Store</span>
+                    <span class="sm:hidden">Add</span>
+                </button>
+                @endcan
+            </div>
             <table id="storesTable" class="display w-full" style="width:100%">
                 <thead>
                     <tr>
@@ -31,7 +33,7 @@
                         <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Location</th>
                         <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Branch</th>
                         <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Status</th>
-                        <th class="text-right py-3 px-4 text-sm font-semibold text-gray-700">Actions</th>
+                        <th class="text-center py-3 px-4 text-sm font-semibold text-gray-700">Actions</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-100">
@@ -45,13 +47,28 @@
                                     {{ ucfirst($store->status) }}
                                 </span>
                             </td>
-                            <td class="py-3 px-4 text-right text-sm font-medium">
-                                @can('edit_store')
-                                <button wire:click="edit({{ $store->id }})" class="text-blue-600 hover:text-blue-900 mr-3">Edit</button>
-                                @endcan
-                                @can('delete_store')
-                                <button wire:click="delete({{ $store->id }})" wire:confirm="Are you sure?" class="text-red-600 hover:text-red-900">Delete</button>
-                                @endcan
+                            <td class="py-3 px-4 text-center">
+                                <div class="flex items-center justify-center gap-2">
+                                    @can('edit_store')
+                                    <button wire:click="edit({{ $store->id }})" 
+                                            class="p-2 text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition-colors" 
+                                            title="Edit">
+                                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                        </svg>
+                                    </button>
+                                    @endcan
+                                    @can('delete_store')
+                                    <button wire:click="delete({{ $store->id }})" 
+                                            wire:confirm="Are you sure?" 
+                                            class="p-2 text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors" 
+                                            title="Delete">
+                                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                        </svg>
+                                    </button>
+                                    @endcan
+                                </div>
                             </td>
                         </tr>
                     @endforeach
@@ -147,7 +164,8 @@
                     className: 'bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 border-none'
                 }],
                 language: {
-                    search: "Search stores:",
+                    search: "",
+                    searchPlaceholder: "Search stores...",
                     emptyTable: "No stores found",
                     paginate: {
                         first: "First",
@@ -155,6 +173,9 @@
                         next: "Next",
                         previous: "Previous"
                     }
+                },
+                initComplete: function() {
+                    $('.dataTables_filter input').attr('placeholder', 'Search stores...');
                 }
             });
         }

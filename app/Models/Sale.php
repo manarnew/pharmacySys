@@ -17,6 +17,7 @@ class Sale extends Model
         'tax',
         'total',
         'payment_status',
+        'payment_type',
         'paid_amount',
         'notes',
         'created_by',

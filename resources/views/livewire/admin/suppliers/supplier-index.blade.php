@@ -4,33 +4,35 @@
      class="space-y-6">
     
     <!-- Header -->
-    <div class="flex items-center justify-between">
+    <div class="mb-6">
         <div>
-            <h1 class="text-2xl font-bold tracking-tight text-gray-900">Suppliers</h1>
-            <p class="mt-1 text-sm text-gray-500">Manage your suppliers and their contact information.</p>
-        </div>
-        <div class="flex items-center space-x-3">
-            @can('create_supplier')
-            <button @click="showModal = true; $wire.openModal()" type="button" class="inline-flex items-center rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200">
-                <svg class="mr-2 -ml-1 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                </svg>
-                Add Supplier
-            </button>
-            @endcan
+            <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-gray-900">Suppliers</h1>
+            <p class="mt-1 text-xs sm:text-sm text-gray-500">Manage your suppliers and their contact information.</p>
         </div>
     </div>
 
     <!-- Content -->
     <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-        <div class="p-6">
+        <div class="p-3 sm:p-4 md:p-6">
+            <!-- Add Button inside table container -->
+            <div class="flex justify-end mb-4">
+                @can('create_supplier')
+                <button @click="showModal = true; $wire.openModal()" type="button" class="inline-flex items-center rounded-lg bg-blue-600 px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200">
+                    <svg class="mr-1 sm:mr-2 -ml-1 h-4 w-4 sm:h-5 sm:w-5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                    </svg>
+                    <span class="hidden sm:inline">Add Supplier</span>
+                    <span class="sm:hidden">Add</span>
+                </button>
+                @endcan
+            </div>
             <table id="suppliersTable" class="display w-full" style="width:100%">
                 <thead>
                     <tr>
                         <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Name</th>
                         <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Phone</th>
                         <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Email</th>
-                        <th class="text-right py-3 px-4 text-sm font-semibold text-gray-700">Actions</th>
+                        <th class="text-center py-3 px-4 text-sm font-semibold text-gray-700">Actions</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-100">
@@ -39,14 +41,28 @@
                             <td class="py-3 px-4 text-sm text-gray-900 font-medium">{{ $supplier->name }}</td>
                             <td class="py-3 px-4 text-sm text-gray-500">{{ $supplier->phone ?? '-' }}</td>
                             <td class="py-3 px-4 text-sm text-gray-500">{{ $supplier->email ?? '-' }}</td>
-                            <td class="py-3 px-4 text-right text-sm font-medium">
-                                @can('edit_supplier')
-                                <button wire:click="edit({{ $supplier->id }})" class="text-blue-600 hover:text-blue-900 mr-3">Edit</button>
-                                @endcan
-
-                                @can('delete_supplier')
-                                <button wire:click="delete({{ $supplier->id }})" wire:confirm="Are you sure you want to delete this supplier?" class="text-red-600 hover:text-red-900">Delete</button>
-                                @endcan
+                            <td class="py-3 px-4 text-center">
+                                <div class="flex items-center justify-center gap-2">
+                                    @can('edit_supplier')
+                                    <button wire:click="edit({{ $supplier->id }})" 
+                                            class="p-2 text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition-colors" 
+                                            title="Edit">
+                                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                        </svg>
+                                    </button>
+                                    @endcan
+                                    @can('delete_supplier')
+                                    <button wire:click="delete({{ $supplier->id }})" 
+                                            wire:confirm="Are you sure you want to delete this supplier?" 
+                                            class="p-2 text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors" 
+                                            title="Delete">
+                                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                        </svg>
+                                    </button>
+                                    @endcan
+                                </div>
                             </td>
                         </tr>
                     @endforeach
@@ -143,7 +159,8 @@
                     className: 'bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 border-none'
                 }],
                 language: {
-                    search: "Search suppliers:",
+                    search: "",
+                    searchPlaceholder: "Search suppliers...",
                     emptyTable: "No suppliers found",
                     paginate: {
                         first: "First",
@@ -151,6 +168,9 @@
                         next: "Next",
                         previous: "Previous"
                     }
+                },
+                initComplete: function() {
+                    $('.dataTables_filter input').attr('placeholder', 'Search suppliers...');
                 }
             });
         }

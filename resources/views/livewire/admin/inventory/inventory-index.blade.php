@@ -128,12 +128,20 @@
                 ordering: true,
                 responsive: true,
                 scrollX: true,
-                dom: '<"flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4"Bf><"flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4"lfr>t<"flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mt-4"ip>',
+                dom: 'Bfrtip',
                 buttons: [{
                     extend: 'excelHtml5',
                     text: '📥 Export Excel',
                     className: 'bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 border-none text-xs sm:text-sm mr-2'
-                }]
+                }],
+                language: {
+                    search: "",
+                    searchPlaceholder: "Search inventory...",
+                    emptyTable: "No data available"
+                },
+                initComplete: function() {
+                    $('.dataTables_filter input').attr('placeholder', 'Search inventory...');
+                }
             };
 
             $('#stockTable').DataTable(options);

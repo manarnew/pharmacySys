@@ -21,6 +21,20 @@ class Dashboard extends Component
     public $expenseStats = [];
     public $customerGrowth = [];
 
+    // Today's Stats
+    public $todaySales = 0;
+    public $todayTransactions = 0;
+    public $todayExpenses = 0;
+    public $todayNetCash = 0;
+    public $newCustomersToday = 0;
+    public $topProductsToday = [];
+
+    // Stocktake Stats
+    public $pendingStocktakesCount = 0;
+    public $approvedStocktakesCount = 0;
+    public $rejectedStocktakesCount = 0;
+    public $recentStocktakes = [];
+
     public $startDate;
     public $endDate;
     public $selectedBranch;
@@ -41,6 +55,8 @@ class Dashboard extends Component
 
     public function loadStats()
     {
+        // ... (Existing Code) ...
+
         $this->totalCustomers = Customer::query()
             ->when($this->selectedBranch, function($q) {
                 $q->whereExists(function ($query) {
@@ -63,7 +79,7 @@ class Dashboard extends Component
             ->sum('amount');
 
         // New Metrics: Sales & Purchases
-        $this->totalSales = \App\Models\Sale::query()
+        $salesQuery = \App\Models\Sale::query()
             ->whereBetween('sale_date', [$this->startDate, $this->endDate])
             ->when($this->selectedBranch, function($q) {
                 $q->whereExists(function ($query) {
@@ -72,8 +88,9 @@ class Dashboard extends Component
                         ->whereColumn('users.id', 'sales.created_by')
                         ->where('users.branch_id', $this->selectedBranch);
                 });
-            })
-            ->sum('total');
+            });
+
+        $this->totalSales = (clone $salesQuery)->sum('total');
 
         $this->totalPurchases = \App\Models\Purchase::query()
             ->whereBetween('purchase_date', [$this->startDate, $this->endDate])
@@ -81,6 +98,93 @@ class Dashboard extends Component
 
         $this->lowStockCount = \App\Models\Product::whereRaw('(select COALESCE(SUM(quantity), 0) from inventories where product_id = products.id) < reorder_level')
             ->count();
+
+        // ---------------------------------------------
+        // Today's Highlights Calculation
+        // ---------------------------------------------
+        $todayStart = now()->startOfDay();
+        $todayEnd = now()->endOfDay();
+
+        // Today's Sales Query
+        $todaySalesQuery = \App\Models\Sale::query()
+            ->whereBetween('sale_date', [$todayStart, $todayEnd])
+            ->when($this->selectedBranch, function($q) {
+                $q->whereExists(function ($query) {
+                    $query->select(\Illuminate\Support\Facades\DB::raw(1))
+                        ->from('users')
+                        ->whereColumn('users.id', 'sales.created_by')
+                        ->where('users.branch_id', $this->selectedBranch);
+                });
+            });
+
+        $this->todaySales = (clone $todaySalesQuery)->sum('total');
+        $this->todayTransactions = (clone $todaySalesQuery)->count();
+
+        // Today's Expenses
+        $this->todayExpenses = Expense::query()
+            ->whereDate('date', now()->today())
+            ->sum('amount');
+
+        $this->todayNetCash = $this->todaySales - $this->todayExpenses;
+
+        // New Customers Today
+        $this->newCustomersToday = Customer::query()
+            ->whereBetween('created_at', [$todayStart, $todayEnd])
+            ->when($this->selectedBranch, function($q) {
+                $q->whereExists(function ($query) {
+                    $query->select(\Illuminate\Support\Facades\DB::raw(1))
+                        ->from('users')
+                        ->whereColumn('users.id', 'customers.created_by')
+                        ->where('users.branch_id', $this->selectedBranch);
+                });
+            })
+            ->count();
+
+        // Top 5 Products Today
+        $this->topProductsToday = \App\Models\SaleItem::query()
+            ->select('product_id', \Illuminate\Support\Facades\DB::raw('SUM(quantity) as total_qty'), \Illuminate\Support\Facades\DB::raw('SUM(total) as total_revenue'))
+            ->whereHas('sale', function($q) use ($todayStart, $todayEnd) {
+                $q->whereBetween('sale_date', [$todayStart, $todayEnd])
+                  ->when($this->selectedBranch, function($subQ) {
+                      $subQ->whereExists(function ($query) {
+                          $query->select(\Illuminate\Support\Facades\DB::raw(1))
+                              ->from('users')
+                              ->whereColumn('users.id', 'sales.created_by')
+                              ->where('users.branch_id', $this->selectedBranch);
+                      });
+                  });
+            })
+            ->groupBy('product_id')
+            ->orderByDesc('total_qty')
+            ->with('product') // Eager load product name
+            ->limit(5)
+            ->get();
+
+        // ---------------------------------------------
+        // Stocktake Stats
+        // ---------------------------------------------
+        $stocktakeQuery = \App\Models\Stocktake::query()
+            ->when($this->selectedBranch, function($q) {
+                // Stocktakes are directly linked to store, which belongs to branch?
+                // Wait, Store model doesn't explicitly guarantee branch link in this codebase yet?
+                // However, the `created_by` user DOES have a branch. Let's use that for consistency.
+                $q->whereExists(function ($query) {
+                    $query->select(\Illuminate\Support\Facades\DB::raw(1))
+                        ->from('users')
+                        ->whereColumn('users.id', 'stocktakes.created_by')
+                        ->where('users.branch_id', $this->selectedBranch);
+                });
+            });
+
+        $this->pendingStocktakesCount = (clone $stocktakeQuery)->where('status', 'pending_approval')->count();
+        $this->approvedStocktakesCount = (clone $stocktakeQuery)->where('status', 'completed')->count(); // Completed = Approved
+        $this->rejectedStocktakesCount = (clone $stocktakeQuery)->where('status', 'rejected')->count();
+
+        $this->recentStocktakes = (clone $stocktakeQuery)
+            ->with(['creator', 'store'])
+            ->latest()
+            ->limit(5)
+            ->get();
 
         $this->recentSales = \App\Models\Sale::with('customer')
             ->when($this->selectedBranch, function($q) {

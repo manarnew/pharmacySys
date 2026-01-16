@@ -142,6 +142,14 @@
                         </div>
                     </div>
 
+                    <div class="mt-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Payment Type</label>
+                        <select wire:model="payment_type" class="block w-full rounded-lg border-gray-300 shadow-sm focus:ring-blue-500 sm:text-sm border p-2">
+                            <option value="cash">Cash</option>
+                            <option value="bankak">Bankak</option>
+                        </select>
+                    </div>
+
                     <hr class="my-4 border-gray-100">
 
                     <div class="space-y-3">

@@ -1,4 +1,4 @@
-# pharmacySys
+# pharmacySys EPS
 
 A professional pharmacy management system built with Laravel and Livewire.
 
@@ -22,7 +22,7 @@ A professional pharmacy management system built with Laravel and Livewire.
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/manarnew/pharmacySys.git
+   git clone https://github.com/manarnew/pharmacySys-eps.git
    ```
 2. Install dependencies:
    ```bash

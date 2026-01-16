@@ -81,7 +81,7 @@
                         <div class="h-8 w-8 sm:h-9 sm:w-9 rounded-xl bg-blue-50 flex items-center justify-center mr-2 sm:mr-3">
                             <span class="text-blue-600">👁️</span>
                         </div>
-                        pharmacySys Admin
+                        pharmacySys EPS Admin
                         @endif
                     </h2>
                 </div>
@@ -104,98 +104,7 @@
                 </button>
 
                 <!-- Notifications -->
-                <div class="relative" x-data="{ open: false }">
-                    <button @click="open = !open"
-                        class="p-2.5 rounded-xl text-gray-600 hover:text-gray-900 hover:bg-gray-100/80 transition-all duration-200 relative group">
-                        <span class="sr-only">View notifications</span>
-                        <!-- Bell icon -->
-                        <svg class="h-6 w-6 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2"
-                                d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-                        </svg>
-                        <!-- Notification indicator -->
-                        <span class="absolute top-2 right-2.5 block h-2.5 w-2.5 rounded-full bg-gradient-to-r from-red-500 to-red-400 shadow-lg shadow-red-400/50 border-2 border-white"></span>
-                    </button>
-
-                    <!-- Notifications dropdown -->
-                    <div x-show="open" @click.away="open = false" 
-                         x-transition:enter="transition ease-out duration-150"
-                         x-transition:enter-start="transform opacity-0 scale-95"
-                         x-transition:enter-end="transform opacity-100 scale-100"
-                         x-transition:leave="transition ease-in duration-100"
-                         x-transition:leave-start="transform opacity-100 scale-100"
-                         x-transition:leave-end="transform opacity-0 scale-95"
-                         class="absolute right-0 mt-3 w-[calc(100vw-2rem)] sm:w-96 max-w-sm bg-white rounded-2xl shadow-2xl py-2 z-50 border border-gray-200/80">
-                        <div class="px-5 py-4 border-b border-gray-100">
-                            <h3 class="text-base font-bold text-gray-900 flex items-center">
-                                <span class="mr-2">🔔</span>
-                                Notifications
-                                <span class="ml-auto px-2.5 py-0.5 bg-red-100 text-red-700 text-xs font-bold rounded-full">3</span>
-                            </h3>
-                            <p class="text-sm text-gray-500 mt-1">You have 3 unread notifications</p>
-                        </div>
-                        <div class="max-h-96 overflow-y-auto">
-                            <!-- Notification 1 -->
-                            <a href="#" class="flex items-start px-5 py-4 hover:bg-gray-50/80 border-b border-gray-100/50 transition-colors">
-                                <div class="flex-shrink-0">
-                                    <div class="h-10 w-10 rounded-xl bg-gradient-to-br from-blue-100 to-blue-50 flex items-center justify-center shadow-sm">
-                                        <span class="text-blue-600 text-base">💊</span>
-                                    </div>
-                                </div>
-                                <div class="ml-4 flex-1 min-w-0">
-                                    <p class="text-sm font-semibold text-gray-900">New customer registered</p>
-                                    <p class="text-xs text-gray-500 mt-0.5">John Doe signed up 5 minutes ago</p>
-                                </div>
-                                <div class="ml-3">
-                                    <span class="h-2 w-2 rounded-full bg-blue-500 inline-block animate-pulse"></span>
-                                </div>
-                            </a>
-
-                            <!-- Notification 2 -->
-                            <a href="#" class="flex items-start px-5 py-4 hover:bg-gray-50/80 border-b border-gray-100/50 transition-colors">
-                                <div class="flex-shrink-0">
-                                    <div class="h-10 w-10 rounded-xl bg-gradient-to-br from-green-100 to-green-50 flex items-center justify-center shadow-sm">
-                                        <span class="text-green-600 text-base">📅</span>
-                                    </div>
-                                </div>
-                                <div class="ml-4 flex-1 min-w-0">
-                                    <p class="text-sm font-semibold text-gray-900">Appointment reminder</p>
-                                    <p class="text-xs text-gray-500 mt-0.5">Sarah Smith at 2:00 PM today</p>
-                                </div>
-                                <div class="ml-3">
-                                    <span class="text-xs text-gray-400">1h</span>
-                                </div>
-                            </a>
-
-                            <!-- Notification 3 -->
-                            <a href="#" class="flex items-start px-5 py-4 hover:bg-gray-50/80 transition-colors">
-                                <div class="flex-shrink-0">
-                                    <div class="h-10 w-10 rounded-xl bg-gradient-to-br from-yellow-100 to-yellow-50 flex items-center justify-center shadow-sm">
-                                        <span class="text-yellow-600 text-base">📦</span>
-                                    </div>
-                                </div>
-                                <div class="ml-4 flex-1 min-w-0">
-                                    <p class="text-sm font-semibold text-gray-900">Low stock alert</p>
-                                    <p class="text-xs text-gray-500 mt-0.5">Contact lenses running low</p>
-                                </div>
-                                <div class="ml-3">
-                                    <span class="text-xs text-gray-400">2h</span>
-                                </div>
-                            </a>
-                        </div>
-                        <div class="border-t border-gray-100">
-                            <a href="#"
-                                class="block px-5 py-3 text-sm font-medium text-blue-600 hover:bg-blue-50/50 text-center transition-colors rounded-b-2xl">
-                                <span class="flex items-center justify-center">
-                                    View all notifications
-                                    <svg class="ml-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                                    </svg>
-                                </span>
-                            </a>
-                        </div>
-                    </div>
-                </div>
+                @livewire('admin.partials.header-notifications')
 
                 <!-- User Menu -->
                 <div class="relative" x-data="{ open: false }">

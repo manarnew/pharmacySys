@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>pharmacySys Admin - @yield('title', 'Dashboard')</title>
+    <title>pharmacySys EPS Admin - @yield('title', 'Dashboard')</title>
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 
@@ -81,17 +81,174 @@
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1) !important;
         }
 
+        /* DataTables Styling */
+        /* Header styling - centered text with background */
+        table.dataTable thead th,
+        table thead th {
+            text-align: center !important;
+            background-color: #f8fafc !important;
+            border-bottom: 2px solid #e2e8f0 !important;
+            font-weight: 600 !important;
+            color: #475569 !important;
+            padding: 0.75rem 1rem !important;
+            font-size: 0.75rem !important;
+            text-transform: uppercase !important;
+            letter-spacing: 0.05em !important;
+        }
+
+        /* Body styling - less colorful, centered */
+        table.dataTable tbody td,
+        table tbody td {
+            text-align: center !important;
+            padding: 0.75rem 1rem !important;
+            border-bottom: 1px solid #f1f5f9 !important;
+            color: #64748b !important;
+        }
+
+        /* Allow left alignment for specific columns if needed */
+        table.dataTable tbody td.text-left,
+        table tbody td.text-left {
+            text-align: left !important;
+        }
+
+        table.dataTable tbody tr {
+            background-color: #ffffff !important;
+        }
+
+        table.dataTable tbody tr:hover {
+            background-color: #f8fafc !important;
+        }
+
+        table.dataTable tbody tr.even {
+            background-color: #ffffff !important;
+        }
+
+        table.dataTable tbody tr.odd {
+            background-color: #f8fafc !important;
+        }
+
+        /* Search input - smaller height, placeholder styling */
+        .dataTables_wrapper .dataTables_filter {
+            margin-bottom: 1rem !important;
+        }
+
+        @media (max-width: 640px) {
+            .dataTables_wrapper .dataTables_filter {
+                margin-bottom: 1.5rem !important;
+            }
+        }
+
+        .dataTables_wrapper .dataTables_filter input {
+            height: 32px !important;
+            padding: 0.375rem 0.75rem !important;
+            font-size: 0.875rem !important;
+            border: 1px solid #d1d5db !important;
+            border-radius: 0.375rem !important;
+            margin-left: 0 !important;
+        }
+
+        .dataTables_wrapper .dataTables_filter input::placeholder {
+            color: #94a3b8 !important;
+            opacity: 1 !important;
+        }
+
+        /* Set placeholder text via JavaScript for DataTables */
+        .dataTables_wrapper .dataTables_filter input[type="search"]::placeholder {
+            color: #94a3b8 !important;
+        }
+
+        .dataTables_wrapper .dataTables_filter label {
+            font-size: 0.875rem !important;
+            color: #64748b !important;
+        }
+
+        /* Pagination styling */
+        .dataTables_wrapper .dataTables_paginate {
+            margin-top: 1rem !important;
+        }
+
+        .dataTables_wrapper .dataTables_paginate .paginate_button {
+            padding: 0.375rem 0.75rem !important;
+            margin: 0 0.125rem !important;
+            border: 1px solid #e2e8f0 !important;
+            border-radius: 0.375rem !important;
+            background-color: #ffffff !important;
+            color: #475569 !important;
+            font-size: 0.875rem !important;
+            transition: all 0.2s !important;
+        }
+
+        .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+            background-color: #f1f5f9 !important;
+            border-color: #cbd5e1 !important;
+            color: #1e293b !important;
+        }
+
+        .dataTables_wrapper .dataTables_paginate .paginate_button.current {
+            background-color: #3b82f6 !important;
+            border-color: #3b82f6 !important;
+            color: #ffffff !important;
+        }
+
+        .dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {
+            background-color: #2563eb !important;
+            border-color: #2563eb !important;
+        }
+
+        .dataTables_wrapper .dataTables_paginate .paginate_button.disabled {
+            opacity: 0.5 !important;
+            cursor: not-allowed !important;
+        }
+
+        /* Length select styling */
+        .dataTables_wrapper .dataTables_length select {
+            height: 32px !important;
+            padding: 0.375rem 2rem 0.375rem 0.75rem !important;
+            font-size: 0.875rem !important;
+            border: 1px solid #d1d5db !important;
+            border-radius: 0.375rem !important;
+        }
+
+        /* Info text styling */
+        .dataTables_wrapper .dataTables_info {
+            font-size: 0.875rem !important;
+            color: #64748b !important;
+            padding-top: 0.75rem !important;
+        }
+
+        /* Action buttons - convert to icons */
+        .dataTables_wrapper .dt-buttons {
+            margin-bottom: 1rem !important;
+        }
+
+        .dataTables_wrapper .dt-buttons .dt-button {
+            height: 32px !important;
+            padding: 0.375rem 0.75rem !important;
+            font-size: 0.875rem !important;
+            border-radius: 0.375rem !important;
+        }
+
         /* Responsive DataTables */
         @media (max-width: 640px) {
             .dataTables_wrapper .dataTables_length,
             .dataTables_wrapper .dataTables_filter,
             .dataTables_wrapper .dataTables_info,
             .dataTables_wrapper .dataTables_paginate {
+                display: flex !important;
+                flex-direction: column !important;
+                align-items: center !important;
+                justify-content: center !important;
+                text-align: center !important;
                 margin-top: 0.5rem;
             }
             .dataTables_wrapper .dataTables_paginate .paginate_button {
                 padding: 0.25rem 0.5rem;
                 font-size: 0.75rem;
+            }
+            .dataTables_wrapper .dataTables_filter input {
+                width: 200px !important;
+                margin-left: 0 !important;
+                margin-top: 0.5rem !important;
             }
         }
 
@@ -205,7 +362,7 @@
             <!-- Footer (Optional) -->
             <footer class="bg-white border-t px-4 py-3">
                 <div class="text-center text-sm text-gray-600">
-                    &copy; {{ date('Y') }} pharmacySys. All rights reserved.
+                    &copy; {{ date('Y') }} pharmacySys EPS. All rights reserved.
                 </div>
             </footer>
         </div>

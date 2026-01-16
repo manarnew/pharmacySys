@@ -47,6 +47,11 @@ class RolePermissionSeeder extends Seeder
         // Additional specific permissions
         Permission::findOrCreate('view_dashboard', 'web');
         Permission::findOrCreate('view_reports', 'web');
+        
+        // Stocktake Permissions
+        Permission::findOrCreate('stocktake_view', 'web');
+        Permission::findOrCreate('stocktake_create', 'web');
+        Permission::findOrCreate('stocktake_approve', 'web');
 
         // Create Roles and assign permissions
         $adminRole = Role::findOrCreate('Administrator', 'web');
