@@ -20,6 +20,8 @@ class Dashboard extends Component
     public $recentSales = [];
     public $expenseStats = [];
     public $customerGrowth = [];
+    public $cashMovementData = [];
+    public $cashGrowthData = [];
 
     // Today's Stats
     public $todaySales = 0;
@@ -27,7 +29,7 @@ class Dashboard extends Component
     public $todayExpenses = 0;
     public $todayNetCash = 0;
     public $newCustomersToday = 0;
-    public $topProductsToday = [];
+    public $topProductsSelectedRange = [];
 
     // Stocktake Stats
     public $pendingStocktakesCount = 0;
@@ -48,9 +50,22 @@ class Dashboard extends Component
         $this->loadStats();
     }
 
+    public function updatedSelectedBranch()
+    {
+        $this->loadStats();
+        $this->dispatch('statsUpdated', [
+            'movement' => $this->cashMovementData,
+            'growth' => $this->cashGrowthData
+        ]);
+    }
+
     public function filter()
     {
         $this->loadStats();
+        $this->dispatch('statsUpdated', [
+            'movement' => $this->cashMovementData,
+            'growth' => $this->cashGrowthData
+        ]);
     }
 
     public function loadStats()
@@ -94,10 +109,30 @@ class Dashboard extends Component
 
         $this->totalPurchases = \App\Models\Purchase::query()
             ->whereBetween('purchase_date', [$this->startDate, $this->endDate])
+            ->when($this->selectedBranch, function($q) {
+                $q->whereExists(function ($query) {
+                    $query->select(\Illuminate\Support\Facades\DB::raw(1))
+                        ->from('users')
+                        ->whereColumn('users.id', 'purchases.created_by')
+                        ->where('users.branch_id', $this->selectedBranch);
+                });
+            })
             ->sum('total');
 
-        $this->lowStockCount = \App\Models\Product::whereRaw('(select COALESCE(SUM(quantity), 0) from inventories where product_id = products.id) < reorder_level')
-            ->count();
+        $this->lowStockCount = \App\Models\Product::where(function($q) {
+            $q->selectRaw('COALESCE(SUM(quantity), 0)')
+              ->from('inventories')
+              ->whereColumn('product_id', 'products.id')
+              ->when($this->selectedBranch, function($subQ) {
+                  $subQ->whereExists(function ($query) {
+                      $query->select(\Illuminate\Support\Facades\DB::raw(1))
+                          ->from('stores')
+                          ->whereColumn('stores.id', 'inventories.store_id')
+                          ->where('stores.branch_id', $this->selectedBranch);
+                  });
+              });
+        }, '<', \Illuminate\Support\Facades\DB::raw('reorder_level'))
+        ->count();
 
         // ---------------------------------------------
         // Today's Highlights Calculation
@@ -140,11 +175,11 @@ class Dashboard extends Component
             })
             ->count();
 
-        // Top 5 Products Today
-        $this->topProductsToday = \App\Models\SaleItem::query()
+        // Top 5 Products in Selected Range
+        $this->topProductsSelectedRange = \App\Models\SaleItem::query()
             ->select('product_id', \Illuminate\Support\Facades\DB::raw('SUM(quantity) as total_qty'), \Illuminate\Support\Facades\DB::raw('SUM(total) as total_revenue'))
-            ->whereHas('sale', function($q) use ($todayStart, $todayEnd) {
-                $q->whereBetween('sale_date', [$todayStart, $todayEnd])
+            ->whereHas('sale', function($q) {
+                $q->whereBetween('sale_date', [$this->startDate, $this->endDate])
                   ->when($this->selectedBranch, function($subQ) {
                       $subQ->whereExists(function ($query) {
                           $query->select(\Illuminate\Support\Facades\DB::raw(1))
@@ -227,6 +262,70 @@ class Dashboard extends Component
             ->groupBy(\Illuminate\Support\Facades\DB::raw('DATE(created_at)'))
             ->orderBy('date')
             ->get();
+
+        // ---------------------------------------------
+        // Cash Movement Data (Combo Chart)
+        // ---------------------------------------------
+        $dates = [];
+        $saleData = [];
+        $expenseData = [];
+        $netCashData = [];
+        $cumulativeData = [];
+        $currentCumulative = 0;
+
+        $period = new \DatePeriod(
+            new \DateTime($this->startDate),
+            new \DateInterval('P1D'),
+            (new \DateTime($this->endDate))->modify('+1 day')
+        );
+
+        $dailySales = \App\Models\Sale::query()
+            ->select(\Illuminate\Support\Facades\DB::raw('DATE(sale_date) as date'), \Illuminate\Support\Facades\DB::raw('SUM(total) as total'))
+            ->whereBetween('sale_date', [$this->startDate, $this->endDate])
+            ->when($this->selectedBranch, function($q) {
+                $q->whereExists(function ($query) {
+                    $query->select(\Illuminate\Support\Facades\DB::raw(1))
+                        ->from('users')
+                        ->whereColumn('users.id', 'sales.created_by')
+                        ->where('users.branch_id', $this->selectedBranch);
+                });
+            })
+            ->groupBy('date')
+            ->pluck('total', 'date');
+
+        $dailyExpenses = Expense::query()
+            ->select('date', \Illuminate\Support\Facades\DB::raw('SUM(amount) as total'))
+            ->whereBetween('date', [$this->startDate, $this->endDate])
+            ->groupBy('date')
+            ->pluck('total', 'date');
+
+        foreach ($period as $date) {
+            $dateString = $date->format('Y-m-d');
+            $dates[] = $date->format('M d');
+            
+            $s = (float)($dailySales[$dateString] ?? 0);
+            $e = (float)($dailyExpenses[$dateString] ?? 0);
+            $net = $s - $e;
+            
+            $saleData[] = $s;
+            $expenseData[] = $e;
+            $netCashData[] = $net;
+            
+            $currentCumulative += $net;
+            $cumulativeData[] = $currentCumulative;
+        }
+
+        $this->cashMovementData = [
+            'labels' => $dates,
+            'sales' => $saleData,
+            'expenses' => $expenseData,
+            'netCash' => $netCashData,
+        ];
+
+        $this->cashGrowthData = [
+            'labels' => $dates,
+            'data' => $cumulativeData,
+        ];
     }
 
     #[Layout('layouts.admin')]

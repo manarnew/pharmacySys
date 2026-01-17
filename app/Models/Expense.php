@@ -11,8 +11,19 @@ class Expense extends Model
     use HasFactory;
 
     protected $fillable = [
+        'shift_id',
         'reason',
         'amount',
         'date',
     ];
+
+    protected $casts = [
+        'date' => 'date',
+        'amount' => 'decimal:2',
+    ];
+
+    public function shift()
+    {
+        return $this->belongsTo(Shift::class);
+    }
 }

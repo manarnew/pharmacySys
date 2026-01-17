@@ -97,40 +97,40 @@
                         <span class="text-[10px] font-bold bg-gray-100 px-2 py-1 rounded text-gray-500 uppercase">Recent 50 Entries</span>
                     </div>
                     <div class="overflow-x-auto">
-                        <table class="w-full text-left">
+                        <table class="w-full text-center">
                             <thead class="bg-gray-50/50">
                                 <tr>
-                                    <th class="px-6 py-4 text-[10px] font-bold text-gray-500 uppercase tracking-widest border-b border-gray-100">Date</th>
-                                    <th class="px-6 py-4 text-[10px] font-bold text-gray-500 uppercase tracking-widest border-b border-gray-100">Type</th>
-                                    <th class="px-6 py-4 text-[10px] font-bold text-gray-500 uppercase tracking-widest border-b border-gray-100">In / Out</th>
-                                    <th class="px-6 py-4 text-[10px] font-bold text-gray-500 uppercase tracking-widest border-b border-gray-100">Balance</th>
-                                    <th class="px-6 py-4 text-[10px] font-bold text-gray-500 uppercase tracking-widest border-b border-gray-100">Ref / User</th>
+                                    <th class="px-6 py-4 text-[10px] font-bold text-gray-500 uppercase tracking-widest border-b border-gray-100 text-center">Date</th>
+                                    <th class="px-6 py-4 text-[10px] font-bold text-gray-500 uppercase tracking-widest border-b border-gray-100 text-center">Type</th>
+                                    <th class="px-6 py-4 text-[10px] font-bold text-gray-500 uppercase tracking-widest border-b border-gray-100 text-center">In / Out</th>
+                                    <th class="px-6 py-4 text-[10px] font-bold text-gray-500 uppercase tracking-widest border-b border-gray-100 text-center">Balance</th>
+                                    <th class="px-6 py-4 text-[10px] font-bold text-gray-500 uppercase tracking-widest border-b border-gray-100 text-center">Ref / User</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-50">
                                 @forelse($movements as $mov)
                                 <tr class="hover:bg-gray-50/30 transition-colors">
-                                    <td class="px-6 py-4 whitespace-nowrap">
+                                    <td class="px-6 py-4 whitespace-nowrap text-center">
                                         <div class="text-sm font-semibold text-gray-900">{{ $mov->created_at->format('Y-m-d') }}</div>
                                         <div class="text-[10px] text-gray-400 uppercase tracking-tighter">{{ $mov->created_at->format('H:i') }}</div>
                                     </td>
-                                    <td class="px-6 py-4">
+                                    <td class="px-6 py-4 text-center">
                                         <span class="inline-flex items-center px-2 py-0.5 rounded-lg text-xs font-bold uppercase tracking-widest
                                             @if($mov->type == 'purchase') bg-blue-50 text-blue-700 @elseif($mov->type == 'sale') bg-orange-50 text-orange-700 @else bg-purple-50 text-purple-700 @endif">
                                             {{ str_replace('_', ' ', $mov->type) }}
                                         </span>
                                     </td>
-                                    <td class="px-6 py-4">
+                                    <td class="px-6 py-4 text-center">
                                         @if($mov->quantity_in > 0)
                                             <span class="text-emerald-600 font-black">+{{ $mov->quantity_in }}</span>
                                         @else
                                             <span class="text-red-500 font-black">-{{ $mov->quantity_out }}</span>
                                         @endif
                                     </td>
-                                    <td class="px-6 py-4 font-bold text-gray-900">
+                                    <td class="px-6 py-4 font-bold text-gray-900 text-center">
                                         {{ $mov->balance }}
                                     </td>
-                                    <td class="px-6 py-4">
+                                    <td class="px-6 py-4 text-center">
                                         <div class="text-xs font-medium text-gray-700">{{ $mov->notes }}</div>
                                         <div class="text-[10px] text-gray-400 capitalize">{{ $mov->creator->name ?? 'System' }}</div>
                                     </td>

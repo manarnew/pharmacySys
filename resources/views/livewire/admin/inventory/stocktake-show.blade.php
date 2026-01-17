@@ -3,7 +3,7 @@
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div>
             <div class="flex items-center space-x-3">
-                <h1 class="text-2xl font-bold tracking-tight text-gray-900">Stocktake Report</h1>
+                <h1 class="text-2xl font-bold tracking-tight text-gray-900">{{ __('Stocktake Report') }}</h1>
                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium 
                     {{ $stocktake->status === 'completed' ? 'bg-green-100 text-green-800' : 
                        ($stocktake->status === 'pending_approval' ? 'bg-yellow-100 text-yellow-800' : 
@@ -11,19 +11,19 @@
                     {{ ucfirst(str_replace('_', ' ', $stocktake->status)) }}
                 </span>
             </div>
-            <p class="mt-1 text-sm text-gray-500">Reference: <span class="font-mono font-medium">{{ $stocktake->reference }}</span></p>
+            <p class="mt-1 text-sm text-gray-500">{{ __('Reference') }}: <span class="font-mono font-medium">{{ $stocktake->reference }}</span></p>
         </div>
         <div class="flex items-center space-x-3">
             <a href="{{ route('admin.stocktakes.index') }}" class="inline-flex items-center rounded-lg bg-white px-3 py-2 text-sm font-medium text-gray-700 shadow-sm border border-gray-300 hover:bg-gray-50 transition-colors">
-                Back to List
+                {{ __('Back to List') }}
             </a>
             
             @if($stocktake->status === 'pending_approval' && auth()->user()->can('stocktake_approve'))
-                <button wire:click="reject" wire:confirm="Are you sure you want to REJECT this stocktake?" class="inline-flex items-center rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-red-700 transition-colors focus:ring-2 focus:ring-red-500 focus:ring-offset-2">
-                    Reject
+                <button wire:click="reject" wire:confirm="{{ __('Are you sure you want to REJECT this stocktake?') }}" class="inline-flex items-center rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-red-700 transition-colors focus:ring-2 focus:ring-red-500 focus:ring-offset-2">
+                    {{ __('Reject') }}
                 </button>
-                <button wire:click="approve" wire:confirm="Are you sure? This will update the LIVE inventory." class="inline-flex items-center rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-green-700 transition-colors focus:ring-2 focus:ring-green-500 focus:ring-offset-2">
-                    Approve & Adjust Stock
+                <button wire:click="approve" wire:confirm="{{ __('Are you sure? This will update the LIVE inventory.') }}" class="inline-flex items-center rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-green-700 transition-colors focus:ring-2 focus:ring-green-500 focus:ring-offset-2">
+                    {{ __('Approve & Adjust Stock') }}
                 </button>
             @endif
         </div>
@@ -44,20 +44,20 @@
     <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
         <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
             <div>
-                <dt class="text-xs font-medium text-gray-500 uppercase tracking-wider">Store</dt>
+                <dt class="text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('Store') }}</dt>
                 <dd class="mt-1 text-sm font-semibold text-gray-900">{{ $stocktake->store->name }}</dd>
             </div>
             <div>
-                <dt class="text-xs font-medium text-gray-500 uppercase tracking-wider">Date</dt>
+                <dt class="text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('Date') }}</dt>
                 <dd class="mt-1 text-sm font-semibold text-gray-900">{{ $stocktake->date->format('Y-m-d') }}</dd>
             </div>
             <div>
-                <dt class="text-xs font-medium text-gray-500 uppercase tracking-wider">Created By</dt>
+                <dt class="text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('Created By') }}</dt>
                 <dd class="mt-1 text-sm font-semibold text-gray-900">{{ $stocktake->creator->name }}</dd>
             </div>
             @if($stocktake->approved_by)
             <div>
-                <dt class="text-xs font-medium text-gray-500 uppercase tracking-wider">Approved By</dt>
+                <dt class="text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('Approved By') }}</dt>
                 <dd class="mt-1 text-sm font-semibold text-gray-900">
                     {{ $stocktake->approver->name }} <br>
                     <span class="text-xs font-normal text-gray-500">{{ $stocktake->approved_at->diffForHumans() }}</span>
@@ -67,7 +67,7 @@
         </div>
         @if($stocktake->notes)
             <div class="mt-6 pt-4 border-t border-gray-100">
-                <dt class="text-xs font-medium text-gray-500 uppercase tracking-wider">Notes</dt>
+                <dt class="text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('Notes') }}</dt>
                 <dd class="mt-1 text-sm text-gray-700 whitespace-pre-wrap">{{ $stocktake->notes }}</dd>
             </div>
         @endif
@@ -76,17 +76,17 @@
     <!-- Items Table -->
     <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
         <div class="p-4 border-b border-gray-100 bg-gray-50">
-            <h3 class="text-lg font-semibold text-gray-900">Count Details</h3>
+            <h3 class="text-lg font-semibold text-gray-900">{{ __('Count Details') }}</h3>
         </div>
         <div class="overflow-x-auto">
             <table class="min-w-full divide-y divide-gray-200">
                 <thead class="bg-gray-50">
                     <tr>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Product</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Batch</th>
-                        <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">System</th>
-                        <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Actual</th>
-                        <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Diff</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('Product') }}</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('Batch') }}</th>
+                        <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('System') }}</th>
+                        <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('Actual') }}</th>
+                        <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('Diff') }}</th>
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200">

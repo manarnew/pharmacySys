@@ -11,7 +11,14 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+        $middleware->web(append: [
+            \App\Http\Middleware\SetLocale::class,
+        ]);
+        
+        // Register middleware aliases
+        $middleware->alias([
+            'require_open_shift' => \App\Http\Middleware\RequireOpenShift::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

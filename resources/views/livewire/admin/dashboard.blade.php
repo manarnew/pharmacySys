@@ -8,24 +8,24 @@
         <div class="flex flex-col sm:flex-row flex-wrap gap-2 sm:gap-4 bg-white p-3 sm:p-4 rounded-xl shadow-sm border border-slate-200 items-stretch sm:items-center w-full md:w-auto">
             <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-4 w-full sm:w-auto">
                 <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2 w-full sm:w-auto">
-                    <span class="text-slate-500 font-bold uppercase tracking-wider text-[10px] whitespace-nowrap sm:whitespace-normal">Branch:</span>
+                    <span class="text-slate-500 font-bold uppercase tracking-wider text-[10px] whitespace-nowrap sm:whitespace-normal">{{ __('Branch:') }}</span>
                     <select wire:model.live="selectedBranch" class="border-slate-200 bg-slate-50 focus:border-blue-400 focus:ring-blue-400 focus:bg-white rounded-lg shadow-sm text-sm h-9 w-full sm:min-w-[150px] text-slate-600">
-                        <option value="">All Branches</option>
+                        <option value="">{{ __('All Branches') }}</option>
                         @foreach($branches as $branch)
                             <option value="{{ $branch->id }}">{{ $branch->name }}</option>
                         @endforeach
                     </select>
                 </div>
                 <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2 w-full sm:w-auto">
-                    <span class="text-slate-500 font-bold uppercase tracking-wider text-[10px] whitespace-nowrap sm:whitespace-normal">From:</span>
+                    <span class="text-slate-500 font-bold uppercase tracking-wider text-[10px] whitespace-nowrap sm:whitespace-normal">{{ __('From:') }}</span>
                     <input type="date" wire:model="startDate" class="border-slate-300 focus:border-blue-500 focus:ring-blue-500 rounded-lg shadow-sm text-sm h-9 w-full sm:w-auto text-slate-700">
                 </div>
                 <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2 w-full sm:w-auto">
-                    <span class="text-slate-500 font-bold uppercase tracking-wider text-[10px] whitespace-nowrap sm:whitespace-normal">To:</span>
+                    <span class="text-slate-500 font-bold uppercase tracking-wider text-[10px] whitespace-nowrap sm:whitespace-normal">{{ __('To:') }}</span>
                     <input type="date" wire:model="endDate" class="border-slate-300 focus:border-blue-500 focus:ring-blue-500 rounded-lg shadow-sm text-sm h-9 w-full sm:w-auto text-slate-700">
                 </div>
                 <button wire:click="filter" class="bg-blue-500 text-white px-4 sm:px-6 py-2 h-9 rounded-lg text-sm font-medium hover:bg-blue-600 transition shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 w-full sm:w-auto">
-                    Update
+                    {{ __('Update') }}
                 </button>
             </div>
         </div>
@@ -33,7 +33,7 @@
 
     <!-- Today's Highlights -->
     <div class="mb-8">
-        <h3 class="text-sm font-bold text-slate-500 uppercase tracking-wider mb-4">Today's Highlights</h3>
+        <h3 class="text-sm font-bold text-slate-500 uppercase tracking-wider mb-4">{{ __('Today\'s Highlights') }}</h3>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <!-- Today's Sales -->
             <div class="bg-gradient-to-br from-blue-400 to-blue-500 rounded-xl p-4 text-white shadow-md">
@@ -45,7 +45,7 @@
                     </div>
                     <span class="text-xs font-medium bg-blue-600/50 px-2 py-1 rounded-full">Today</span>
                 </div>
-                <p class="text-blue-50 text-xs font-medium mb-1">Sales Revenue</p>
+                <p class="text-blue-50 text-xs font-medium mb-1">{{ __('Sales Revenue') }}</p>
                 <p class="text-2xl font-bold">${{ number_format($todaySales, 2) }}</p>
             </div>
 
@@ -58,10 +58,10 @@
                         </svg>
                     </div>
                 </div>
-                <p class="text-slate-500 text-xs font-medium mb-1">Transactions</p>
+                <p class="text-slate-500 text-xs font-medium mb-1">{{ __('Transactions') }}</p>
                 <div class="flex items-baseline space-x-2">
                     <p class="text-2xl font-bold text-slate-800">{{ $todayTransactions }}</p>
-                    <span class="text-xs text-slate-400">orders</span>
+                    <span class="text-xs text-slate-400">{{ __('orders') }}</span>
                 </div>
             </div>
 
@@ -74,7 +74,7 @@
                         </svg>
                     </div>
                 </div>
-                <p class="text-slate-500 text-xs font-medium mb-1">Net Cash Trend</p>
+                <p class="text-slate-500 text-xs font-medium mb-1">{{ __('Net Cash Trend') }}</p>
                 <p class="text-2xl font-bold {{ $todayNetCash >= 0 ? 'text-emerald-600' : 'text-rose-600' }}">
                     {{ $todayNetCash >= 0 ? '+' : '' }}${{ number_format($todayNetCash, 2) }}
                 </p>
@@ -89,10 +89,10 @@
                         </svg>
                     </div>
                 </div>
-                <p class="text-cyan-50 text-xs font-medium mb-1">New Customers</p>
+                <p class="text-cyan-50 text-xs font-medium mb-1">{{ __('New Customers') }}</p>
                 <div class="flex items-baseline space-x-2">
                     <p class="text-2xl font-bold">{{ $newCustomersToday }}</p>
-                    <span class="text-xs text-cyan-50">registered</span>
+                    <span class="text-xs text-cyan-50">{{ __('registered') }}</span>
                 </div>
             </div>
         </div>
@@ -109,7 +109,7 @@
                     </svg>
                 </div>
                 <div>
-                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Total Sales</p>
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{{ __('Total Sales') }}</p>
                     <p class="text-xl font-bold text-slate-800">${{ number_format($totalSales, 2) }}</p>
                 </div>
             </div>
@@ -124,7 +124,7 @@
                     </svg>
                 </div>
                 <div>
-                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Total Purchases</p>
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{{ __('Total Purchases') }}</p>
                     <p class="text-xl font-bold text-slate-800">${{ number_format($totalPurchases, 2) }}</p>
                 </div>
             </div>
@@ -139,7 +139,7 @@
                     </svg>
                 </div>
                 <div>
-                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Expenses</p>
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{{ __('Expenses') }}</p>
                     <p class="text-xl font-bold text-slate-800">${{ number_format($totalExpenses, 2) }}</p>
                 </div>
             </div>
@@ -154,7 +154,7 @@
                     </svg>
                 </div>
                 <div>
-                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Low Stock Items</p>
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{{ __('Low Stock Items') }}</p>
                     <p class="text-xl font-bold text-slate-800">{{ $lowStockCount }}</p>
                 </div>
             </div>
@@ -164,32 +164,58 @@
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <!-- Main Stats / Charts -->
         <div class="lg:col-span-2 space-y-8">
-            <!-- Top Selling Products Today -->
+            <!-- Top Selling Products -->
             <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
                 <div class="flex justify-between items-center mb-6">
                     <div>
-                        <h3 class="text-lg font-bold text-slate-800">Top Selling Products Today</h3>
-                        <p class="text-xs text-slate-400">By quantity sold</p>
+                        <h3 class="text-lg font-bold text-slate-800">{{ __('Top Selling Products') }}</h3>
+                        <p class="text-xs text-slate-400">{{ __('By quantity sold') }}</p>
                     </div>
                 </div>
                 <div class="space-y-4">
-                    @forelse($topProductsToday as $item)
+                    @forelse($topProductsSelectedRange as $item)
                     <div class="relative">
                         <div class="flex justify-between text-sm font-medium text-slate-700 mb-1 z-10 relative">
                             <span>{{ $item->product->name }}</span>
-                            <span class="font-bold">{{ $item->total_qty }} sold</span>
+                            <span class="font-bold">{{ $item->total_qty }} {{ __('sold') }}</span>
                         </div>
                         <div class="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden">
                             @php
-                                $maxQty = $topProductsToday->max('total_qty');
+                                $maxQty = $topProductsSelectedRange->max('total_qty');
                                 $percentage = $maxQty > 0 ? ($item->total_qty / $maxQty) * 100 : 0;
                             @endphp
                             <div class="bg-gradient-to-r from-blue-400 to-cyan-400 h-2.5 rounded-full" style="width: {{ $percentage }}%"></div>
                         </div>
                     </div>
                     @empty
-                        <div class="text-center text-slate-400 py-4 italic text-sm">No sales recorded today</div>
+                        <div class="text-center text-slate-400 py-4 italic text-sm">{{ __('No sales recorded for this period') }}</div>
                     @endforelse
+                </div>
+            </div>
+
+            <!-- Cash Movement Analysis -->
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <div>
+                        <h3 class="text-lg font-bold text-slate-800">{{ __('Cash Movement Analysis') }}</h3>
+                        <p class="text-xs text-slate-400">{{ __('Comparison of sales, expenses and net cash') }}</p>
+                    </div>
+                </div>
+                <div class="relative h-80" wire:ignore>
+                    <canvas id="cashMovementChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Cash Growth Trend -->
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <div>
+                        <h3 class="text-lg font-bold text-slate-800">{{ __('Cash Growth Trend') }}</h3>
+                        <p class="text-xs text-slate-400">{{ __('Cumulative net cash balance over time') }}</p>
+                    </div>
+                </div>
+                <div class="relative h-80" wire:ignore>
+                    <canvas id="cashGrowthChart"></canvas>
                 </div>
             </div>
 
@@ -197,7 +223,7 @@
             <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
                 <div class="flex justify-between items-center mb-6">
                     <div>
-                        <h3 class="text-lg font-bold text-slate-800">Customer Growth</h3>
+                        <h3 class="text-lg font-bold text-slate-800">{{ __('Customer Growth') }}</h3>
                         <p class="text-xs text-slate-400">Total customers: {{ $totalCustomers }}</p>
                     </div>
                 </div>
@@ -218,27 +244,29 @@
             <!-- Recent Sales Table -->
             <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
                 <div class="p-4 sm:p-6 border-b border-slate-100">
-                    <h3 class="text-base sm:text-lg font-bold text-slate-800">Recent Sales</h3>
+                    <h3 class="text-base sm:text-lg font-bold text-slate-800">{{ __('Recent Sales') }}</h3>
                 </div>
                 <div class="overflow-x-auto -mx-4 sm:mx-0">
                     <div class="inline-block min-w-full align-middle px-4 sm:px-0">
                         <table class="min-w-full divide-y divide-slate-200">
                         <thead class="bg-slate-50">
                             <tr>
-                                <th class="px-3 sm:px-6 py-3 text-center text-[10px] font-bold text-slate-500 uppercase tracking-widest">Invoice</th>
-                                <th class="px-3 sm:px-6 py-3 text-center text-[10px] font-bold text-slate-500 uppercase tracking-widest hidden sm:table-cell">Customer</th>
-                                <th class="px-3 sm:px-6 py-3 text-center text-[10px] font-bold text-slate-500 uppercase tracking-widest">Total</th>
-                                <th class="px-3 sm:px-6 py-3 text-center text-[10px] font-bold text-slate-500 uppercase tracking-widest">Status</th>
+                                <th class="px-3 sm:px-6 py-3 text-center text-[10px] font-bold text-slate-500 uppercase tracking-widest">{{ __('Invoice') }}</th>
+                                <th class="px-3 sm:px-6 py-3 text-center text-[10px] font-bold text-slate-500 uppercase tracking-widest hidden sm:table-cell">{{ __('Customer') }}</th>
+                                <th class="px-3 sm:px-6 py-3 text-center text-[10px] font-bold text-slate-500 uppercase tracking-widest">{{ __('Total') }}</th>
+                                <th class="px-3 sm:px-6 py-3 text-center text-[10px] font-bold text-slate-500 uppercase tracking-widest">{{ __('Status') }}</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-100">
                             @foreach($recentSales as $sale)
                             <tr class="hover:bg-slate-50 transition-colors">
                                 <td class="px-3 sm:px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-700 text-center">
-                                    <div>#{{ $sale->invoice_no }}</div>
-                                    <div class="text-xs text-slate-500 sm:hidden">{{ $sale->customer->name ?? 'Walk-in' }}</div>
+                                    <a href="{{ route('admin.sales.print', $sale) }}" target="_blank" class="text-blue-600 hover:text-blue-800 hover:underline">
+                                        #{{ $sale->invoice_no }}
+                                    </a>
+                                    <div class="text-xs text-slate-500 sm:hidden">{{ $sale->customer->name ?? __('Walk-in') }}</div>
                                 </td>
-                                <td class="px-3 sm:px-6 py-4 whitespace-nowrap text-sm text-slate-600 hidden sm:table-cell text-center">{{ $sale->customer->name ?? 'Walk-in' }}</td>
+                                <td class="px-3 sm:px-6 py-4 whitespace-nowrap text-sm text-slate-600 hidden sm:table-cell text-center">{{ $sale->customer->name ?? __('Walk-in') }}</td>
                                 <td class="px-3 sm:px-6 py-4 whitespace-nowrap text-sm font-bold text-blue-500 text-center">${{ number_format($sale->total, 2) }}</td>
                                 <td class="px-3 sm:px-6 py-4 whitespace-nowrap text-center">
                                     <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium {{ $sale->payment_status === 'paid' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700' }}">
@@ -257,18 +285,18 @@
             @if(count($recentStocktakes) > 0)
             <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
                 <div class="p-4 sm:p-6 border-b border-slate-100 flex justify-between items-center">
-                    <h3 class="text-base sm:text-lg font-bold text-slate-800">Recent Stocktakes</h3>
-                    <a href="{{ route('admin.stocktakes.index') }}" class="text-sm font-medium text-blue-600 hover:text-blue-800">View All</a>
+                    <h3 class="text-base sm:text-lg font-bold text-slate-800">{{ __('Recent Stocktakes') }}</h3>
+                    <a href="{{ route('admin.stocktakes.index') }}" class="text-sm font-medium text-blue-600 hover:text-blue-800">{{ __('View All') }}</a>
                 </div>
                 <div class="overflow-x-auto -mx-4 sm:mx-0">
                     <div class="inline-block min-w-full align-middle px-4 sm:px-0">
                         <table class="min-w-full divide-y divide-slate-200">
                         <thead class="bg-slate-50">
                             <tr>
-                                <th class="px-3 sm:px-6 py-3 text-center text-[10px] font-bold text-slate-500 uppercase tracking-widest">Ref</th>
-                                <th class="px-3 sm:px-6 py-3 text-center text-[10px] font-bold text-slate-500 uppercase tracking-widest hidden sm:table-cell">Store</th>
-                                <th class="px-3 sm:px-6 py-3 text-center text-[10px] font-bold text-slate-500 uppercase tracking-widest">Date</th>
-                                <th class="px-3 sm:px-6 py-3 text-center text-[10px] font-bold text-slate-500 uppercase tracking-widest">Status</th>
+                                <th class="px-3 sm:px-6 py-3 text-center text-[10px] font-bold text-slate-500 uppercase tracking-widest">{{ __('Ref') }}</th>
+                                <th class="px-3 sm:px-6 py-3 text-center text-[10px] font-bold text-slate-500 uppercase tracking-widest hidden sm:table-cell">{{ __('Store') }}</th>
+                                <th class="px-3 sm:px-6 py-3 text-center text-[10px] font-bold text-slate-500 uppercase tracking-widest">{{ __('Date') }}</th>
+                                <th class="px-3 sm:px-6 py-3 text-center text-[10px] font-bold text-slate-500 uppercase tracking-widest">{{ __('Status') }}</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-100">
@@ -305,7 +333,7 @@
                 <!-- Stocktake Actions -->
                 @if($pendingStocktakesCount > 0 || $approvedStocktakesCount > 0 || $rejectedStocktakesCount > 0)
                 <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
-                    <h3 class="text-sm font-bold text-slate-500 uppercase tracking-wider mb-4">Stocktake Status</h3>
+                    <h3 class="text-sm font-bold text-slate-500 uppercase tracking-wider mb-4">{{ __('Stocktake Status') }}</h3>
                     <div class="space-y-4">
                         <!-- Pending -->
                         <div class="flex items-center justify-between p-3 bg-yellow-50 rounded-lg border border-yellow-100">
@@ -315,7 +343,7 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                                     </svg>
                                 </div>
-                                <span class="text-sm font-medium text-slate-700">Pending</span>
+                                <span class="text-sm font-medium text-slate-700">{{ __('Pending') }}</span>
                             </div>
                             <span class="text-lg font-bold text-yellow-700">{{ $pendingStocktakesCount }}</span>
                         </div>
@@ -328,7 +356,7 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                                     </svg>
                                 </div>
-                                <span class="text-sm font-medium text-slate-700">Approved</span>
+                                <span class="text-sm font-medium text-slate-700">{{ __('Approved') }}</span>
                             </div>
                             <span class="text-lg font-bold text-green-700">{{ $approvedStocktakesCount }}</span>
                         </div>
@@ -341,7 +369,7 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
                                     </svg>
                                 </div>
-                                <span class="text-sm font-medium text-slate-700">Rejected</span>
+                                <span class="text-sm font-medium text-slate-700">{{ __('Rejected') }}</span>
                             </div>
                             <span class="text-lg font-bold text-red-700">{{ $rejectedStocktakesCount }}</span>
                         </div>
@@ -353,7 +381,7 @@
                 <div class="bg-indigo-500 rounded-xl p-6 shadow-md text-white">
                     <div class="flex justify-between items-start">
                         <div>
-                            <p class="text-[10px] font-bold text-indigo-50 uppercase tracking-widest mb-1">Active Branches</p>
+                            <p class="text-[10px] font-bold text-indigo-50 uppercase tracking-widest mb-1">{{ __('Active Branches') }}</p>
                             <p class="text-3xl font-black">{{ $activeBranches }}</p>
                         </div>
                         <div class="p-2 bg-indigo-400/50 rounded-lg">
@@ -368,7 +396,7 @@
                 <div class="bg-purple-500 rounded-xl p-6 shadow-md text-white">
                     <div class="flex justify-between items-start">
                         <div>
-                            <p class="text-[10px] font-bold text-purple-50 uppercase tracking-widest mb-1">Total Users</p>
+                            <p class="text-[10px] font-bold text-purple-50 uppercase tracking-widest mb-1">{{ __('Total Users') }}</p>
                             <p class="text-3xl font-black">{{ $totalUsers }}</p>
                         </div>
                         <div class="p-2 bg-purple-400/50 rounded-lg">
@@ -382,3 +410,208 @@
         </div>
     </div>
 </div>
+
+@push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    function initCashMovementChart(data) {
+        const ctx = document.getElementById('cashMovementChart');
+        if (!ctx) return;
+
+        const existingChart = Chart.getChart(ctx);
+        if (existingChart) {
+            existingChart.destroy();
+        }
+
+        if (!data) {
+            data = @json($cashMovementData);
+        }
+
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: data.labels,
+                datasets: [
+                    {
+                        label: '{{ __('Sales') }}',
+                        data: data.sales,
+                        backgroundColor: 'rgba(59, 130, 246, 0.7)',
+                        borderColor: 'rgb(59, 130, 246)',
+                        borderWidth: 1,
+                        borderRadius: 4,
+                        order: 2
+                    },
+                    {
+                        label: '{{ __('Expenses') }}',
+                        data: data.expenses,
+                        backgroundColor: 'rgba(244, 63, 94, 0.7)',
+                        borderColor: 'rgb(244, 63, 94)',
+                        borderWidth: 1,
+                        borderRadius: 4,
+                        order: 2
+                    },
+                    {
+                        label: '{{ __('Net Cash') }}',
+                        data: data.netCash,
+                        type: 'line',
+                        borderColor: '#8b5cf6',
+                        backgroundColor: '#8b5cf6',
+                        borderWidth: 3,
+                        pointBackgroundColor: '#8b5cf6',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2,
+                        pointRadius: 4,
+                        pointHoverRadius: 6,
+                        fill: false,
+                        tension: 0.4,
+                        order: 1
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            usePointStyle: true,
+                            padding: 20,
+                            font: {
+                                size: 11
+                            }
+                        }
+                    },
+                    tooltip: {
+                        padding: 12,
+                        backgroundColor: 'rgba(15, 23, 42, 0.9)',
+                        titleFont: { size: 13 },
+                        bodyFont: { size: 12 },
+                        cornerRadius: 8,
+                        mode: 'index',
+                        intersect: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: '#f1f5f9'
+                        },
+                        ticks: {
+                            font: { size: 10 },
+                            callback: function(value) {
+                                return '$' + value;
+                            }
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        },
+                        ticks: {
+                            font: { size: 10 }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    function initCashGrowthChart(data) {
+        const ctx = document.getElementById('cashGrowthChart');
+        if (!ctx) return;
+
+        const existingChart = Chart.getChart(ctx);
+        if (existingChart) {
+            existingChart.destroy();
+        }
+
+        if (!data) {
+            data = @json($cashGrowthData);
+        }
+
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: data.labels,
+                datasets: [
+                    {
+                        label: '{{ __('Cumulative Balance') }}',
+                        data: data.data,
+                        fill: true,
+                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                        borderColor: '#10b981',
+                        borderWidth: 3,
+                        pointBackgroundColor: '#10b981',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2,
+                        pointRadius: 4,
+                        pointHoverRadius: 6,
+                        tension: 0.4
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            usePointStyle: true,
+                            padding: 20
+                        }
+                    },
+                    tooltip: {
+                        padding: 12,
+                        backgroundColor: 'rgba(15, 23, 42, 0.9)',
+                        mode: 'index',
+                        intersect: false,
+                        callbacks: {
+                            label: function(context) {
+                                return context.dataset.label + ': $' + context.parsed.y.toLocaleString();
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: { color: '#f1f5f9' },
+                        ticks: {
+                            callback: function(value) {
+                                return '$' + value;
+                            }
+                        }
+                    },
+                    x: {
+                        grid: { display: false }
+                    }
+                }
+            }
+        });
+    }
+
+    document.addEventListener('livewire:navigated', () => {
+        setTimeout(() => {
+            initCashMovementChart();
+            initCashGrowthChart();
+            initTopProductsChart();
+        }, 100);
+    });
+    
+    document.addEventListener('livewire:initialized', () => {
+        initCashMovementChart();
+        initCashGrowthChart();
+        
+        Livewire.on('statsUpdated', (eventData) => {
+            const data = eventData[0];
+            setTimeout(() => {
+                initCashMovementChart(data.movement);
+                initCashGrowthChart(data.growth);
+            }, 100);
+        });
+    });
+</script>
+@endpush

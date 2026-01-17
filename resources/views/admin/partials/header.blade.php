@@ -6,7 +6,7 @@
                 <!-- Mobile menu button -->
                 <button @click="sidebarOpen = !sidebarOpen"
                     class="lg:hidden p-2.5 rounded-xl text-gray-600 hover:text-gray-900 hover:bg-gray-100/80 transition-all duration-200 z-50 relative">
-                    <span class="sr-only">Toggle sidebar</span>
+                    <span class="sr-only">{{ __('Toggle sidebar') }}</span>
                     <!-- Menu icon (hamburger) -->
                     <svg x-show="!sidebarOpen" class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
@@ -28,7 +28,7 @@
                             <div class="h-8 w-8 rounded-lg bg-blue-50 flex items-center justify-center mr-2.5">
                                 <span class="text-blue-500">🏠</span>
                             </div>
-                            Dashboard
+                            {{ __('Dashboard') }}
                         </a>
 
                         <!-- Separator -->
@@ -44,14 +44,14 @@
                             <div class="h-8 w-8 rounded-lg bg-gradient-to-br from-blue-100 to-blue-50 flex items-center justify-center mr-2.5">
                                 <span class="text-blue-600">📈</span>
                             </div>
-                            Overview
+                            {{ __('Overview') }}
                         </span>
                         @elseif(request()->routeIs('admin.customers.index'))
                         <span class="flex items-center text-gray-800">
                             <div class="h-8 w-8 rounded-lg bg-gradient-to-br from-blue-100 to-blue-50 flex items-center justify-center mr-2.5">
                                 <span class="text-blue-600">👥</span>
                             </div>
-                            Customers
+                            {{ __('Customers') }}
                         </span>
                         @else
                         <span class="text-gray-800 flex items-center">
@@ -65,30 +65,41 @@
                 </div>
 
                 <!-- Mobile Page Title -->
-                <div class="lg:hidden ml-2 sm:ml-4">
-                    <h2 class="text-base sm:text-lg md:text-xl font-bold text-gray-900 flex items-center">
-                        @if(request()->routeIs('admin.dashboard'))
+                <div class="lg:hidden ml-2 sm:ml-4 flex items-center">
+                    @if($site_settings['logo'] ?? false)
+                        <img src="{{ asset('storage/' . $site_settings['logo']) }}" alt="{{ $site_settings['site_name'] ?? 'Logo' }}" class="h-8 w-8 sm:h-9 sm:w-9 rounded-lg object-contain mr-2 sm:mr-3">
+                    @else
                         <div class="h-8 w-8 sm:h-9 sm:w-9 rounded-xl bg-blue-50 flex items-center justify-center mr-2 sm:mr-3">
-                            <span class="text-blue-600">📊</span>
+                            <span class="text-blue-600">💊</span>
                         </div>
-                        Dashboard
-                        @elseif(request()->routeIs('admin.customers.index'))
-                        <div class="h-8 w-8 sm:h-9 sm:w-9 rounded-xl bg-blue-50 flex items-center justify-center mr-2 sm:mr-3">
-                            <span class="text-blue-600">👥</span>
-                        </div>
-                        Customers
-                        @else
-                        <div class="h-8 w-8 sm:h-9 sm:w-9 rounded-xl bg-blue-50 flex items-center justify-center mr-2 sm:mr-3">
-                            <span class="text-blue-600">👁️</span>
-                        </div>
-                        pharmacySys EPS Admin
-                        @endif
+                    @endif
+                    <h2 class="text-base sm:text-lg font-bold text-gray-900">
+                        {{ $site_settings['site_name'] ?? 'pharmacySys EPS' }}
                     </h2>
                 </div>
             </div>
 
             <!-- Right side - Search & User Menu -->
-            <div class="flex items-center space-x-2 sm:space-x-3 md:space-x-5">
+            <div class="flex items-center space-x-1 sm:space-x-2 md:space-x-3">
+                <!-- Shift Status (Mobile Badge) -->
+                @php
+                    $currentShift = \App\Models\Shift::where('user_id', auth()->id())
+                        ->where('status', 'open')
+                        ->first();
+                @endphp
+                
+                <a href="{{ route('admin.shifts.index') }}" wire:navigate 
+                   class="md:hidden p-2 rounded-lg relative {{ $currentShift ? 'bg-green-50 text-green-700' : 'bg-gray-50 text-gray-600' }}">
+                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    @if($currentShift)
+                        <span class="absolute top-1 right-1 flex h-2 w-2">
+                            <span class="animate-ping absolute inline-flex h-2 w-2 rounded-full bg-green-400 opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                        </span>
+                    @endif
+                </a>
                 <!-- Search Bar (Desktop) -->
                 <div class="hidden lg:block w-72">
                     @livewire('admin.global-search')
@@ -96,12 +107,70 @@
 
                 <!-- Search Button (Mobile) -->
                 <button @click="$dispatch('toggle-search')" class="lg:hidden p-2.5 rounded-xl text-gray-600 hover:text-gray-900 hover:bg-gray-100/80 transition-all duration-200">
-                    <span class="sr-only">Search</span>
+                    <span class="sr-only">{{ __('Search') }}</span>
                     <svg class="h-5 w-5 sm:h-6 sm:w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2"
                             d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                     </svg>
                 </button>
+
+                <!-- Shift Status Indicator -->
+                @php
+                    $currentShift = \App\Models\Shift::where('user_id', auth()->id())
+                        ->where('status', 'open')
+                        ->first();
+                @endphp
+                
+                <a href="{{ route('admin.shifts.index') }}" wire:navigate 
+                   class="hidden md:flex items-center space-x-2 px-3 py-2 rounded-xl transition-all duration-200 {{ $currentShift ? 'bg-green-50 hover:bg-green-100 text-green-700' : 'bg-gray-50 hover:bg-gray-100 text-gray-600' }}">
+                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span class="text-sm font-medium">
+                        @if($currentShift)
+                            {{ __('shifts.shift_open') }}
+                        @else
+                            {{ __('shifts.no_open_shift') }}
+                        @endif
+                    </span>
+                    @if($currentShift)
+                        <span class="flex h-2 w-2">
+                            <span class="animate-ping absolute inline-flex h-2 w-2 rounded-full bg-green-400 opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                        </span>
+                    @endif
+                </a>
+
+                <!-- Language Switcher -->
+                <div class="relative" x-data="{ open: false }">
+                    <button @click="open = !open" 
+                            class="p-2.5 rounded-xl text-gray-600 hover:text-gray-900 hover:bg-gray-100/80 transition-all duration-200">
+                        <span class="sr-only">{{ __('Switch Language') }}</span>
+                        <div class="h-5 w-5 sm:h-6 sm:w-6 flex items-center justify-center font-bold text-sm">
+                            {{ app()->getLocale() == 'ar' ? 'ع' : 'En' }}
+                        </div>
+                    </button>
+                    <!-- Dropdown menu -->
+                    <div x-show="open" @click.away="open = false"
+                        x-transition:enter="transition ease-out duration-150"
+                        x-transition:enter-start="transform opacity-0 scale-95"
+                        x-transition:enter-end="transform opacity-100 scale-100"
+                        x-transition:leave="transition ease-in duration-100"
+                        x-transition:leave-start="transform opacity-100 scale-100"
+                        x-transition:leave-end="transform opacity-0 scale-95"
+                        class="absolute right-0 mt-3 w-40 bg-white rounded-2xl shadow-xl py-2 z-50 border border-gray-200/80">
+                        
+                        <a href="{{ route('lang.switch', 'en') }}" class="flex items-center px-4 py-2 text-sm {{ app()->getLocale() == 'en' ? 'text-blue-600 font-medium bg-blue-50' : 'text-gray-700 hover:bg-gray-50' }}">
+                            <div class="w-8 text-center mr-2">🇺🇸</div>
+                            English
+                        </a>
+                        
+                        <a href="{{ route('lang.switch', 'ar') }}" class="flex items-center px-4 py-2 text-sm {{ app()->getLocale() == 'ar' ? 'text-blue-600 font-medium bg-blue-50' : 'text-gray-700 hover:bg-gray-50' }}">
+                            <div class="w-8 text-center mr-2">🇸🇦</div>
+                            العربية
+                        </a>
+                    </div>
+                </div>
 
                 <!-- Notifications -->
                 @livewire('admin.partials.header-notifications')
@@ -154,25 +223,25 @@
                         </div>
 
                         <!-- Menu items -->
-                        <a href="#" class="flex items-center px-5 py-3 text-sm text-gray-700 hover:bg-gray-50/80 transition-colors">
+                        <a href="{{ route('admin.profile') }}" wire:navigate class="flex items-center px-5 py-3 text-sm text-gray-700 hover:bg-gray-50/80 transition-colors">
                             <div class="h-8 w-8 rounded-lg bg-blue-50 flex items-center justify-center mr-3">
                                 <span class="text-blue-500">👤</span>
                             </div>
-                            My Profile
+                            {{ __('My Profile') }}
                         </a>
 
                         <a href="#" class="flex items-center px-5 py-3 text-sm text-gray-700 hover:bg-gray-50/80 transition-colors">
                             <div class="h-8 w-8 rounded-lg bg-purple-50 flex items-center justify-center mr-3">
                                 <span class="text-purple-500">⚙️</span>
                             </div>
-                            Settings
+                            {{ __('Settings') }}
                         </a>
 
                         <a href="#" class="flex items-center px-5 py-3 text-sm text-gray-700 hover:bg-gray-50/80 transition-colors">
                             <div class="h-8 w-8 rounded-lg bg-green-50 flex items-center justify-center mr-3">
                                 <span class="text-green-500">🆘</span>
                             </div>
-                            Help & Support
+                            {{ __('Help & Support') }}
                         </a>
 
                         <div class="border-t border-gray-100 my-2"></div>
@@ -185,7 +254,7 @@
                                 <div class="h-8 w-8 rounded-lg bg-red-50 flex items-center justify-center mr-3">
                                     <span class="text-red-500">🚪</span>
                                 </div>
-                                Logout
+                                {{ __('Logout') }}
                             </button>
                         </form>
                     </div>

@@ -1,4 +1,5 @@
 <div x-data="{ showModal: false, isEditing: @entangle('isEditing'), showConfirmDuplicate: @entangle('showConfirmDuplicate') }"
+     x-init="$watch('showModal', value => { if (!value) setTimeout(initDataTable, 100) })"
      @customer-saved.window="showModal = false; $wire.$refresh()"
      @open-edit-modal.window="showModal = true"
      class="space-y-6">
@@ -6,8 +7,8 @@
     <!-- Header -->
     <div class="mb-6">
         <div>
-            <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-gray-900">Customers</h1>
-            <p class="mt-1 text-xs sm:text-sm text-gray-500">Manage your customers and their records.</p>
+            <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-gray-900">{{ __('Customers') }}</h1>
+            <p class="mt-1 text-xs sm:text-sm text-gray-500">{{ __('Manage your customers and their records.') }}</p>
         </div>
     </div>
 
@@ -21,8 +22,8 @@
                     <svg class="mr-1 sm:mr-2 -ml-1 h-4 w-4 sm:h-5 sm:w-5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                     </svg>
-                    <span class="hidden sm:inline">Add Customer</span>
-                    <span class="sm:hidden">Add</span>
+                    <span class="hidden sm:inline">{{ __('Add Customer') }}</span>
+                    <span class="sm:hidden">{{ __('Add') }}</span>
                 </button>
                 @endcan
             </div>
@@ -31,11 +32,11 @@
                     <table id="customersTable" class="display w-full" style="width:100%">
                 <thead>
                     <tr class="border-b border-slate-200 bg-slate-50">
-                        <th class="text-left py-3 px-4 text-sm font-semibold text-slate-600 uppercase tracking-wider">Name</th>
-                        <th class="text-left py-3 px-4 text-sm font-semibold text-slate-600 uppercase tracking-wider">Age</th>
-                        <th class="text-left py-3 px-4 text-sm font-semibold text-slate-600 uppercase tracking-wider">Phone</th>
-                        <th class="text-left py-3 px-4 text-sm font-semibold text-slate-600 uppercase tracking-wider">Date</th>
-                        <th class="text-center py-3 px-4 text-sm font-semibold text-slate-600 uppercase tracking-wider">Actions</th>
+                        <th class="text-left py-3 px-4 text-sm font-semibold text-slate-600 uppercase tracking-wider">{{ __('Name') }}</th>
+                        <th class="text-left py-3 px-4 text-sm font-semibold text-slate-600 uppercase tracking-wider">{{ __('Age') }}</th>
+                        <th class="text-left py-3 px-4 text-sm font-semibold text-slate-600 uppercase tracking-wider">{{ __('Phone') }}</th>
+                        <th class="text-left py-3 px-4 text-sm font-semibold text-slate-600 uppercase tracking-wider">{{ __('Date') }}</th>
+                        <th class="text-center py-3 px-4 text-sm font-semibold text-slate-600 uppercase tracking-wider">{{ __('Actions') }}</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-100">
@@ -129,37 +130,37 @@
                         </div>
                         <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
                             <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">
-                                <span x-text="isEditing ? 'Edit Customer' : 'Add New Customer'"></span>
+                                <span x-text="isEditing ? '{{ __('Edit Customer') }}' : '{{ __('Add New Customer') }}'"></span>
                             </h3>
                             <div class="mt-2 text-sm text-gray-500">
                                 <div class="grid grid-cols-1 gap-y-4">
                                     <div>
-                                        <label for="name" class="block text-sm font-medium text-gray-700">Customer Name</label>
+                                        <label for="name" class="block text-sm font-medium text-gray-700">{{ __('Customer Name') }}</label>
                                         <input type="text" wire:model="name" id="name" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm border-gray-300 p-2 border">
                                         @error('name') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                                     </div>
                                         <div>
-                                            <label for="address" class="block text-sm font-medium text-gray-700">Address</label>
+                                            <label for="address" class="block text-sm font-medium text-gray-700">{{ __('Address') }}</label>
                                             <input type="text" wire:model="address" id="address" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm border-gray-300 p-2 border">
                                             @error('address') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                                         </div>
                                         <div>
-                                            <label for="gender" class="block text-sm font-medium text-gray-700">Gender</label>
+                                            <label for="gender" class="block text-sm font-medium text-gray-700">{{ __('Gender') }}</label>
                                             <select wire:model="gender" id="gender" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm border-gray-300 p-2 border">
-                                                <option value="">Select Gender</option>
-                                                <option value="male">Male</option>
-                                                <option value="female">Female</option>
+                                                <option value="">{{ __('Select Gender') }}</option>
+                                                <option value="male">{{ __('Male') }}</option>
+                                                <option value="female">{{ __('Female') }}</option>
                                             </select>
                                             @error('gender') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                                         </div>
                                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                         <div>
-                                            <label for="age" class="block text-sm font-medium text-gray-700">Age</label>
+                                            <label for="age" class="block text-sm font-medium text-gray-700">{{ __('Age') }}</label>
                                             <input type="number" wire:model="age" id="age" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm border-gray-300 p-2 border">
                                             @error('age') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                                         </div>
                                         <div>
-                                            <label for="phone" class="block text-sm font-medium text-gray-700">Phone</label>
+                                            <label for="phone" class="block text-sm font-medium text-gray-700">{{ __('Phone') }}</label>
                                             <input type="text" wire:model="phone" id="phone" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm border-gray-300 p-2 border">
                                             @error('phone') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                                         </div>
@@ -171,10 +172,10 @@
                 </div>
                 <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
                     <button x-on:click="isEditing ? $wire.update() : $wire.checkDuplicate()" type="button" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm">
-                        Save
+                        {{ __('Save') }}
                     </button>
                     <button @click="showModal = false" type="button" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
-                        Cancel
+                        {{ __('Cancel') }}
                     </button>
                 </div>
             </div>
@@ -197,19 +198,19 @@
                             </svg>
                         </div>
                         <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-                            <h3 class="text-lg leading-6 font-medium text-gray-900">Duplicate Customer Detected</h3>
+                            <h3 class="text-lg leading-6 font-medium text-gray-900">{{ __('Duplicate Customer Detected') }}</h3>
                             <div class="mt-2">
-                                <p class="text-sm text-gray-500">There is already a customer with the same name and phone number. Do you want to continue and save a duplicate record?</p>
+                                <p class="text-sm text-gray-500">{{ __('There is already a customer with the same name and phone number. Do you want to continue and save a duplicate record?') }}</p>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
                     <button wire:click="store" type="button" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-yellow-600 text-base font-medium text-white hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 sm:ml-3 sm:w-auto sm:text-sm">
-                        Yes, Save Duplicate
+                        {{ __('Yes, Save Duplicate') }}
                     </button>
                     <button @click="showConfirmDuplicate = false" type="button" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
-                        No, Skip
+                        {{ __('No, Skip') }}
                     </button>
                 </div>
             </div>
@@ -231,22 +232,22 @@
                 dom: 'Bfrtip',
                 buttons: [{
                     extend: 'excelHtml5',
-                    text: '📥 Export Excel',
+                    text: '📥 {{ __('Export Excel') }}',
                     className: 'bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 border-none'
                 }],
                 language: {
                     search: "",
-                    searchPlaceholder: "Search customers...",
-                    emptyTable: "No customers found",
+                    searchPlaceholder: "{{ __('Search customers...') }}",
+                    emptyTable: "{{ __('No customers found') }}",
                     paginate: {
-                        first: "First",
-                        last: "Last",
-                        next: "Next",
-                        previous: "Previous"
+                        first: "{{ __('First') }}",
+                        last: "{{ __('Last') }}",
+                        next: "{{ __('Next') }}",
+                        previous: "{{ __('Previous') }}"
                     }
                 },
                 initComplete: function() {
-                    $('.dataTables_filter input').attr('placeholder', 'Search customers...');
+                    $('.dataTables_filter input').attr('placeholder', '{{ __('Search customers...') }}');
                 }
             });
         }
@@ -254,7 +255,7 @@
         document.addEventListener('livewire:navigated', initDataTable);
         
         document.addEventListener('livewire:initialized', () => {
-            @foreach(['customer-saved', 'customer-deleted'] as $event)
+            @foreach(['customer-saved', 'customer-deleted', 'open-edit-modal'] as $event)
                 Livewire.on('{{ $event }}', () => {
                     setTimeout(initDataTable, 100);
                 });

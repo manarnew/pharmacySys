@@ -316,7 +316,7 @@
                     </div>
                 </div>
                 <p class="text-indigo-900 font-medium tracking-wider text-xs uppercase mt-2">
-                    Loading...
+                    {{ __('Loading...') }}
                 </p>
             </div>
         </div>
@@ -362,13 +362,14 @@
             <!-- Footer (Optional) -->
             <footer class="bg-white border-t px-4 py-3">
                 <div class="text-center text-sm text-gray-600">
-                    &copy; {{ date('Y') }} pharmacySys EPS. All rights reserved.
+                    &copy; {{ date('Y') }} {{ $site_settings['site_name'] ?? 'pharmacySys EPS' }}. {{ __($site_settings['footer_text'] ?? 'All rights reserved.') }}
                 </div>
             </footer>
         </div>
     </div>
 
     @livewireScripts
+    @stack('scripts')
 </body>
 
 </html>

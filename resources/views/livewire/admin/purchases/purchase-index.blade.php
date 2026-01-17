@@ -1,12 +1,13 @@
 <div x-data="{ showModal: @entangle('showCreateModal') }"
+     x-init="$watch('showModal', value => { if (!value) setTimeout(initDataTable, 100) })"
      @purchase-saved.window="showModal = false; $wire.$refresh()"
      class="space-y-6">
     
     <!-- Header -->
     <div class="mb-6">
         <div>
-            <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-gray-900">Purchases</h1>
-            <p class="mt-1 text-xs sm:text-sm text-gray-500">Manage supplier purchase orders and stock entry.</p>
+            <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-gray-900">{{ __('Purchases') }}</h1>
+            <p class="mt-1 text-xs sm:text-sm text-gray-500">{{ __('Manage supplier purchase orders and stock entry.') }}</p>
         </div>
     </div>
 
@@ -26,8 +27,8 @@
                     <svg class="mr-1 sm:mr-2 -ml-1 h-4 w-4 sm:h-5 sm:w-5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                     </svg>
-                    <span class="hidden sm:inline">New Purchase</span>
-                    <span class="sm:hidden">New</span>
+                    <span class="hidden sm:inline">{{ __('New Purchase') }}</span>
+                    <span class="sm:hidden">{{ __('New') }}</span>
                 </button>
                 @endcan
             </div>
@@ -36,12 +37,12 @@
                     <table id="purchasesTable" class="display w-full" style="width:100%">
                 <thead>
                     <tr>
-                        <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Date</th>
-                        <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Invoice No</th>
-                        <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Supplier</th>
-                        <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Total</th>
-                        <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Created By</th>
-                        <th class="text-center py-3 px-4 text-sm font-semibold text-gray-700">Actions</th>
+                        <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">{{ __('Date') }}</th>
+                        <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">{{ __('Invoice No') }}</th>
+                        <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">{{ __('Supplier') }}</th>
+                        <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">{{ __('Total') }}</th>
+                        <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">{{ __('Created By') }}</th>
+                        <th class="text-center py-3 px-4 text-sm font-semibold text-gray-700">{{ __('Actions') }}</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-100">
@@ -57,16 +58,16 @@
                                     <a href="{{ route('admin.purchases.return', ['purchase_id' => $purchase->id]) }}" 
                                        wire:navigate 
                                        class="p-2 text-orange-600 hover:text-orange-700 hover:bg-orange-50 rounded-lg transition-colors" 
-                                       title="Return">
+                                       title="{{ __('Return') }}">
                                         <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
                                         </svg>
                                     </a>
                                     @can('delete_purchase')
                                     <button wire:click="delete({{ $purchase->id }})" 
-                                            wire:confirm="Are you sure? This will reverse the stock." 
+                                            wire:confirm="{{ __('Are you sure? This will reverse the stock.') }}" 
                                             class="p-2 text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors" 
-                                            title="Delete">
+                                            title="{{ __('Delete') }}">
                                         <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                         </svg>
@@ -107,46 +108,46 @@
                             </svg>
                         </div>
                         <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
-                            <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">Record New Purchase</h3>
+                            <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">{{ __('Record New Purchase') }}</h3>
                             <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700">Supplier</label>
+                                    <label class="block text-sm font-medium text-gray-700">{{ __('Supplier') }}</label>
                                     <div wire:ignore>
                                         <select id="supplier-select" class="mt-1 block w-full">
                                             @if($supplier_id)
                                                 <option value="{{ $supplier_id }}" selected>{{ App\Models\Supplier::find($supplier_id)?->name }}</option>
                                             @else
-                                                <option value="">Select Supplier</option>
+                                                <option value="">{{ __('Select Supplier') }}</option>
                                             @endif
                                         </select>
                                     </div>
                                     @error('supplier_id') <span class="text-red-500 text-[10px]">{{ $message }}</span> @enderror
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700">Invoice No</label>
+                                    <label class="block text-sm font-medium text-gray-700">{{ __('Invoice No') }}</label>
                                     <input type="text" wire:model="invoice_no" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm border p-2">
                                     @error('invoice_no') <span class="text-red-500 text-[10px]">{{ $message }}</span> @enderror
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700">Purchase Date</label>
+                                    <label class="block text-sm font-medium text-gray-700">{{ __('Purchase Date') }}</label>
                                     <input type="date" wire:model="purchase_date" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm border p-2">
                                     @error('purchase_date') <span class="text-red-500 text-[10px]">{{ $message }}</span> @enderror
                                 </div>
                             </div>
 
                             <div class="mt-6">
-                                <h4 class="text-md font-semibold text-gray-800 mb-2">Purchase Items</h4>
+                                <h4 class="text-md font-semibold text-gray-800 mb-2">{{ __('Purchase Items') }}</h4>
                                 <div class="overflow-x-auto">
                                     <table class="min-w-full divide-y divide-gray-200">
                                         <thead class="bg-gray-50">
                                             <tr>
-                                                <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Product</th>
-                                                <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Store</th>
-                                                <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Batch</th>
-                                                <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Expiry</th>
-                                                <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase w-20">Qty</th>
-                                                <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase w-32">Price</th>
-                                                <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Total</th>
+                                                <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">{{ __('Product') }}</th>
+                                                <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">{{ __('Store') }}</th>
+                                                <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">{{ __('Batch') }}</th>
+                                                <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">{{ __('Expiry') }}</th>
+                                                <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase w-20">{{ __('Qty') }}</th>
+                                                <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase w-32">{{ __('Price') }}</th>
+                                                <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">{{ __('Total') }}</th>
                                                 <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase"></th>
                                             </tr>
                                         </thead>
@@ -159,7 +160,7 @@
                                                             @if($item['product_id'])
                                                                 <option value="{{ $item['product_id'] }}" selected>{{ App\Models\Product::find($item['product_id'])?->name }}</option>
                                                             @else
-                                                                <option value="">Search Product...</option>
+                                                                <option value="">{{ __('Search Product...') }}</option>
                                                             @endif
                                                         </select>
                                                     </div>
@@ -167,7 +168,7 @@
                                                 </td>
                                                 <td class="p-2">
                                                     <select wire:model="items.{{ $index }}.store_id" class="block w-full rounded-md border-gray-300 shadow-sm focus:ring-blue-500 sm:text-xs border p-1">
-                                                        <option value="">Select Store</option>
+                                                        <option value="">{{ __('Select Store') }}</option>
                                                         @foreach($stores as $store)
                                                             <option value="{{ $store->id }}">{{ $store->name }}</option>
                                                         @endforeach
@@ -210,7 +211,7 @@
                                                         <svg class="mr-1 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                                                         </svg>
-                                                        Add Item
+                                                        {{ __('Add Item') }}
                                                     </button>
                                                 </td>
                                             </tr>
@@ -219,19 +220,19 @@
                                 </div>
                                 <div class="mt-4 flex flex-col items-end space-y-2">
                                     <div class="flex items-center space-x-2">
-                                        <span class="text-sm font-medium text-gray-700">Discount:</span>
+                                        <span class="text-sm font-medium text-gray-700">{{ __('Discount') }}:</span>
                                         <input type="number" step="0.01" wire:model.live.debounce.300ms="discount" class="rounded-md border-gray-300 shadow-sm sm:text-xs border p-1 w-32">
                                     </div>
                                     <div class="flex items-center space-x-2">
-                                        <span class="text-sm font-medium text-gray-700">Tax:</span>
+                                        <span class="text-sm font-medium text-gray-700">{{ __('Tax') }}:</span>
                                         <input type="number" step="0.01" wire:model.live.debounce.300ms="tax" class="rounded-md border-gray-300 shadow-sm sm:text-xs border p-1 w-32">
                                     </div>
                                     <div class="text-lg font-bold text-blue-600">
-                                        Total: {{ number_format(collect($items)->sum(fn($i) => ($i['quantity'] ?? 0) * ($i['unit_price'] ?? 0)) - $discount + $tax, 2) }}
+                                        {{ __('Total') }}: {{ number_format(collect($items)->sum(fn($i) => ($i['quantity'] ?? 0) * ($i['unit_price'] ?? 0)) - $discount + $tax, 2) }}
                                     </div>
                                 </div>
                                 <div class="mt-4">
-                                    <label class="block text-sm font-medium text-gray-700">Notes</label>
+                                    <label class="block text-sm font-medium text-gray-700">{{ __('Notes') }}</label>
                                     <textarea wire:model="notes" rows="2" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm border p-2"></textarea>
                                 </div>
                             </div>
@@ -240,11 +241,11 @@
                 </div>
                 <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
                     <button wire:click="store" wire:loading.attr="disabled" type="button" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm disabled:opacity-50">
-                        <span wire:loading.remove>Confirm Purchase & Save Stock</span>
-                        <span wire:loading>Saving...</span>
+                        <span wire:loading.remove>{{ __('Confirm Purchase & Save Stock') }}</span>
+                        <span wire:loading>{{ __('Saving...') }}</span>
                     </button>
                     <button @click="showModal = false" type="button" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
-                        Cancel
+                        {{ __('Cancel') }}
                     </button>
                 </div>
             </div>
@@ -266,22 +267,22 @@
                 dom: 'Bfrtip',
                 buttons: [{
                     extend: 'excelHtml5',
-                    text: '📥 Export Excel',
+                    text: '📥 {{ __('Export Excel') }}',
                     className: 'bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 border-none'
                 }],
                 language: {
                     search: "",
-                    searchPlaceholder: "Search purchases...",
-                    emptyTable: "No purchases found",
+                    searchPlaceholder: "{{ __('Search purchases...') }}",
+                    emptyTable: "{{ __('No purchases found') }}",
                     paginate: {
-                        first: "First",
-                        last: "Last",
-                        next: "Next",
-                        previous: "Previous"
+                        first: "{{ __('First') }}",
+                        last: "{{ __('Last') }}",
+                        next: "{{ __('Next') }}",
+                        previous: "{{ __('Previous') }}"
                     }
                 },
                 initComplete: function() {
-                    $('.dataTables_filter input').attr('placeholder', 'Search purchases...');
+                    $('.dataTables_filter input').attr('placeholder', '{{ __('Search purchases...') }}');
                 }
             });
         }
@@ -292,7 +293,7 @@
             initSelect2();
             @this.on('item-added', () => setTimeout(initSelect2, 100));
 
-            @foreach(['purchase-saved', 'purchase-deleted'] as $event)
+            @foreach(['purchase-saved', 'purchase-deleted', 'open-edit-modal'] as $event)
                 Livewire.on('{{ $event }}', () => {
                     setTimeout(initDataTable, 100);
                 });
@@ -303,7 +304,7 @@
             const dropdownParent = $('#modal-title').closest('.inline-block');
             
             $('#supplier-select').select2({
-                placeholder: 'Search supplier...',
+                placeholder: '{{ __('Search supplier...') }}',
                 dropdownParent: dropdownParent,
                 ajax: {
                     url: '{{ route("admin.search.suppliers") }}',
@@ -319,7 +320,7 @@
             $('.purchase-product-select').each(function() {
                 let index = $(this).data('index');
                 $(this).select2({
-                    placeholder: 'Search product...',
+                    placeholder: '{{ __('Search product...') }}',
                     dropdownParent: dropdownParent,
                     ajax: {
                         url: '{{ route("admin.search.products") }}',

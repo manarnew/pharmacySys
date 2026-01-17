@@ -6,6 +6,7 @@ use Livewire\Component;
 use Livewire\Attributes\Layout;
 
 use App\Models\Expense;
+use App\Models\Shift;
 use Livewire\WithPagination;
 
 class ExpenseIndex extends Component
@@ -14,12 +15,25 @@ class ExpenseIndex extends Component
 
     public $reason, $amount, $date, $expense_id;
     public $isEditing = false;
+    public $currentShift;
 
     protected $rules = [
         'reason' => 'required|string|max:255',
         'amount' => 'required|numeric|min:0',
         'date' => 'required|date',
     ];
+
+    public function mount()
+    {
+        $this->loadCurrentShift();
+    }
+
+    public function loadCurrentShift()
+    {
+        $this->currentShift = Shift::where('user_id', auth()->id())
+            ->where('status', 'open')
+            ->first();
+    }
 
     public function resetFields()
     {
@@ -36,14 +50,26 @@ class ExpenseIndex extends Component
     {
         $this->validate();
 
+        // Check if there's an open shift
+        if (!$this->currentShift) {
+            $this->dispatch('expense-error', 'Please open a shift first before adding expenses.');
+            return;
+        }
+
         Expense::create([
+            'shift_id' => $this->currentShift->id,
             'reason' => $this->reason,
             'amount' => $this->amount,
             'date' => $this->date,
         ]);
 
+        // Update shift expected cash balance (expense reduces cash)
+        $this->currentShift->expected_cash_balance -= $this->amount;
+        $this->currentShift->save();
+
         $this->dispatch('expense-saved', 'Expense added successfully!');
         $this->resetFields();
+        $this->loadCurrentShift();
     }
 
     public function edit($id)

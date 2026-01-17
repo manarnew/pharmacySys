@@ -41,7 +41,7 @@
                 @foreach($results as $result)
                     <a 
                         href="{{ $result['url'] }}" 
-                        wire:navigate
+                        {{ $result['type'] === 'sale' ? 'target="_blank"' : 'wire:navigate' }}
                         class="flex items-center px-4 py-3 hover:bg-gray-50 transition duration-150 border-b border-gray-100 last:border-b-0"
                         @click="open = false; $wire.clearSearch()"
                     >
@@ -70,6 +70,12 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m.599-1H11.401m.002 0a6.7 6.7 0 01-1.393-1.04C10.311 15.01 10 14.524 10 14m0 0c0-.895 1.343-2 3-2M10 14c0 .895 1.343 2 3 2m3-2c0 .895-1.343-2-3-2m3 2c0 .895-1.343 2-3 2" />
                                     </svg>
                                 </div>
+                            @elseif($result['type'] === 'category')
+                                <div class="w-10 h-10 bg-gradient-to-br from-cyan-500 to-blue-500 rounded-full flex items-center justify-center">
+                                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                                    </svg>
+                                </div>
                             @else
                                 <div class="w-10 h-10 bg-gradient-to-br from-rose-500 to-pink-500 rounded-full flex items-center justify-center">
                                     <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -89,6 +95,7 @@
                                     {{ $result['type'] === 'product' ? 'bg-amber-100 text-amber-800' : '' }}
                                     {{ $result['type'] === 'sale' ? 'bg-indigo-100 text-indigo-800' : '' }}
                                     {{ $result['type'] === 'purchase' ? 'bg-rose-100 text-rose-800' : '' }}
+                                    {{ $result['type'] === 'category' ? 'bg-cyan-100 text-cyan-800' : '' }}
                                 ">
                                     {{ $result['type'] }}
                                 </span>

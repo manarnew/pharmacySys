@@ -11,18 +11,34 @@
     
     <!-- Header with Toggle -->
     <div class="px-4 py-5 flex-shrink-0 border-b border-gray-800 flex items-center justify-between">
-        <div class="flex items-center space-x-3" :class="{ 'justify-center': isCollapsed }">
-            <div class="h-10 w-10 rounded-xl overflow-hidden flex items-center justify-center shadow-lg shadow-cyan-500/10 bg-white">
-                <img src="{{ asset('assets/images/logo.png') }}" alt="pharmacySys EPS Logo" class="w-full h-full object-contain">
-            </div>
+        <a href="{{ route('admin.dashboard') }}" wire:navigate class="flex items-center space-x-3 group" :class="{ 'justify-center': isCollapsed }">
+            @if($site_settings['logo'] ?? false)
+                <div class="h-10 w-10 rounded-xl overflow-hidden flex items-center justify-center shadow-lg shadow-cyan-500/10 bg-white"
+                     x-show="!isCollapsed">
+                    <img src="{{ asset('storage/' . $site_settings['logo']) }}" alt="{{ $site_settings['site_name'] ?? 'Logo' }}" class="w-full h-full object-contain">
+                </div>
+                <div class="h-8 w-8 rounded-xl overflow-hidden flex items-center justify-center shadow-lg shadow-cyan-500/10 bg-white"
+                     x-show="isCollapsed">
+                    <img src="{{ asset('storage/' . $site_settings['logo']) }}" alt="{{ $site_settings['site_name'] ?? 'Logo' }}" class="w-full h-full object-contain">
+                </div>
+            @else
+                <div class="h-10 w-10 rounded-xl overflow-hidden flex items-center justify-center shadow-lg shadow-cyan-500/10 bg-white"
+                     x-show="!isCollapsed">
+                    <span class="text-2xl">💊</span>
+                </div>
+                <div class="h-8 w-8 rounded-xl overflow-hidden flex items-center justify-center shadow-lg shadow-cyan-500/10 bg-white"
+                     x-show="isCollapsed">
+                    <span class="text-xl">💊</span>
+                </div>
+            @endif
             <div x-show="!isCollapsed" x-transition:enter="transition ease-out duration-200" 
                  x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100">
                 <h1 class="text-lg font-bold tracking-tight text-white leading-tight">
-                   <span class="text-cyan-400">EPS</span>
+                   <span class="text-cyan-400">{{ $site_settings['site_name'] ?? 'pharmacySys EPS' }}</span>
                 </h1>
-                <p class="text-xs text-gray-400 font-medium">Pharmacy Panel</p>
+                <p class="text-xs text-gray-400 font-medium">{{ __('Pharmacy Panel') }}</p>
             </div>
-        </div>
+        </a>
         
         <!-- Collapse Toggle Button (Desktop only) -->
         <button @click="isCollapsed = !isCollapsed" 
@@ -68,7 +84,7 @@
                 </svg>
                 <span x-show="!isCollapsed" x-transition:enter="transition ease-out duration-200" 
                       x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
-                      class="text-sm font-medium">Dashboard</span>
+                      class="text-sm font-medium">{{ __('Dashboard') }}</span>
                 <!-- Active indicator dot - only shows when collapsed AND active -->
                 <template x-if="isCollapsed">
                     <div x-show="{{ request()->routeIs('admin.dashboard') ? 'true' : 'false' }}"
@@ -94,7 +110,7 @@
                 </svg>
                 <span x-show="!isCollapsed" x-transition:enter="transition ease-out duration-200" 
                       x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
-                      class="text-sm font-medium">Customers</span>
+                      class="text-sm font-medium">{{ __('Customers') }}</span>
                 <!-- Active indicator dot - only shows when collapsed AND active -->
                 <template x-if="isCollapsed">
                     <div x-show="{{ request()->routeIs('admin.customers.*') ? 'true' : 'false' }}"
@@ -120,7 +136,7 @@
                 </svg>
                 <span x-show="!isCollapsed" x-transition:enter="transition ease-out duration-200" 
                       x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
-                      class="text-sm font-medium">Users</span>
+                      class="text-sm font-medium">{{ __('Users') }}</span>
                 <!-- Active indicator dot - only shows when collapsed AND active -->
                 <template x-if="isCollapsed">
                     <div x-show="{{ request()->routeIs('admin.users.*') ? 'true' : 'false' }}"
@@ -146,7 +162,7 @@
                 </svg>
                 <span x-show="!isCollapsed" x-transition:enter="transition ease-out duration-200" 
                       x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
-                      class="text-sm font-medium">Branches</span>
+                      class="text-sm font-medium">{{ __('Branches') }}</span>
                 <!-- Active indicator dot - only shows when collapsed AND active -->
                 <template x-if="isCollapsed">
                     <div x-show="{{ request()->routeIs('admin.branches.*') ? 'true' : 'false' }}"
@@ -173,7 +189,7 @@
                 </svg>
                 <span x-show="!isCollapsed" x-transition:enter="transition ease-out duration-200" 
                       x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
-                      class="text-sm font-medium">Suppliers</span>
+                      class="text-sm font-medium">{{ __('Suppliers') }}</span>
                 <!-- Active indicator dot - only shows when collapsed AND active -->
                 <template x-if="isCollapsed">
                     <div x-show="{{ request()->routeIs('admin.suppliers.*') ? 'true' : 'false' }}"
@@ -199,7 +215,7 @@
                 </svg>
                 <span x-show="!isCollapsed" x-transition:enter="transition ease-out duration-200" 
                       x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
-                      class="text-sm font-medium">Permissions</span>
+                      class="text-sm font-medium">{{ __('Permissions') }}</span>
                 <!-- Active indicator dot - only shows when collapsed AND active -->
                 <template x-if="isCollapsed">
                     <div x-show="{{ request()->routeIs('admin.permissions.*') ? 'true' : 'false' }}"
@@ -225,7 +241,7 @@
                 </svg>
                 <span x-show="!isCollapsed" x-transition:enter="transition ease-out duration-200" 
                       x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
-                      class="text-sm font-medium">Roles</span>
+                      class="text-sm font-medium">{{ __('Roles') }}</span>
                 <!-- Active indicator dot - only shows when collapsed AND active -->
                 <template x-if="isCollapsed">
                     <div x-show="{{ request()->routeIs('admin.roles.*') ? 'true' : 'false' }}"
@@ -252,7 +268,7 @@
                 </svg>
                 <span x-show="!isCollapsed" x-transition:enter="transition ease-out duration-200" 
                       x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
-                      class="text-sm font-medium">Expenses</span>
+                      class="text-sm font-medium">{{ __('Expenses') }}</span>
                 <!-- Active indicator dot - only shows when collapsed AND active -->
                 <template x-if="isCollapsed">
                     <div x-show="{{ request()->routeIs('admin.expenses.*') ? 'true' : 'false' }}"
@@ -278,7 +294,7 @@
                 </svg>
                 <span x-show="!isCollapsed" x-transition:enter="transition ease-out duration-200" 
                       x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
-                      class="text-sm font-medium">Products</span>
+                      class="text-sm font-medium">{{ __('Products') }}</span>
                 <template x-if="isCollapsed">
                     <div x-show="{{ request()->routeIs('admin.products.*') ? 'true' : 'false' }}"
                          class="absolute left-14 w-2 h-2 rounded-full bg-cyan-400"></div>
@@ -303,7 +319,7 @@
                 </svg>
                 <span x-show="!isCollapsed" x-transition:enter="transition ease-out duration-200" 
                       x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
-                      class="text-sm font-medium">Stores</span>
+                      class="text-sm font-medium">{{ __('Stores') }}</span>
                 <template x-if="isCollapsed">
                     <div x-show="{{ request()->routeIs('admin.stores.*') ? 'true' : 'false' }}"
                          class="absolute left-14 w-2 h-2 rounded-full bg-cyan-400"></div>
@@ -328,7 +344,7 @@
                 </svg>
                 <span x-show="!isCollapsed" x-transition:enter="transition ease-out duration-200" 
                       x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
-                      class="text-sm font-medium">Purchases</span>
+                      class="text-sm font-medium">{{ __('Purchases') }}</span>
                 <template x-if="isCollapsed">
                     <div x-show="{{ request()->routeIs('admin.purchases.*') ? 'true' : 'false' }}"
                          class="absolute left-14 w-2 h-2 rounded-full bg-cyan-400"></div>
@@ -353,13 +369,36 @@
                 </svg>
                 <span x-show="!isCollapsed" x-transition:enter="transition ease-out duration-200" 
                       x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
-                      class="text-sm font-medium">Sales</span>
+                      class="text-sm font-medium">{{ __('Sales') }}</span>
                 <template x-if="isCollapsed">
                     <div x-show="{{ request()->routeIs('admin.sales.*') ? 'true' : 'false' }}"
                          class="absolute left-14 w-2 h-2 rounded-full bg-cyan-400"></div>
                 </template>
             </a>
             @endcan
+
+            <!-- Shifts -->
+            <a href="{{ route('admin.shifts.index') }}" wire:navigate
+                class="group flex items-center px-3 py-2.5 rounded-lg transition-all duration-200 relative
+                {{ request()->routeIs('admin.shifts.*') 
+                    ? 'bg-gradient-to-r from-cyan-600 to-blue-600 text-white shadow-lg shadow-cyan-500/10' 
+                    : 'text-gray-400 hover:bg-gray-800/60 hover:text-white' 
+                }}"
+                :class="{ 'justify-center': isCollapsed }">
+                <svg class="h-5 w-5 flex-shrink-0 transition-colors duration-200
+                    {{ request()->routeIs('admin.shifts.*') ? 'text-white' : 'text-gray-500 group-hover:text-gray-300' }}"
+                    :class="{ 'mr-3': !isCollapsed }"
+                    fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span x-show="!isCollapsed" x-transition:enter="transition ease-out duration-200" 
+                      x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
+                      class="text-sm font-medium">{{ __('shifts.shifts') }}</span>
+                <template x-if="isCollapsed">
+                    <div x-show="{{ request()->routeIs('admin.shifts.*') ? 'true' : 'false' }}"
+                         class="absolute left-14 w-2 h-2 rounded-full bg-cyan-400"></div>
+                </template>
+            </a>
 
             <!-- Inventory -->
             <!-- Inventory -->
@@ -378,7 +417,7 @@
                         fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
                     </svg>
-                    <span x-show="!isCollapsed" class="flex-1 text-left text-sm font-medium">Inventory</span>
+                    <span x-show="!isCollapsed" class="flex-1 text-left text-sm font-medium">{{ __('Inventory') }}</span>
                     <svg x-show="!isCollapsed" class="ml-auto h-4 w-4 transform transition-transform duration-200" 
                         :class="{ 'rotate-180': open }" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
@@ -388,12 +427,12 @@
                 <div x-show="open && !isCollapsed" class="mt-1 space-y-1 pl-10" x-cloak>
                     <a href="{{ route('admin.inventory.index') }}" wire:navigate 
                        class="block py-2 text-sm text-gray-400 hover:text-white transition-colors {{ request()->routeIs('admin.inventory.index') ? 'text-white font-semibold' : '' }}">
-                        Current Stock
+                         {{ __('Current Stock') }}
                     </a>
                     @can('stocktake_view')
                     <a href="{{ route('admin.stocktakes.index') }}" wire:navigate 
                        class="block py-2 text-sm text-gray-400 hover:text-white transition-colors {{ request()->routeIs('admin.stocktakes.*') ? 'text-white font-semibold' : '' }}">
-                        Stocktakes
+                         {{ __('Stocktakes') }}
                     </a>
                     @endcan
                 </div>
@@ -403,6 +442,51 @@
 
 
             
+            <!-- Categories -->
+            <a href="{{ route('admin.categories.index') }}" wire:navigate
+                class="group flex items-center px-3 py-2.5 rounded-lg transition-all duration-200 relative
+                {{ request()->routeIs('admin.categories.*') 
+                    ? 'bg-gradient-to-r from-cyan-600 to-blue-600 text-white shadow-lg shadow-cyan-500/10' 
+                    : 'text-gray-400 hover:bg-gray-800/60 hover:text-white' 
+                }}"
+                :class="{ 'justify-center': isCollapsed }">
+                <svg class="h-5 w-5 flex-shrink-0 transition-colors duration-200
+                    {{ request()->routeIs('admin.categories.*') ? 'text-white' : 'text-gray-500 group-hover:text-gray-300' }}"
+                    :class="{ 'mr-3': !isCollapsed }"
+                    viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M2 5a2 2 0 012-2h12a2 2 0 012 2v2a2 2 0 01-2 2H4a2 2 0 01-2-2V5zm14 1a1 1 0 11-2 0 1 1 0 012 0zM2 13a2 2 0 012-2h12a2 2 0 012 2v2a2 2 0 01-2 2H4a2 2 0 01-2-2v-2zm14 1a1 1 0 11-2 0 1 1 0 012 0z" clip-rule="evenodd" />
+                </svg>
+                <span x-show="!isCollapsed" x-transition:enter="transition ease-out duration-200" 
+                      x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
+                      class="text-sm font-medium">{{ __('Categories') }}</span>
+                <template x-if="isCollapsed">
+                    <div x-show="{{ request()->routeIs('admin.categories.*') ? 'true' : 'false' }}"
+                         class="absolute left-14 w-2 h-2 rounded-full bg-cyan-400"></div>
+                </template>
+            </a>
+
+            <!-- Settings -->
+            <a href="{{ route('admin.settings.index') }}" wire:navigate
+                class="group flex items-center px-3 py-2.5 rounded-lg transition-all duration-200 relative
+                {{ request()->routeIs('admin.settings.*') 
+                    ? 'bg-gradient-to-r from-cyan-600 to-blue-600 text-white shadow-lg shadow-cyan-500/10' 
+                    : 'text-gray-400 hover:bg-gray-800/60 hover:text-white' 
+                }}"
+                :class="{ 'justify-center': isCollapsed }">
+                <svg class="h-5 w-5 flex-shrink-0 transition-colors duration-200
+                    {{ request()->routeIs('admin.settings.*') ? 'text-white' : 'text-gray-500 group-hover:text-gray-300' }}"
+                    :class="{ 'mr-3': !isCollapsed }"
+                    viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd" />
+                </svg>
+                <span x-show="!isCollapsed" x-transition:enter="transition ease-out duration-200" 
+                      x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
+                      class="text-sm font-medium">{{ __('Settings') }}</span>
+                <template x-if="isCollapsed">
+                    <div x-show="{{ request()->routeIs('admin.settings.*') ? 'true' : 'false' }}"
+                         class="absolute left-14 w-2 h-2 rounded-full bg-cyan-400"></div>
+                </template>
+            </a>
         </nav>
     </div>
 </aside>

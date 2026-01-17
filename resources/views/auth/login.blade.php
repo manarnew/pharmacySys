@@ -1,11 +1,23 @@
 <x-guest-layout>
     <!-- Header -->
     <div class="text-center mb-8">
+        @php
+            $siteSettings = \App\Models\Setting::pluck('value', 'key');
+        @endphp
+        
         <div class="inline-flex items-center justify-center w-20 h-20 rounded-xl bg-white mb-4 shadow-sm overflow-hidden">
-            <img src="{{ asset('assets/images/logo.png') }}" alt="pharmacySys EPS Logo" class="w-full h-full object-contain">
+            @if($siteSettings['logo'] ?? false)
+                <img src="{{ asset('storage/' . $siteSettings['logo']) }}" alt="{{ $siteSettings['site_name'] ?? 'Logo' }}" class="w-full h-full object-contain p-2">
+            @else
+                <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-500 to-cyan-400">
+                    <span class="text-white font-bold text-3xl">💊</span>
+                </div>
+            @endif
         </div>
-        <h2 class="text-2xl font-bold text-slate-900 tracking-tight"> <span class="text-blue-600">EPS</span></h2>
-        <p class="text-slate-500 text-sm mt-2">Sign in to manage your pharmacy</p>
+        <h2 class="text-2xl font-bold text-slate-900 tracking-tight">
+            <span class="text-blue-600">{{ $siteSettings['site_name'] ?? 'pharmacySys EPS' }}</span>
+        </h2>
+        <p class="text-slate-500 text-sm mt-2">{{ __('Sign in to manage your pharmacy') }}</p>
     </div>
 
     <!-- Session Status -->
@@ -16,7 +28,7 @@
 
         <!-- Email -->
         <div class="space-y-1.5">
-            <label class="text-sm font-bold text-slate-700 block">Email Address</label>
+            <label class="text-sm font-bold text-slate-700 block">{{ __('Email Address') }}</label>
             <div class="relative">
                 <div class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -39,10 +51,10 @@
         <!-- Password -->
         <div class="space-y-1.5">
             <div class="flex justify-between items-center">
-                <label class="text-sm font-bold text-slate-700">Password</label>
+                <label class="text-sm font-bold text-slate-700">{{ __('Password') }}</label>
                 @if (Route::has('password.request'))
                     <a class="text-xs font-semibold text-blue-600 hover:text-blue-700 transition-colors" href="{{ route('password.request') }}">
-                        Forgot password?
+                        {{ __('Forgot your password?') }}
                     </a>
                 @endif
             </div>
@@ -72,19 +84,19 @@
         <!-- Remember Me -->
         <div class="flex items-center">
             <input id="remember_me" type="checkbox" class="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500" name="remember">
-            <label for="remember_me" class="ml-2 text-sm text-slate-600">Remember me</label>
+            <label for="remember_me" class="ml-2 text-sm text-slate-600">{{ __('Remember me') }}</label>
         </div>
 
         <!-- Submit -->
         <button type="submit" class="w-full py-2.5 px-4 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-bold shadow-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-            Sign In
+            {{ __('Sign In') }}
         </button>
     </form>
 
     <!-- Footer -->
     <div class="mt-8 pt-6 border-t border-slate-100 text-center">
         <p class="text-xs text-slate-400">
-            &copy; {{ date('Y') }} EPS • v2.0
+            &copy; {{ date('Y') }} {{ $siteSettings['site_name'] ?? 'pharmacySys EPS' }} • v2.0
         </p>
     </div>
 

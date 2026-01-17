@@ -1,4 +1,5 @@
 <div x-data="{ showModal: false, isEditing: @entangle('isEditing') }"
+     x-init="$watch('showModal', value => { if (!value) setTimeout(initDataTable, 100) })"
      @product-saved.window="showModal = false; $wire.$refresh()"
      @open-edit-modal.window="showModal = true"
      class="space-y-6">
@@ -6,8 +7,8 @@
     <!-- Header -->
     <div class="mb-6">
         <div>
-            <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-gray-900">Products</h1>
-            <p class="mt-1 text-xs sm:text-sm text-gray-500">Manage your pharmacy products and medicines.</p>
+            <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-gray-900">{{ __('Products') }}</h1>
+            <p class="mt-1 text-xs sm:text-sm text-gray-500">{{ __('Manage your pharmacy products and medicines.') }}</p>
         </div>
     </div>
 
@@ -21,8 +22,8 @@
                     <svg class="mr-1 sm:mr-2 -ml-1 h-4 w-4 sm:h-5 sm:w-5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                     </svg>
-                    <span class="hidden sm:inline">Add Product</span>
-                    <span class="sm:hidden">Add</span>
+                    <span class="hidden sm:inline">{{ __('Add Product') }}</span>
+                    <span class="sm:hidden">{{ __('Add') }}</span>
                 </button>
                 @endcan
             </div>
@@ -31,12 +32,12 @@
                     <table id="productsTable" class="display w-full" style="width:100%">
                 <thead>
                     <tr>
-                        <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">SKU</th>
-                        <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Name</th>
-                        <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Category</th>
-                        <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Price</th>
-                        <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Status</th>
-                        <th class="text-center py-3 px-4 text-sm font-semibold text-gray-700">Actions</th>
+                        <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">{{ __('SKU') }}</th>
+                        <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">{{ __('Name') }}</th>
+                        <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">{{ __('Category') }}</th>
+                        <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">{{ __('Price') }}</th>
+                        <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">{{ __('Status') }}</th>
+                        <th class="text-center py-3 px-4 text-sm font-semibold text-gray-700">{{ __('Actions') }}</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-100">
@@ -49,8 +50,8 @@
                             </td>
                             <td class="py-3 px-4 text-sm text-gray-500">{{ $product->category->name ?? 'N/A' }}</td>
                             <td class="py-3 px-4 text-sm text-gray-900">
-                                <div class="font-semibold">Sell: {{ number_format($product->selling_price, 2) }}</div>
-                                <div class="text-xs text-gray-400">Buy: {{ number_format($product->purchase_price, 2) }}</div>
+                                <div class="font-semibold">{{ __('Sell:') }} {{ number_format($product->selling_price, 2) }}</div>
+                                <div class="text-xs text-gray-400">{{ __('Buy:') }} {{ number_format($product->purchase_price, 2) }}</div>
                             </td>
                             <td class="py-3 px-4 text-sm">
                                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $product->status === 'active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
@@ -121,84 +122,81 @@
                         </div>
                         <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
                             <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">
-                                {{ $isEditing ? 'Edit Product' : 'Add New Product' }}
+                                {{ $isEditing ? __('Edit Product') : __('Add New Product') }}
                             </h3>
                             <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div class="col-span-1">
-                                    <label class="block text-sm font-medium text-gray-700">SKU/Barcode</label>
+                                    <label class="block text-sm font-medium text-gray-700">{{ __('SKU/Barcode') }}</label>
                                     <input type="text" wire:model="sku" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm border p-2">
                                     @error('sku') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                                 </div>
                                 <div class="col-span-1">
-                                    <label class="block text-sm font-medium text-gray-700">Product Name</label>
+                                    <label class="block text-sm font-medium text-gray-700">{{ __('Product Name') }}</label>
                                     <input type="text" wire:model="name" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm border p-2">
                                     @error('name') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                                 </div>
                                 <div class="col-span-1">
-                                    <label class="block text-sm font-medium text-gray-700">Generic Name</label>
+                                    <label class="block text-sm font-medium text-gray-700">{{ __('Generic Name') }}</label>
                                     <input type="text" wire:model="generic_name" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm border p-2">
                                     @error('generic_name') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                                 </div>
                                 <div class="col-span-1">
-                                    <label class="block text-sm font-medium text-gray-700">Category</label>
-                                    <div wire:ignore>
-                                        <select id="category-select" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm border p-2">
-                                            @if($category_id)
-                                                <option value="{{ $category_id }}" selected>{{ App\Models\Category::find($category_id)?->name }}</option>
-                                            @else
-                                                <option value="">Search Category...</option>
-                                            @endif
-                                        </select>
-                                    </div>
+                                    <label class="block text-sm font-medium text-gray-700">{{ __('Category') }}</label>
+                                    <select wire:model="category_id" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm border p-2">
+                                        <option value="">{{ __('Select Category...') }}</option>
+                                        @foreach($categories as $category)
+                                            <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                        @endforeach
+                                    </select>
                                     @error('category_id') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                                 </div>
                                 <div class="col-span-1">
-                                    <label class="block text-sm font-medium text-gray-700">Unit</label>
+                                    <label class="block text-sm font-medium text-gray-700">{{ __('Unit') }}</label>
                                     <select wire:model="unit" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm border p-2">
-                                        <option value="piece">Piece</option>
-                                        <option value="box">Box</option>
-                                        <option value="strip">Strip</option>
-                                        <option value="bottle">Bottle</option>
-                                        <option value="tube">Tube</option>
+                                        <option value="piece">{{ __('Piece') }}</option>
+                                        <option value="box">{{ __('Box') }}</option>
+                                        <option value="strip">{{ __('Strip') }}</option>
+                                        <option value="bottle">{{ __('Bottle') }}</option>
+                                        <option value="tube">{{ __('Tube') }}</option>
                                     </select>
                                     @error('unit') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                                 </div>
                                 <div class="col-span-1">
-                                    <label class="block text-sm font-medium text-gray-700">Purchase Price</label>
+                                    <label class="block text-sm font-medium text-gray-700">{{ __('Purchase Price') }}</label>
                                     <input type="number" step="0.01" wire:model="purchase_price" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm border p-2">
                                     @error('purchase_price') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                                 </div>
                                 <div class="col-span-1">
-                                    <label class="block text-sm font-medium text-gray-700">Selling Price</label>
+                                    <label class="block text-sm font-medium text-gray-700">{{ __('Selling Price') }}</label>
                                     <input type="number" step="0.01" wire:model="selling_price" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm border p-2">
                                     @error('selling_price') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                                 </div>
                                 <div class="col-span-1">
-                                    <label class="block text-sm font-medium text-gray-700">Tax Rate (%)</label>
+                                    <label class="block text-sm font-medium text-gray-700">{{ __('Tax Rate (%)') }}</label>
                                     <input type="number" step="0.1" wire:model="tax_rate" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm border p-2">
                                     @error('tax_rate') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                                 </div>
                                 <div class="col-span-1">
-                                    <label class="block text-sm font-medium text-gray-700">Reorder Level</label>
+                                    <label class="block text-sm font-medium text-gray-700">{{ __('Reorder Level') }}</label>
                                     <input type="number" wire:model="reorder_level" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm border p-2">
                                     @error('reorder_level') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                                 </div>
                                 <div class="col-span-1">
-                                    <label class="block text-sm font-medium text-gray-700">Status</label>
+                                    <label class="block text-sm font-medium text-gray-700">{{ __('Status') }}</label>
                                     <select wire:model="status" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm border p-2">
-                                        <option value="active">Active</option>
-                                        <option value="inactive">Inactive</option>
+                                        <option value="active">{{ __('Active') }}</option>
+                                        <option value="inactive">{{ __('Inactive') }}</option>
                                     </select>
                                     @error('status') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                                 </div>
                                 <div class="col-span-2">
                                     <label class="flex items-center">
                                         <input type="checkbox" wire:model="is_prescription_required" class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-500 focus:ring-blue-500">
-                                        <span class="ml-2 text-sm text-gray-700">Prescription Required</span>
+                                        <span class="ml-2 text-sm text-gray-700">{{ __('Prescription Required') }}</span>
                                     </label>
                                 </div>
                                 <div class="col-span-2">
-                                    <label class="block text-sm font-medium text-gray-700">Description</label>
+                                    <label class="block text-sm font-medium text-gray-700">{{ __('Description') }}</label>
                                     <textarea wire:model="description" rows="3" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm border p-2"></textarea>
                                     @error('description') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                                 </div>
@@ -208,10 +206,10 @@
                 </div>
                 <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
                     <button x-on:click="isEditing ? $wire.update() : $wire.store()" type="button" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm">
-                        Save
+                        {{ __('Save') }}
                     </button>
                     <button @click="showModal = false" type="button" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
-                        Cancel
+                        {{ __('Cancel') }}
                     </button>
                 </div>
             </div>
@@ -233,22 +231,22 @@
                 dom: 'Bfrtip',
                 buttons: [{
                     extend: 'excelHtml5',
-                    text: '📥 Export Excel',
+                    text: '📥 {{ __('Export Excel') }}',
                     className: 'bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 border-none'
                 }],
                 language: {
                     search: "",
-                    searchPlaceholder: "Search products...",
-                    emptyTable: "No products found",
+                    searchPlaceholder: "{{ __('Search products...') }}",
+                    emptyTable: "{{ __('No products found') }}",
                     paginate: {
-                        first: "First",
-                        last: "Last",
-                        next: "Next",
-                        previous: "Previous"
+                        first: "{{ __('First') }}",
+                        last: "{{ __('Last') }}",
+                        next: "{{ __('Next') }}",
+                        previous: "{{ __('Previous') }}"
                     }
                 },
                 initComplete: function() {
-                    $('.dataTables_filter input').attr('placeholder', 'Search products...');
+                    $('.dataTables_filter input').attr('placeholder', '{{ __('Search products...') }}');
                 }
             });
         }
@@ -256,28 +254,13 @@
         document.addEventListener('livewire:navigated', initDataTable);
         
         document.addEventListener('livewire:initialized', () => {
-            initSelect2();
-            @foreach(['product-saved', 'product-deleted'] as $event)
+            @foreach(['product-saved', 'product-deleted', 'open-edit-modal'] as $event)
                 Livewire.on('{{ $event }}', () => {
                     setTimeout(initDataTable, 100);
                 });
             @endforeach
         });
 
-        function initSelect2() {
-            $('#category-select').select2({
-                placeholder: 'Search category...',
-                dropdownParent: $('#modal-title').closest('.inline-block'), // Ensure it works inside modal
-                ajax: {
-                    url: '{{ route("admin.search.categories") }}',
-                    dataType: 'json',
-                    delay: 250,
-                    data: (params) => ({ q: params.term }),
-                    processResults: (data) => ({ results: data })
-                }
-            }).on('change', function (e) {
-                @this.set('category_id', $(this).val());
-            });
-        }
+
     </script>
 </div>

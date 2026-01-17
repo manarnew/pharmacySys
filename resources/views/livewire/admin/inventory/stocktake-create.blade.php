@@ -2,11 +2,11 @@
     <!-- Header -->
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div>
-            <h1 class="text-2xl font-bold tracking-tight text-gray-900">New Stocktake</h1>
-            <p class="mt-1 text-sm text-gray-500">Perform a physical inventory count and reconcile stock.</p>
+            <h1 class="text-2xl font-bold tracking-tight text-gray-900">{{ __('New Stocktake') }}</h1>
+            <p class="mt-1 text-sm text-gray-500">{{ __('Perform a physical inventory count and reconcile stock.') }}</p>
         </div>
         <div>
-            <a href="{{ route('admin.dashboard') }}" class="text-gray-500 hover:text-gray-700">Cancel</a>
+            <a href="{{ route('admin.dashboard') }}" class="text-gray-500 hover:text-gray-700">{{ __('Cancel') }}</a>
         </div>
     </div>
 
@@ -16,17 +16,17 @@
             <div class="flex items-center">
                 <div class="flex flex-col items-center">
                     <div class="w-8 h-8 flex items-center justify-center rounded-full {{ $step >= 1 ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-500' }} font-bold text-sm">1</div>
-                    <span class="mt-1 text-xs font-medium {{ $step >= 1 ? 'text-blue-600' : 'text-gray-500' }}">Setup</span>
+                    <span class="mt-1 text-xs font-medium {{ $step >= 1 ? 'text-blue-600' : 'text-gray-500' }}">{{ __('Setup') }}</span>
                 </div>
                 <div class="w-16 h-1 {{ $step >= 2 ? 'bg-blue-600' : 'bg-gray-200' }} mx-2"></div>
                 <div class="flex flex-col items-center">
                     <div class="w-8 h-8 flex items-center justify-center rounded-full {{ $step >= 2 ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-500' }} font-bold text-sm">2</div>
-                    <span class="mt-1 text-xs font-medium {{ $step >= 2 ? 'text-blue-600' : 'text-gray-500' }}">Count</span>
+                    <span class="mt-1 text-xs font-medium {{ $step >= 2 ? 'text-blue-600' : 'text-gray-500' }}">{{ __('Count') }}</span>
                 </div>
                 <div class="w-16 h-1 {{ $step >= 3 ? 'bg-blue-600' : 'bg-gray-200' }} mx-2"></div>
                 <div class="flex flex-col items-center">
                     <div class="w-8 h-8 flex items-center justify-center rounded-full {{ $step >= 3 ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-500' }} font-bold text-sm">3</div>
-                    <span class="mt-1 text-xs font-medium {{ $step >= 3 ? 'text-blue-600' : 'text-gray-500' }}">Review</span>
+                    <span class="mt-1 text-xs font-medium {{ $step >= 3 ? 'text-blue-600' : 'text-gray-500' }}">{{ __('Review') }}</span>
                 </div>
             </div>
         </div>
@@ -35,10 +35,10 @@
     <!-- Step 1: Setup -->
     @if($step === 1)
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 max-w-2xl mx-auto">
-            <h3 class="text-lg font-semibold text-gray-900 mb-4">Stocktake Setup</h3>
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">{{ __('Stocktake Setup') }}</h3>
             <div class="space-y-4">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Store</label>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">{{ __('Store') }}</label>
                     <select wire:model="store_id" class="block w-full rounded-lg border-gray-300 shadow-sm focus:ring-blue-500 sm:text-sm border p-2.5">
                         @foreach($stores as $store)
                             <option value="{{ $store->id }}">{{ $store->name }}</option>
@@ -48,19 +48,19 @@
                 </div>
                 
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Date</label>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">{{ __('Date') }}</label>
                     <input type="date" wire:model="date" class="block w-full rounded-lg border-gray-300 shadow-sm focus:ring-blue-500 sm:text-sm border p-2.5">
                     @error('date') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Notes (Optional)</label>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">{{ __('Notes') }} (Optional)</label>
                     <textarea wire:model="notes" rows="3" class="block w-full rounded-lg border-gray-300 shadow-sm focus:ring-blue-500 sm:text-sm border p-2.5" placeholder="Reason for stocktake, participants, etc."></textarea>
                 </div>
 
                 <div class="pt-4">
                     <button wire:click="startCount" class="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">
-                        Start Counting
+                        {{ __('Start Counting') }}
                     </button>
                 </div>
             </div>
@@ -71,7 +71,7 @@
     @if($step === 2)
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
             <div class="p-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
-                <h3 class="text-lg font-semibold text-gray-900">Enter Actual Counts</h3>
+                <h3 class="text-lg font-semibold text-gray-900">{{ __('Enter Actual Counts') }}</h3>
                 <div class="text-sm text-gray-500">
                     Store: <span class="font-medium text-gray-900">{{ $stores->find($store_id)?->name }}</span>
                 </div>
@@ -81,11 +81,11 @@
                 <table class="min-w-full divide-y divide-gray-200">
                     <thead class="bg-gray-50">
                         <tr>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Product</th>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Batch Info</th>
-                            <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider w-32">System Qty</th>
-                            <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider w-32">Actual Qty</th>
-                            <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider w-32">Diff</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('Product') }}</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('Batch Info') }}</th>
+                            <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider w-32">{{ __('System Qty') }}</th>
+                            <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider w-32">{{ __('Actual Qty') }}</th>
+                            <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider w-32">{{ __('Diff') }}</th>
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
@@ -117,7 +117,7 @@
                         @empty
                             <tr>
                                 <td colspan="5" class="px-6 py-10 text-center text-sm text-gray-500">
-                                    No inventory items found in this store to count.
+                                    {{ __('No inventory items found in this store to count.') }}
                                 </td>
                             </tr>
                         @endforelse
@@ -127,11 +127,11 @@
             
             <div class="p-4 bg-gray-50 border-t border-gray-200 flex justify-between">
                 <button wire:click="backToStore" class="px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                    Back
+                    {{ __('Back') }}
                 </button>
                 @if(count($items) > 0)
                 <button wire:click="proceedToReview" class="px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                    Review Differences
+                    {{ __('Review Differences') }}
                 </button>
                 @endif
             </div>
@@ -142,8 +142,8 @@
     @if($step === 3)
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
             <div class="p-4 border-b border-gray-100 bg-gray-50">
-                <h3 class="text-lg font-semibold text-gray-900">Review & Submit</h3>
-                <p class="text-sm text-gray-500">Please review the discrepancies before submitting.</p>
+                <h3 class="text-lg font-semibold text-gray-900">{{ __('Review & Submit') }}</h3>
+                <p class="text-sm text-gray-500">{{ __('Please review the discrepancies before submitting.') }}</p>
             </div>
 
             <div class="p-6">
@@ -160,9 +160,9 @@
                                 </svg>
                             </div>
                             <div class="ml-3">
-                                <h3 class="text-sm font-medium text-yellow-800">Discrepancies Found</h3>
+                                <h3 class="text-sm font-medium text-yellow-800">{{ __('Discrepancies Found') }}</h3>
                                 <div class="mt-2 text-sm text-yellow-700">
-                                    <p>You have recorded <strong>{{ $discrepancies->count() }}</strong> items with quantity differences. These will require approval.</p>
+                                    <p>{{ __('You have recorded') }} <strong>{{ $discrepancies->count() }}</strong> {{ __('items with quantity differences. These will require approval.') }}</p>
                                 </div>
                             </div>
                         </div>
@@ -171,10 +171,10 @@
                     <table class="min-w-full divide-y divide-gray-200 mb-6">
                         <thead class="bg-gray-50">
                             <tr>
-                                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Product</th>
-                                <th class="px-4 py-2 text-center text-xs font-medium text-gray-500 uppercase">System</th>
-                                <th class="px-4 py-2 text-center text-xs font-medium text-gray-500 uppercase">Actual</th>
-                                <th class="px-4 py-2 text-center text-xs font-medium text-gray-500 uppercase">Diff</th>
+                                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">{{ __('Product') }}</th>
+                                <th class="px-4 py-2 text-center text-xs font-medium text-gray-500 uppercase">{{ __('System') }}</th>
+                                <th class="px-4 py-2 text-center text-xs font-medium text-gray-500 uppercase">{{ __('Actual') }}</th>
+                                <th class="px-4 py-2 text-center text-xs font-medium text-gray-500 uppercase">{{ __('Diff') }}</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-200">
@@ -197,21 +197,21 @@
                         <svg class="h-5 w-5 text-green-400 mr-3" viewBox="0 0 20 20" fill="currentColor">
                             <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
                         </svg>
-                        <span class="text-green-800 font-medium">Perfect Match! No discrepancies found.</span>
+                        <span class="text-green-800 font-medium">{{ __('Perfect Match! No discrepancies found.') }}</span>
                     </div>
                 @endif
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                      <button wire:click="save('draft')" class="w-full justify-center px-4 py-3 border border-gray-300 shadow-sm text-base font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">
-                        Save as Draft
+                        {{ __('Save as Draft') }}
                     </button>
                     <button wire:click="save('pending_approval')" class="w-full justify-center px-4 py-3 border border-transparent shadow-sm text-base font-medium rounded-lg text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors">
-                        Submit for Approval
+                        {{ __('Submit for Approval') }}
                     </button>
                 </div>
                 
                 <div class="mt-4 text-center">
-                    <button wire:click="backToCount" class="text-sm text-gray-500 hover:text-gray-900">Back to Count</button>
+                    <button wire:click="backToCount" class="text-sm text-gray-500 hover:text-gray-900">{{ __('Back to Count') }}</button>
                 </div>
             </div>
         </div>

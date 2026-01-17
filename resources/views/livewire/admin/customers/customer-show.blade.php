@@ -127,7 +127,9 @@
                                         </div>
                                     </td>
                                     <td class="px-8 py-5 whitespace-nowrap">
-                                         <span class="text-sm font-bold text-gray-900">#{{ $sale->invoice_no }}</span>
+                                         <a href="{{ route('admin.sales.print', ['sale' => $sale->id]) }}" target="_blank" class="text-sm font-bold text-blue-600 hover:text-blue-800 hover:underline">
+                                             #{{ $sale->invoice_no }}
+                                         </a>
                                     </td>
                                     <td class="px-8 py-5 whitespace-nowrap">
                                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $sale->payment_status === 'paid' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">

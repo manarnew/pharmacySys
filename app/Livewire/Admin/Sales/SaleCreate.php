@@ -17,10 +17,18 @@ class SaleCreate extends Component
 {
     public $customer_id, $invoice_no, $sale_date, $discount = 0, $tax = 0, $paid_amount = 0, $notes;
     public $payment_type = 'cash'; // Default to cash
-    public $items = []; 
+    public $transaction_number, $sender_name;
+    public $cash_amount = 0, $banking_app_amount = 0;
+    public $items = [];
+    public $currentShift; 
 
     public function mount()
     {
+        // Get current open shift
+        $this->currentShift = \App\Models\Shift::where('user_id', auth()->id())
+            ->where('status', 'open')
+            ->first();
+
         $this->sale_date = date('Y-m-d');
         $this->invoice_no = 'SALE-' . strtoupper(uniqid());
 
@@ -47,7 +55,11 @@ class SaleCreate extends Component
             'customer_id' => 'required|exists:customers,id',
             'invoice_no' => 'required|string|max:255|unique:sales,invoice_no',
             'sale_date' => 'required|date',
-            'payment_type' => 'required|in:cash,bankak',
+            'payment_type' => 'required|in:cash,banking_app,cash_banking_app',
+            'transaction_number' => 'required_if:payment_type,banking_app,cash_banking_app|nullable|string|max:255',
+            'sender_name' => 'required_if:payment_type,banking_app,cash_banking_app|nullable|string|max:255',
+            'cash_amount' => 'required_if:payment_type,cash_banking_app|numeric|min:0',
+            'banking_app_amount' => 'required_if:payment_type,cash_banking_app|numeric|min:0',
             'discount' => 'required|numeric|min:0',
             'tax' => 'required|numeric|min:0',
             'paid_amount' => 'required|numeric|min:0',
@@ -88,7 +100,7 @@ class SaleCreate extends Component
 
     public function updated($propertyName)
     {
-        if (str_starts_with($propertyName, 'items') || in_array($propertyName, ['discount', 'tax'])) {
+        if (str_starts_with($propertyName, 'items') || in_array($propertyName, ['discount', 'tax', 'payment_type', 'cash_amount', 'banking_app_amount'])) {
             $this->calculateTotals();
         }
     }
@@ -97,7 +109,14 @@ class SaleCreate extends Component
     {
         $subtotal = collect($this->items)->sum(fn($i) => (float)($i['quantity'] ?? 0) * (float)($i['unit_price'] ?? 0));
         $total = $subtotal - (float)$this->discount + (float)$this->tax;
-        $this->paid_amount = max(0, $total);
+        
+        if ($this->payment_type === 'cash_banking_app') {
+            $this->paid_amount = (float)$this->cash_amount + (float)$this->banking_app_amount;
+        } else {
+            $this->paid_amount = max(0, $total);
+            $this->cash_amount = $this->payment_type === 'cash' ? $this->paid_amount : 0;
+            $this->banking_app_amount = $this->payment_type === 'banking_app' ? $this->paid_amount : 0;
+        }
     }
 
     public function setCustomer($customerId)
@@ -142,8 +161,13 @@ class SaleCreate extends Component
                 'total' => $total,
                 'paid_amount' => $this->paid_amount,
                 'payment_status' => $paymentStatus,
+                'transaction_number' => in_array($this->payment_type, ['banking_app', 'cash_banking_app']) ? $this->transaction_number : null,
+                'sender_name' => in_array($this->payment_type, ['banking_app', 'cash_banking_app']) ? $this->sender_name : null,
+                'cash_amount' => $this->payment_type === 'cash_banking_app' ? $this->cash_amount : ($this->payment_type === 'cash' ? $this->paid_amount : 0),
+                'banking_app_amount' => $this->payment_type === 'cash_banking_app' ? $this->banking_app_amount : ($this->payment_type === 'banking_app' ? $this->paid_amount : 0),
                 'notes' => $this->notes,
                 'created_by' => auth()->id(),
+                'shift_id' => $this->currentShift?->id,
             ]);
 
             foreach ($this->items as $itemData) {
@@ -191,6 +215,51 @@ class SaleCreate extends Component
                 }
             }
 
+            // Create payment transactions
+            if ($this->payment_type === 'cash') {
+                \App\Models\PaymentTransaction::create([
+                    'sale_id' => $sale->id,
+                    'shift_id' => $this->currentShift?->id,
+                    'payment_type' => 'cash',
+                    'amount' => $this->paid_amount,
+                    'transaction_number' => null,
+                    'sender_name' => null,
+                    'created_by' => auth()->id(),
+                ]);
+            } elseif ($this->payment_type === 'banking_app') {
+                \App\Models\PaymentTransaction::create([
+                    'sale_id' => $sale->id,
+                    'shift_id' => $this->currentShift?->id,
+                    'payment_type' => 'banking_app',
+                    'amount' => $this->paid_amount,
+                    'transaction_number' => $this->transaction_number,
+                    'sender_name' => $this->sender_name,
+                    'created_by' => auth()->id(),
+                ]);
+            } elseif ($this->payment_type === 'cash_banking_app') {
+                // Create cash transaction
+                \App\Models\PaymentTransaction::create([
+                    'sale_id' => $sale->id,
+                    'shift_id' => $this->currentShift?->id,
+                    'payment_type' => 'cash',
+                    'amount' => $this->cash_amount,
+                    'transaction_number' => null,
+                    'sender_name' => null,
+                    'created_by' => auth()->id(),
+                ]);
+                
+                // Create banking app transaction
+                \App\Models\PaymentTransaction::create([
+                    'sale_id' => $sale->id,
+                    'shift_id' => $this->currentShift?->id,
+                    'payment_type' => 'banking_app',
+                    'amount' => $this->banking_app_amount,
+                    'transaction_number' => $this->transaction_number,
+                    'sender_name' => $this->sender_name,
+                    'created_by' => auth()->id(),
+                ]);
+            }
+
             return $sale;
         });
 
@@ -201,10 +270,15 @@ class SaleCreate extends Component
 
     public function resetFields()
     {
-        $this->reset(['discount', 'tax', 'paid_amount', 'notes']);
+        $this->reset(['discount', 'tax', 'paid_amount', 'notes', 'transaction_number', 'sender_name', 'cash_amount', 'banking_app_amount']);
         $this->payment_type = 'cash';
         $this->sale_date = date('Y-m-d');
         $this->invoice_no = 'SALE-' . strtoupper(uniqid());
+
+        // Refresh current shift
+        $this->currentShift = \App\Models\Shift::where('user_id', auth()->id())
+            ->where('status', 'open')
+            ->first();
 
         // Set first customer as default
         $defaultCustomer = Customer::first();
@@ -228,6 +302,14 @@ class SaleCreate extends Component
     {
         $this->invoice_no = 'SALE-' . strtoupper(uniqid());
     }
+
+    protected $validationAttributes = [
+        'items.*.product_id' => 'المنتج',
+        'items.*.unit_price' => 'سعر الوحدة',
+        'items.*.quantity' => 'الكمية',
+        'customer_id' => 'العميل',
+        'payment_type' => 'نوع الدفع',
+    ];
 
     #[Layout('layouts.admin')]
     public function render()

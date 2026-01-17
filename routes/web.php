@@ -11,6 +11,13 @@ Route::get('/', function () {
     return redirect()->route('login');
 });
 
+Route::get('lang/{locale}', function ($locale) {
+    if (in_array($locale, ['en', 'ar'])) {
+        session()->put('locale', $locale);
+    }
+    return redirect()->back();
+})->name('lang.switch');
+
 // Authentication Routes
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 
@@ -48,11 +55,24 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::get('/purchases', \App\Livewire\Admin\Purchases\PurchaseIndex::class)->name('purchases.index');
     Route::get('/purchases/return', \App\Livewire\Admin\Purchases\PurchaseReturnCreate::class)->name('purchases.return');
     Route::get('/sales', \App\Livewire\Admin\Sales\SaleIndex::class)->name('sales.index');
-    Route::get('/sales/create', \App\Livewire\Admin\Sales\SaleCreate::class)->name('sales.create');
     Route::get('/sales/return', \App\Livewire\Admin\Sales\SaleReturnCreate::class)->name('sales.return');
     Route::get('/sales/{sale}/print', [\App\Http\Controllers\Admin\InvoiceController::class, 'print'])->name('sales.print');
+    
+    // Shift Management Routes (no shift required to manage shifts)
+    Route::get('/shifts', \App\Livewire\Admin\Shifts\ShiftIndex::class)->name('shifts.index');
+    
+    // Sales Routes - REQUIRE OPEN SHIFT
+    Route::middleware(['require_open_shift'])->group(function () {
+        Route::get('/sales/create', \App\Livewire\Admin\Sales\SaleCreate::class)->name('sales.create');
+    });
+    
     Route::get('/inventory/stocktake/create', App\Livewire\Admin\Inventory\StocktakeCreate::class)->name('stocktakes.create');
     Route::get('/inventory/stocktakes', App\Livewire\Admin\Inventory\StocktakeIndex::class)->name('stocktakes.index');
     Route::get('/inventory/stocktake/{stocktake}', App\Livewire\Admin\Inventory\StocktakeShow::class)->name('stocktakes.show');
     Route::get('/inventory', \App\Livewire\Admin\Inventory\InventoryIndex::class)->name('inventory.index');
+
+    // Site Settings & Categories
+    Route::get('/categories', \App\Livewire\Admin\Categories\CategoryIndex::class)->name('categories.index');
+    Route::get('/settings', \App\Livewire\Admin\Settings\SiteSettings::class)->name('settings.index');
+    Route::get('/profile', \App\Livewire\Admin\Profile\UserProfile::class)->name('profile');
 });

@@ -21,6 +21,11 @@ class Sale extends Model
         'paid_amount',
         'notes',
         'created_by',
+        'shift_id',
+        'transaction_number',
+        'sender_name',
+        'cash_amount',
+        'banking_app_amount',
     ];
 
     protected $casts = [
@@ -30,6 +35,8 @@ class Sale extends Model
         'tax' => 'decimal:2',
         'total' => 'decimal:2',
         'paid_amount' => 'decimal:2',
+        'cash_amount' => 'decimal:2',
+        'banking_app_amount' => 'decimal:2',
     ];
 
     public function customer(): BelongsTo
@@ -52,6 +59,16 @@ class Sale extends Model
         return $this->hasMany(SaleReturn::class);
     }
 
+    public function shift(): BelongsTo
+    {
+        return $this->belongsTo(Shift::class);
+    }
+
+    public function paymentTransactions(): HasMany
+    {
+        return $this->hasMany(PaymentTransaction::class);
+    }
+
     // Calculate totals
     public function calculateTotals()
     {
@@ -65,5 +82,17 @@ class Sale extends Model
     public function getRemainingBalanceAttribute()
     {
         return $this->total - $this->paid_amount;
+    }
+
+    // Check if sale can be edited (only if shift is still open)
+    public function canEdit(): bool
+    {
+        return $this->shift && $this->shift->status === 'open';
+    }
+
+    // Check if sale can be deleted (only if shift is still open)
+    public function canDelete(): bool
+    {
+        return $this->shift && $this->shift->status === 'open';
     }
 }

@@ -1,4 +1,5 @@
 <div x-data="{ showModal: false, isEditing: @entangle('isEditing') }"
+     x-init="$watch('showModal', value => { if (!value) setTimeout(initDataTable, 100) })"
      @user-saved.window="showModal = false; $wire.$refresh()"
      @user-error.window="alert($event.detail)"
      @open-edit-modal.window="showModal = true"
@@ -7,8 +8,8 @@
     <!-- Header -->
     <div class="mb-6">
         <div>
-            <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-gray-900">Users</h1>
-            <p class="mt-1 text-xs sm:text-sm text-gray-500">Manage your administrative users.</p>
+            <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-gray-900">{{ __('Users') }}</h1>
+            <p class="mt-1 text-xs sm:text-sm text-gray-500">{{ __('Manage your administrative users.') }}</p>
         </div>
     </div>
 
@@ -22,8 +23,8 @@
                     <svg class="mr-1 sm:mr-2 -ml-1 h-4 w-4 sm:h-5 sm:w-5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                     </svg>
-                    <span class="hidden sm:inline">Add User</span>
-                    <span class="sm:hidden">Add</span>
+                    <span class="hidden sm:inline">{{ __('Add User') }}</span>
+                    <span class="sm:hidden">{{ __('Add') }}</span>
                 </button>
                 @endcan
             </div>
@@ -32,11 +33,11 @@
                     <table id="usersTable" class="display w-full" style="width:100%">
                 <thead>
                     <tr>
-                        <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Name</th>
-                        <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Email</th>
-                        <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Branch</th>
-                        <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Role</th>
-                        <th class="text-center py-3 px-4 text-sm font-semibold text-gray-700">Actions</th>
+                        <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">{{ __('Name') }}</th>
+                        <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">{{ __('Email') }}</th>
+                        <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">{{ __('Branch') }}</th>
+                        <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">{{ __('Role') }}</th>
+                        <th class="text-center py-3 px-4 text-sm font-semibold text-gray-700">{{ __('Actions') }}</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-100">
@@ -56,7 +57,7 @@
                                     </span>
                                 @endforeach
                                 @if($user->roles->count() === 0)
-                                    <span class="text-gray-400 italic text-xs">No role</span>
+                                    <span class="text-gray-400 italic text-xs">{{ __('No role') }}</span>
                                 @endif
                             </td>
                             <td class="py-3 px-4 text-center">
@@ -117,41 +118,41 @@
                         </div>
                         <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
                             <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">
-                                {{ $isEditing ? 'Edit User' : 'Add New User' }}
+                                {{ $isEditing ? __('Edit User') : __('Add New User') }}
                             </h3>
                             <div class="mt-4 grid grid-cols-1 gap-4">
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700">Name</label>
+                                    <label class="block text-sm font-medium text-gray-700">{{ __('Name') }}</label>
                                     <input type="text" wire:model="name" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm border p-2">
                                     @error('name') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700">Email</label>
+                                    <label class="block text-sm font-medium text-gray-700">{{ __('Email') }}</label>
                                     <input type="email" wire:model="email" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm border p-2">
                                     @error('email') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700">Password {{ $isEditing ? '(leave blank to keep current)' : '' }}</label>
+                                    <label class="block text-sm font-medium text-gray-700">{{ __('Password') }} {{ $isEditing ? __('(leave blank to keep current)') : '' }}</label>
                                     <input type="password" wire:model="password" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm border p-2">
                                     @error('password') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700">Branch</label>
+                                    <label class="block text-sm font-medium text-gray-700">{{ __('Branch') }}</label>
                                     <div wire:ignore>
                                         <select id="branch-select" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm border p-2">
                                             @if($branch_id)
                                                 <option value="{{ $branch_id }}" selected>{{ App\Models\Branch::find($branch_id)?->name }}</option>
                                             @else
-                                                <option value="">Select Branch</option>
+                                                <option value="">{{ __('Select Branch') }}</option>
                                             @endif
                                         </select>
                                     </div>
                                     @error('branch_id') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700">Role</label>
+                                    <label class="block text-sm font-medium text-gray-700">{{ __('Role') }}</label>
                                     <select wire:model="role" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm border p-2">
-                                        <option value="">Select Role</option>
+                                        <option value="">{{ __('Select Role') }}</option>
                                         @foreach($roles as $r)
                                             <option value="{{ $r->name }}">{{ $r->name }}</option>
                                         @endforeach
@@ -164,10 +165,10 @@
                 </div>
                 <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
                     <button x-on:click="isEditing ? $wire.update() : $wire.store()" type="button" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm">
-                        Save
+                        {{ __('Save') }}
                     </button>
                     <button @click="showModal = false" type="button" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
-                        Cancel
+                        {{ __('Cancel') }}
                     </button>
                 </div>
             </div>
@@ -189,22 +190,22 @@
                 dom: 'Bfrtip',
                 buttons: [{
                     extend: 'excelHtml5',
-                    text: '📥 Export Excel',
+                    text: '📥 {{ __('Export Excel') }}',
                     className: 'bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 border-none'
                 }],
                 language: {
                     search: "",
-                    searchPlaceholder: "Search users...",
-                    emptyTable: "No users found",
+                    searchPlaceholder: "{{ __('Search users...') }}",
+                    emptyTable: "{{ __('No users found') }}",
                     paginate: {
-                        first: "First",
-                        last: "Last",
-                        next: "Next",
-                        previous: "Previous"
+                        first: "{{ __('First') }}",
+                        last: "{{ __('Last') }}",
+                        next: "{{ __('Next') }}",
+                        previous: "{{ __('Previous') }}"
                     }
                 },
                 initComplete: function() {
-                    $('.dataTables_filter input').attr('placeholder', 'Search users...');
+                    $('.dataTables_filter input').attr('placeholder', '{{ __('Search users...') }}');
                 }
             });
         }
@@ -213,7 +214,7 @@
         
         document.addEventListener('livewire:initialized', () => {
             initSelect2();
-            @foreach(['user-saved', 'user-deleted'] as $event)
+            @foreach(['user-saved', 'user-deleted', 'open-edit-modal'] as $event)
                 Livewire.on('{{ $event }}', () => {
                     setTimeout(initDataTable, 100);
                 });

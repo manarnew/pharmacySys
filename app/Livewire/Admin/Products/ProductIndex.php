@@ -131,6 +131,7 @@ class ProductIndex extends Component
     public function render()
     {
         $products = Product::with('category')->latest()->get();
-        return view('livewire.admin.products.product-index', compact('products'));
+        $categories = Category::where('status', 'active')->get();
+        return view('livewire.admin.products.product-index', compact('products', 'categories'));
     }
 }
